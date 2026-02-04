@@ -7,6 +7,8 @@
 
 :root {
     --gold: #ffd700;
+    --app-bg: #131A2F;
+
     --dark-gold: #fdbd0f;
     --app-blue:#60AAF8;
     --app-gradient: radial-gradient(circle at 8% 12%,

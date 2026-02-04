@@ -70,7 +70,11 @@
     <div id="navbar-root"></div>
 
     <div id="main-app-container">
-        <div id="splash-page" class="page" style="display: none"></div>
+        <div id="splash-page" class="page">
+            <div class="splash-page-container">
+                <img src="./assets/splash-logo.png" alt="Logo" class="splash-logo" />
+            </div>
+        </div>
         <div id="login-page" class="page" style="display: none"></div>
         <div id="policy-page" class="page" style="display: none"></div>
         <div id="payment-page" class="page" style="display: none"></div>
@@ -102,7 +106,7 @@
         <div id="toast-container"></div>
     </div>
 
-    	<script src="$WEBAPIS/webapis/webapis.js"></script>
+    <script src="$WEBAPIS/webapis/webapis.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-analytics.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
@@ -148,12 +152,12 @@
     <script src="./utils/aspectRatioUtils.js"></script>
 
     <script src="./api/apiFunctions.js"></script>
- <script src="./js/main.js"></script>
+    <script src="./js/main.js"></script>
 
 
 </body>
 
 </html>
 
-        <!-- if (typeof webapis !== "undefined" && webapis.network) {
+<!-- if (typeof webapis !== "undefined" && webapis.network) {
             var mac = webapis.network.getMac(); -->
