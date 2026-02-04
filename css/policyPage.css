@@ -1,0 +1,226 @@
+.policy-page-container {
+  display: flex;
+  width: 100%;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
+  box-sizing: border-box;
+  /* animation: fadeInOut 1s ease-in-out; */
+  background-size: cover;
+  background-position: center;
+  position: fixed;
+background:
+  /* Top-left dark vignette */
+  radial-gradient(
+    circle at 8% 12%,
+    rgba(0, 0, 0, 0.55) 0%,
+    rgba(0, 0, 0, 0.38) 18%,
+    rgba(0, 0, 0, 0.18) 35%,
+    rgba(0, 0, 0, 0) 60%
+  ),
+
+  /* Bottom-right dark vignette */
+  radial-gradient(
+    circle at 92% 88%,
+    rgba(0, 0, 0, 0.5) 0%,
+    rgba(0, 0, 0, 0.34) 20%,
+    rgba(0, 0, 0, 0.16) 38%,
+    rgba(0, 0, 0, 0) 65%
+  ),
+
+  /* Main background gradient */
+  linear-gradient(
+    135deg,
+    #4f7ea6 0%,
+    #3f5f86 22%,
+    #4a4678 42%,
+    #6a3b7f 65%,
+    #7a3a8c 82%,
+    #6a2f7b 100%
+  );
+
+}
+
+
+.policy-page-content{
+  width: 100%;
+}
+.policy-page-logo-img{
+  width: 500px;
+  zoom: 1.3;
+  height: 70px;
+  object-fit: contain;
+}
+
+.privacy-policy-heading img{
+  width: 60px;
+  height: 70px;
+  object-fit: contain;
+  margin-right: 30px;
+}
+
+.privacy-policy-heading{
+  display: flex;
+  font-weight: 550;
+  background: #635CED;
+  padding-left: 40px;
+  padding-top: 30px;
+  padding-bottom: 30px;
+  padding-right: 40px;
+  /* border-top-left-radius: 20px; */
+  /* border-top-right-radius: 20px; */
+align-items: center;
+font-size: 34px;
+}
+
+.policy-page-content{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+}
+
+.privacy-policy-text{
+  padding-top: 55px;
+  padding-left: 60px;
+font-weight: 400;
+font-style: Regular;
+font-size: 24px;
+line-height: 192%;
+letter-spacing: 0%;
+
+  padding-right: 60px;
+}
+
+.privacy-policy-text-container{
+  margin-top: 40px;
+  overflow: hidden;
+ background-color: rgba(244, 244, 244, 0.1);
+
+  border-radius: 26px;
+border: 1px solid #FFFFFF;
+width: 1600px;
+padding-bottom: 40px;
+}
+
+.policy-accept-container{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; 
+  width: 100%;
+  padding-left: 40px;
+  padding-right: 40px;
+  margin-top: 30px;
+}
+
+.policy-checkbox-wrapper{
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  width: 100%;
+  padding-left: 18px;
+}
+
+.policy-checkbox{
+  -webkit-appearance: none;
+  appearance: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  border: 2px solid rgba(255,255,255,0.3);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+  background-color: transparent;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.policy-checkbox:focus{
+  outline: none;
+}
+
+.policy-checkbox:checked{
+  background: linear-gradient(90deg,#6cc7ff,#ff86d1);
+  border: none;
+}
+
+.policy-checkbox:checked::after{
+  content: '✓';
+  position: absolute;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.policy-checkbox-label{
+  font-size: 22px;
+  font-weight: 600;
+  color: #FFFFFF;
+  letter-spacing: 0.4px;
+}
+
+.policy-buttons-wrapper{
+  display: flex;
+  width: 100%;
+  justify-content: center; 
+  margin-top: 28px;
+}
+
+.policy-buttons{
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+}
+
+.policy-buttons button{
+  width: 340px;
+  border-radius: 12px;
+  padding: 14px 20px;
+  font-size: 22px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+  transition: background 140ms ease, box-shadow 160ms ease, transform 120ms ease, color 140ms ease;
+}
+
+.policy-accept-all{
+  background: transparent;
+  color: #fff;
+  border: 1px solid #fff;
+}
+
+.policy-agree{
+ background: transparent;
+    color: #fff;
+    border: 1px solid #fff;
+}
+
+.policy-buttons button:focus{
+  outline: none;
+}
+
+.policy-focus.policy-accept-all{
+  background: linear-gradient(90deg,#4ec4ff,#ff5ec9);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.policy-focus.policy-agree{
+  background: linear-gradient(90deg,#4ec4ff,#ff5ec9);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+
+
+.policy-checkbox.checked + .policy-checkbox-label{
+  opacity: 0.9;
+}
