@@ -84,9 +84,10 @@ function LoginPage() {
 
         const inputs = [
             playlistInput,
-            passwordInput,
 
             usernameInput,
+            passwordInput,
+
             serverInput,
             addUserButton,
             // switchUserButton,
@@ -340,35 +341,35 @@ function LoginPage() {
           <div class="login-inputs-div">
             <div class="input-group">
               <div class="login-input-container">
-                <img class="input-icon" src="../assets/playlist-icon-active.png" alt="Playlist">
-                <input class="playlistname-input login-input" type="text" placeholder="Enter your playlist name">
+                <img class="input-icon" src="../assets/playlist.png" alt="Playlist">
+                <input class="playlistname-input login-input" type="text" value="ShayneCMobAllVue24"  placeholder="Playlist Name">
               </div>
             </div>
-                 <div class="input-group">
-              <div class="login-input-container password-wrapper">
-                <img class="input-icon" src="../assets/parental-lock-icon.png" alt="Password">
-                <input class="password-input login-input" type="password" placeholder="Enter your password">
-                <img class="eye-icon-login" src="../assets/eye-closed.png" alt="Toggle password visibility">
-              </div>
-            </div>
+      
             <div class="input-group">
               <div class="login-input-container">
-                <img class="input-icon" src="../assets/account-user.png" alt="User">
-                <input class="username-input login-input" type="text" placeholder="Enter your username">
+                <img class="input-icon" src="../assets/username.png" alt="User">
+                <input class="username-input login-input" type="text"   value="ShayneCMobAllVue24"  placeholder="Username">
               </div>
             </div>
             
-       
+                  <div class="input-group">
+              <div class="login-input-container password-wrapper">
+                <img class="input-icon" src="../assets/password.png" alt="Password">
+                <input class="password-input login-input" type="password" placeholder="Password" value="ceFdzbZwJ">
+                <img class="eye-icon-login" src="../assets/eye-closed.png" alt="Toggle password visibility">
+              </div>
+            </div>
 
             <div class="input-group">
               <div class="login-input-container">
-                <img class="input-icon" src="../assets/stream-icon-white.png" alt="Server">
-                <input class="server-input login-input" type="text" placeholder="Enter your server address">
+                <img class="input-icon" src="../assets/server.png" alt="Server">
+                <input class="server-input login-input" type="text" value="http://whole.motorcycles/" placeholder="Server Address" >
               </div>
             </div>
 
             <div class="login-buttons-row">
-              <button class="add-user-button">Login<img class="login-button-img" src="../assets/add-user-icon.png" alt="Add User"></button>
+              <button class="add-user-button">Add Playlist<img class="login-button-img" src="../assets/add-user-icon.png" alt="Add User"></button>
               <button class="switch-user-button">Switch User <img class="login-button-img" src="../assets/switch-user-icon.png" alt="Switch User"></button>
             </div>
 

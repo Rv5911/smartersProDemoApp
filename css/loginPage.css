@@ -162,6 +162,7 @@
     background: transparent;
     color: white;
     font-size: 20px;
+    opacity: 0.6;
     outline: none;
     border: 1.34px solid #3D4B76;
     /* transition: all 0.3s ease; */
@@ -174,6 +175,9 @@
 
 .login-input:focus,
 .login-input-focused {
+    transform: scale(1.02);
+opacity: 1;
+transition: all 0.2s ease-in-out;
     border: 2px solid var(--app-text-color);
 }
 
@@ -239,9 +243,8 @@
     background: var(--app-text-color);
     color: white;
     opacity: 1;
-
+    transform: scale(1.02);
     border: 2px solid white;
-    transform: translateY(-2px);
 }
 
 .device-info-button-div {

@@ -94,7 +94,7 @@ window.onload = function() {
             localStorage.setItem("currentPage", "login");
             Router.showPage("login");
         }
-    }, 0);
+    }, 5000);
 
     // if (typeof logAllDnsEntries === "function") logAllDnsEntries();
     if (typeof getTmbdId === "function") getTmbdId();
