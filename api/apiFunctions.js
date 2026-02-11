@@ -2,7 +2,6 @@ const TMBD_API_KEY = localStorage.getItem("tmbdId");
 // const TMBD_API_KEY = localStorage.getItem("tmbdId") ? localStorage.getItem("tmbdId") : "a21eeaca44af5d2a4349214ecba1b338";
 
 const castImageUrl = "https://image.tmdb.org/t/p/w500";
-const apiBaseUrl="https://hosting.iptvbillingsolution.com/abhishek_whmcs/includes/smart_tv_api/api.php"
 
 let currentAnimationId = null;
 let currentLoadingValue = 0;

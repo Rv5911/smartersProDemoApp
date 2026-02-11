@@ -17,7 +17,7 @@ function LoginPage() {
         const deviceInfoButton = document.querySelector(".device-info-button");
 
         let currentSlide = 0;
-        const totalSlides = 1;
+        const totalSlides = 3;
         let sliderInterval;
 
         function updateSlider() {
@@ -84,34 +84,27 @@ function LoginPage() {
 
         const inputs = [
             playlistInput,
-            usernameInput,
             passwordInput,
+
+            usernameInput,
             serverInput,
             addUserButton,
-            switchUserButton,
-            deviceInfoButton,
+            // switchUserButton,
+            // deviceInfoButton,
         ].filter(Boolean);
 
         let currentIndex = 0;
         let lastFocusedInput = null;
 
-        const passwordWrapper = document.createElement("div");
-        passwordWrapper.className = "password-wrapper";
-        passwordInput.parentNode.insertBefore(passwordWrapper, passwordInput);
-        passwordWrapper.appendChild(passwordInput);
-
-        const eyeIcon = document.createElement("img");
-        eyeIcon.src = "../assets/eye-closed.png";
-        eyeIcon.className = "eye-icon-login";
-        eyeIcon.alt = "Toggle password visibility";
+        const eyeIcon = document.querySelector(".eye-icon-login");
 
         // Add error handling for image loading
-        eyeIcon.onerror = function() {
-            console.error("Eye icon image failed to load");
-            eyeIcon.alt = passwordVisible ? "Hide" : "Show";
-        };
-
-        passwordWrapper.appendChild(eyeIcon);
+        if (eyeIcon) {
+            eyeIcon.onerror = function() {
+                console.error("Eye icon image failed to load");
+                eyeIcon.alt = passwordVisible ? "Hide" : "Show";
+            };
+        }
 
         let passwordVisible = false;
 
@@ -133,14 +126,14 @@ function LoginPage() {
         function clearFocusStyles() {
             document
                 .querySelectorAll(
-                    ".login-input-focused, .login-button-focused, .list-button-focused, .eye-icon-focused"
+                    ".login-input-focused, .login-button-focused, .list-button-focused, .eye-icon-focused",
                 )
                 .forEach(function(el) {
                     el.classList.remove(
                         "login-input-focused",
                         "login-button-focused",
                         "list-button-focused",
-                        "eye-icon-focused"
+                        "eye-icon-focused",
                     );
                 });
         }
@@ -189,7 +182,7 @@ function LoginPage() {
                     if (response) {
                         LoginPage.cleanup();
                     }
-                }
+                },
             );
         }
 
@@ -289,7 +282,7 @@ function LoginPage() {
                         if (playlistsData.length === 0) {
                             Toaster.showToast(
                                 "error",
-                                "No playlists available. Please add a playlist!"
+                                "No playlists available. Please add a playlist!",
                             );
                             e.preventDefault();
                             return;
@@ -299,10 +292,7 @@ function LoginPage() {
                             Router.showPage("listPage");
                         }
                     } else if (focused.classList.contains("device-info-button")) {
-                        Toaster.showToast(
-                            "info",
-                            "Coming Soon"
-                        );
+                        Toaster.showToast("info", "Coming Soon");
                     }
                     e.preventDefault();
                     break;
@@ -326,16 +316,16 @@ function LoginPage() {
         <div class="login-image-div">
           <div class="slider-container">
             <div class="slider-slide active">
-              <img class="login-logo" src="../assets/splash-logo.png" alt="MultiVision Logo">
-              <p class="slider-text" style="display: none;">Welcome to MultiVision ONE</p>
+              <img class="login-logo-slide" src="../assets/loginInfo1.png" alt="MultiVision Logo">
+              <p class="slider-text" >Join Us & Explore thousands of Great Opportunities</p>
             </div>
             <div class="slider-slide">
-              <img class="login-logo" src="../assets/main-logo.png" alt="MultiVision Logo">
-              <p class="slider-text">Experience Premium IPTV</p>
+              <img class="login-logo-slide" src="../assets/loginInfo2.png" alt="MultiVision Logo">
+              <p class="slider-text">Join Us & Explore thousands of Great Opportunities</p>
             </div>
             <div class="slider-slide">
-              <img class="login-logo" src="../assets/main-logo.png" alt="MultiVision Logo">
-              <p class="slider-text">Watch Anywhere, Anytime</p>
+              <img class="login-logo-slide" src="../assets/loginInfo3.png" alt="MultiVision Logo">
+              <p class="slider-text">Join Us & Explore thousands of Great Opportunities</p>
             </div>
           </div>
           
@@ -347,31 +337,38 @@ function LoginPage() {
         </div>
 
         <div class="login-form-div">
-          <h2 class="login-heading">Enter Your Login Details</h2>
-
           <div class="login-inputs-div">
             <div class="input-group">
-              <label class="input-label">Playlist Name</label>
-              <input class="playlistname-input login-input" type="text"  placeholder="Enter your playlist name">
+              <div class="login-input-container">
+                <img class="input-icon" src="../assets/playlist-icon-active.png" alt="Playlist">
+                <input class="playlistname-input login-input" type="text" placeholder="Enter your playlist name">
+              </div>
+            </div>
+                 <div class="input-group">
+              <div class="login-input-container password-wrapper">
+                <img class="input-icon" src="../assets/parental-lock-icon.png" alt="Password">
+                <input class="password-input login-input" type="password" placeholder="Enter your password">
+                <img class="eye-icon-login" src="../assets/eye-closed.png" alt="Toggle password visibility">
+              </div>
+            </div>
+            <div class="input-group">
+              <div class="login-input-container">
+                <img class="input-icon" src="../assets/account-user.png" alt="User">
+                <input class="username-input login-input" type="text" placeholder="Enter your username">
+              </div>
             </div>
             
-            <div class="input-group">
-              <label class="input-label">Username</label>
-              <input class="username-input login-input"  type="text" placeholder="Enter your username">
-            </div>
-            
-            <div class="input-group">
-              <label class="input-label">Password</label>
-              <input class="password-input login-input" type="password"  placeholder="Enter your password">
-            </div>
+       
 
             <div class="input-group">
-              <label class="input-label">Server Address</label>
-              <input class="server-input login-input"  type="text" placeholder="Enter your server address">
+              <div class="login-input-container">
+                <img class="input-icon" src="../assets/stream-icon-white.png" alt="Server">
+                <input class="server-input login-input" type="text" placeholder="Enter your server address">
+              </div>
             </div>
 
             <div class="login-buttons-row">
-              <button class="add-user-button">Add User <img class="login-button-img" src="../assets/add-user-icon.png" alt="Add User"></button>
+              <button class="add-user-button">Login<img class="login-button-img" src="../assets/add-user-icon.png" alt="Add User"></button>
               <button class="switch-user-button">Switch User <img class="login-button-img" src="../assets/switch-user-icon.png" alt="Switch User"></button>
             </div>
 

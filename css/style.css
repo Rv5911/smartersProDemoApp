@@ -8,7 +8,9 @@
 :root {
     --gold: #ffd700;
     --app-bg: #131A2F;
-
+    --app-text-color:#615DFC;
+    --app-light-bg:#1A2442;
+--app-text-gray:#6C7795;
     --dark-gold: #fdbd0f;
     --app-blue:#60AAF8;
     --app-gradient: radial-gradient(circle at 8% 12%,
