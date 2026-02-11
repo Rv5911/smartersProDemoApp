@@ -31,62 +31,136 @@ function Navbar() {
     </div>
 
     <div id="sidebar" class="sidebar option-remove">
-      <div class="sidebar-content">
-        <ul>
-          <li class="sidebar-link" tabindex="0"><img src="/assets/sidebar-settings.png" alt="Logo" class="sidebar-link-logo" />Settings</li>
-          <li class="sidebar-link" tabindex="0"><img src="/assets/sidebar-list-user.png" alt="Logo" class="sidebar-link-logo" />List User</li>
-          <li class="account-navbar sidebar-link-account " tabindex="0"><img src="/assets/sidebar-account.png" alt="Logo" class="sidebar-link-logo" />My Account</li>
-          
-          <!-- Sort with expandable submenu -->
-          <li class="sidebar-link sidebar-sort" tabindex="0">
-            <span class="sidebar-link-sort-container">
-              <img src="/assets/sidebar-sort.png" alt="Logo" class="sidebar-link-logo" />
-              Sort
-            </span>
-            <span class="arrow-icon"><img src="/assets/down-arrow.png" alt="Logo" /></span>
-          </li>
-          <div id="sort-options" class="sort-options option-remove">
-            <ul>
-              <li class="sort-option" tabindex="0">
-                <label class="checkbox-container">
-                  <input type="checkbox" class="sort-checkbox" data-sort="default">
-                  <span class="checkmark"></span>
-                  Default
-                </label>
-              </li>
-              <li class="sort-option" tabindex="0">
-                <label class="checkbox-container">
-                  <input type="checkbox" class="sort-checkbox" data-sort="recently-added">
-                  <span class="checkmark"></span>
-                  Recently Added
-                </label>
-              </li>
-              <li class="sort-option" tabindex="0">
-                <label class="checkbox-container">
-                  <input type="checkbox" class="sort-checkbox" data-sort="a-z">
-                  <span class="checkmark"></span>
-                  A-Z
-                </label>
-              </li>
-              <li class="sort-option" tabindex="0">
-                <label class="checkbox-container">
-                  <input type="checkbox" class="sort-checkbox" data-sort="z-a">
-                  <span class="checkmark"></span>
-                  Z-A
-                </label>
-              </li>
-              <li class="sort-option" tabindex="0">
-                <label class="checkbox-container">
-                  <input type="checkbox" class="sort-checkbox" data-sort="top-rated">
-                  <span class="checkmark"></span>
-                  Top Rated
-                </label>
-              </li>
-            </ul>
+      <div class="sidebar-content-wrapper">
+        <!-- Main Sidebar Section -->
+        <div id="main-sidebar-section" class="sidebar-section active">
+          <div class="sidebar-header">
+            <div class="sidebar-user-info">
+              <span>For SimonWinter</span>
+            </div>
+            <div class="sidebar-user-avatar">
+              <i class="fa-solid fa-user"></i>
+            </div>
           </div>
 
-          
-          <li class="logout-navbar sidebar-link" tabindex="0">Sign Out</li>
+          <div class="sidebar-grid">
+            <div class="sidebar-card" data-action="settings" tabindex="0">
+              <i class="fa-solid fa-gear"></i>
+              <span>Settings</span>
+            </div>
+            <div class="sidebar-card" data-action="playlist-info" tabindex="0">
+              <i class="fa-solid fa-user"></i>
+              <span>Playlist Info</span>
+            </div>
+            <div class="sidebar-card" data-action="switch-playlist" tabindex="0">
+              <i class="fa-solid fa-arrows-rotate"></i>
+              <span>Switch Playlist</span>
+            </div>
+            <div class="sidebar-card" data-action="add-playlist" tabindex="0">
+              <i class="fa-solid fa-user-plus"></i>
+              <span>Add Playlist</span>
+            </div>
+            <div class="sidebar-card" data-action="dark-mode" tabindex="0">
+              <div class="sidebar-card-row">
+                <i class="fa-solid fa-moon"></i>
+                <div class="theme-toggle"></div>
+              </div>
+              <span>Dark Mode</span>
+            </div>
+            <div class="sidebar-card" data-action="sort" tabindex="0">
+              <i class="fa-solid fa-filter"></i>
+              <span>Sort</span>
+            </div>
+            <div class="sidebar-card" data-action="change-theme" tabindex="0">
+              <i class="fa-solid fa-palette"></i>
+              <span>Change Theme</span>
+            </div>
+          </div>
+
+          <div class="sidebar-footer">
+            <button class="footer-link-primary" data-action="switch-playlist-footer" tabindex="0">Switch Playlist</button>
+            <span class="version-text">Version: v1.0</span>
+            <span class="contact-text">Contact us at: <span class="contact-email">support@smarterspro.com</span></span>
+          </div>
+        </div>
+
+        <!-- Playlist Info Section -->
+        <div id="playlist-info-section" class="sidebar-section">
+          <div class="nested-header">
+            <div class="back-btn" tabindex="0">
+              <i class="fa-solid fa-chevron-left"></i>
+            </div>
+            <span>Playlist Info</span>
+          </div>
+
+          <div class="info-list">
+            <div class="info-row">
+              <i class="fa-solid fa-user"></i>
+              <span class="info-label">Username</span>
+              <span class="info-value username-val">SimonWinter</span>
+            </div>
+            <div class="info-row">
+              <i class="fa-solid fa-laptop-code"></i>
+              <span class="info-label">Account Status</span>
+              <span class="info-value status-val">N/A</span>
+            </div>
+            <div class="info-row">
+              <i class="fa-solid fa-calendar-days"></i>
+              <span class="info-label">Expiry Date</span>
+              <span class="info-value expiry-val">Unlimited</span>
+            </div>
+            <div class="info-row">
+              <i class="fa-solid fa-users"></i>
+              <span class="info-label">Active Connections</span>
+              <span class="info-value connections-val">N/A</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sort Dialog Overlay -->
+    <div id="sort-dialog" class="sort-dialog-overlay option-remove">
+      <div class="sort-dialog-content">
+        <div class="sort-dialog-header">
+           <span>Sort By</span>
+        </div>
+        <ul class="sort-list">
+          <li class="sort-option" tabindex="0" data-sort="default">
+            <label class="checkbox-container">
+              <input type="checkbox" class="sort-checkbox" data-sort="default">
+              <span class="checkmark"></span>
+              Default
+            </label>
+          </li>
+          <li class="sort-option" tabindex="0" data-sort="recently-added">
+            <label class="checkbox-container">
+              <input type="checkbox" class="sort-checkbox" data-sort="recently-added">
+              <span class="checkmark"></span>
+              Recently Added
+            </label>
+          </li>
+          <li class="sort-option" tabindex="0" data-sort="a-z">
+            <label class="checkbox-container">
+              <input type="checkbox" class="sort-checkbox" data-sort="a-z">
+              <span class="checkmark"></span>
+              A-Z
+            </label>
+          </li>
+          <li class="sort-option" tabindex="0" data-sort="z-a">
+            <label class="checkbox-container">
+              <input type="checkbox" class="sort-checkbox" data-sort="z-a">
+              <span class="checkmark"></span>
+              Z-A
+            </label>
+          </li>
+          <li class="sort-option" tabindex="0" data-sort="top-rated">
+            <label class="checkbox-container">
+              <input type="checkbox" class="sort-checkbox" data-sort="top-rated">
+              <span class="checkmark"></span>
+              Top Rated
+            </label>
+          </li>
         </ul>
       </div>
     </div>
@@ -97,124 +171,92 @@ function buildDynamicSidebarOptions() {
   try {
     const sidebar = document.getElementById("sidebar");
     if (!sidebar) return;
-    const list = sidebar.querySelector("ul");
-    if (!list) return;
+    const grid = sidebar.querySelector(".sidebar-grid");
+    if (!grid) return;
 
-    list
+    // Remove existing dynamic cards
+    grid
       .querySelectorAll(".dynamic-sidebar-option")
       .forEach((el) => el.remove());
 
     const currentPage = localStorage.getItem("currentPage");
 
-    // Handle Sort Option Visibility
-    const sortItem = sidebar.querySelector(".sidebar-sort");
-    if (sortItem) {
+    // Handle Sort Card Visibility
+    const sortCard = grid.querySelector('[data-action="sort"]');
+    if (sortCard) {
       const SORT_ENABLED_PAGES = ["moviesPage", "seriesPage", "liveTvPage"];
       if (SORT_ENABLED_PAGES.includes(currentPage)) {
-        sortItem.classList.remove("option-remove");
-        sortItem.style.display = ""; // Revert to CSS default
+        sortCard.classList.remove("option-remove");
 
-        // Hide Top Rated for Live TV
-        const topRatedOption = sidebar.querySelector(
+        // Handle Top Rated option within the sort menu
+        const topRatedOption = document.querySelector(
           '.sort-checkbox[data-sort="top-rated"]',
         );
         if (topRatedOption) {
           const li = topRatedOption.closest("li");
           if (li) {
-            if (currentPage === "liveTvPage") {
-              li.style.display = "none";
-              li.classList.add("option-remove");
-            } else {
-              li.style.display = "";
-              li.classList.remove("option-remove");
-            }
+            if (currentPage === "liveTvPage") li.classList.add("option-remove");
+            else li.classList.remove("option-remove");
           }
         }
       } else {
-        sortItem.classList.add("option-remove");
-        sortItem.style.display = "none";
+        sortCard.classList.add("option-remove");
       }
     }
+
+    const currentPlaylist = getCurrentPlaylist();
+    if (!currentPlaylist) return;
+
     let label = "";
     let action = "";
-    const currentPlaylist = getCurrentPlaylist();
-
-    // Return early if no playlist is available
-    if (!currentPlaylist) {
-      return;
-    }
-
     const allRecentlyWatchedMovies = currentPlaylist.continueWatchingMovies;
     const allRecentlyWatchedSeries = currentPlaylist.continueWatchingSeries;
     const allRecentlyWatchedChannels = currentPlaylist.ChannelListLive;
     const selectedMovieId = localStorage.getItem("selectedMovieId");
     const selectedSeriesId = localStorage.getItem("selectedSeriesId");
 
-    // FIX: Properly check if movie is in recently watched
     const isIncludedInRecentlyWatchedMovies =
       allRecentlyWatchedMovies &&
-      allRecentlyWatchedMovies.some(
-        (movie) => movie && movie.itemId == selectedMovieId,
-      );
-
+      allRecentlyWatchedMovies.some((m) => m && m.itemId == selectedMovieId);
     const isIncludedInRecentlyWatchedSeries =
       allRecentlyWatchedSeries &&
-      allRecentlyWatchedSeries.some(
-        (series) => series && series.itemId == selectedSeriesId,
-      );
+      allRecentlyWatchedSeries.some((s) => s && s.itemId == selectedSeriesId);
 
     if (currentPage === "moviesPage") {
       if (allRecentlyWatchedMovies && allRecentlyWatchedMovies.length > 0) {
-        label = "Remove All Recently Watched Movies";
+        label = "Clear Movie History";
         action = "remove-all-movies";
-      } else {
-        return;
       }
     } else if (currentPage === "seriesPage") {
       if (allRecentlyWatchedSeries && allRecentlyWatchedSeries.length > 0) {
-        label = "Remove All Recently Watched Series";
+        label = "Clear Series History";
         action = "remove-all-series";
-      } else {
-        return;
       }
     } else if (currentPage === "liveTvPage") {
       if (allRecentlyWatchedChannels && allRecentlyWatchedChannels.length > 0) {
-        label = "Clear Channel History";
+        label = "Clear TV History";
         action = "clear-channel-history";
-      } else {
-        return;
       }
-    }
-    // FIX: Use consistent page name and proper boolean check
-    else if (currentPage === "movieDetailPage") {
+    } else if (currentPage === "movieDetailPage") {
       if (isIncludedInRecentlyWatchedMovies) {
-        label = "Remove Movie From Recently Watched";
+        label = "Remove Movie History";
         action = "remove-movie";
-      } else {
-        console.log(
-          "Not showing remove option - movie not in recently watched",
-        );
-        return;
       }
     } else if (currentPage === "seriesDetailPage") {
       if (isIncludedInRecentlyWatchedSeries) {
-        label = "Remove Series From Recently Watched";
+        label = "Remove Series History";
         action = "remove-series";
-      } else {
-        return;
       }
     }
 
-    if (!action) return;
-
-    const li = document.createElement("li");
-    li.className = "sidebar-link dynamic-sidebar-option";
-    li.setAttribute("tabindex", "0");
-    li.dataset.action = action;
-    li.innerHTML = `<i class="fa fa-trash" style="margin-right: 10px;" aria-hidden="true"></i> <p class="sidebar-link-label" style="margin-left: 20px;">${label}</p>`;
-    const logoutItem = list.querySelector(".logout-navbar");
-    if (logoutItem) list.insertBefore(li, logoutItem);
-    else list.appendChild(li);
+    if (action) {
+      const div = document.createElement("div");
+      div.className = "sidebar-card dynamic-sidebar-option";
+      div.setAttribute("tabindex", "0");
+      div.dataset.action = action;
+      div.innerHTML = `<i class="fa fa-trash"></i> <span>${label}</span>`;
+      grid.appendChild(div);
+    }
   } catch (e) {
     console.error("buildDynamicSidebarOptions error", e);
   }
@@ -368,6 +410,72 @@ function removeFavoriteSeriesById(seriesId) {
   }
 }
 
+function removeAllRecentlyWatchedMovies() {
+  const res = updatePlaylistsData((pl) => ({
+    ...pl,
+    continueWatchingMovies: [],
+  }));
+  if (res.success) {
+    if (typeof Toaster !== "undefined" && Toaster.showToast) {
+      Toaster.showToast("success", "Cleared movies history");
+    }
+  }
+}
+
+function removeAllRecentlyWatchedSeries() {
+  const res = updatePlaylistsData((pl) => ({
+    ...pl,
+    continueWatchingSeries: [],
+  }));
+  if (res.success) {
+    if (typeof Toaster !== "undefined" && Toaster.showToast) {
+      Toaster.showToast("success", "Cleared series history");
+    }
+  }
+}
+
+function removeRecentlyWatchedMovieById(streamId) {
+  if (!streamId) return;
+  const res = updatePlaylistsData((pl) => {
+    const list = Array.isArray(pl.continueWatchingMovies)
+      ? pl.continueWatchingMovies
+      : [];
+    const filtered = list.filter(
+      (item) => item && String(item.itemId) !== String(streamId),
+    );
+    return {
+      ...pl,
+      continueWatchingMovies: filtered,
+    };
+  });
+  if (res.success) {
+    if (typeof Toaster !== "undefined" && Toaster.showToast) {
+      Toaster.showToast("success", "Removed movie from history");
+    }
+  }
+}
+
+function removeRecentlyWatchedSeriesById(seriesId) {
+  if (!seriesId) return;
+  const res = updatePlaylistsData((pl) => {
+    const list = Array.isArray(pl.continueWatchingSeries)
+      ? pl.continueWatchingSeries
+      : [];
+    const filtered = list.filter(
+      (item) => item && String(item.itemId) !== String(seriesId),
+    );
+    return {
+      ...pl,
+      continueWatchingSeries: filtered,
+    };
+  });
+  if (res.success) {
+    if (typeof Toaster !== "undefined" && Toaster.showToast) {
+      Toaster.showToast("success", "Removed series from history");
+    }
+  }
+}
+
 function initNavbar() {
   const navItems = Array.from(document.querySelectorAll(".nav-item"));
   const sidebar = document.getElementById("sidebar");
@@ -483,12 +591,14 @@ function initNavbar() {
   }
   const profileIcon = document.getElementById("profileIcon");
   const searchInput = document.getElementById("search-input");
-  const sortItem = sidebar.querySelector(".sidebar-sort");
-  const sortOptions = document.getElementById("sort-options");
-  const arrowIcon = sortItem.querySelector(".arrow-icon");
-  const sortCheckboxes = Array.from(
-    document.querySelectorAll(".sort-checkbox"),
-  );
+
+  // Legacy sort menu elements removed
+  // const sortItem = sidebar.querySelector(".sidebar-sort");
+  // const sortOptions = document.getElementById("sort-options");
+  // const arrowIcon = sortItem.querySelector(".arrow-icon");
+  // const sortCheckboxes = Array.from(
+  //   document.querySelectorAll(".sort-checkbox"),
+  // );
 
   let currentIndex = 0;
   const totalItems = navItems.length + 2;
@@ -625,15 +735,41 @@ function initNavbar() {
     profileIcon.classList.remove("active");
   });
 
-  sortItem.addEventListener("click", toggleSortMenu);
+  // Restore sort listeners
+  const sortItem = sidebar.querySelector('[data-action="sort"]');
+  if (sortItem) sortItem.addEventListener("click", toggleSortMenu);
 
-  sortCheckboxes.forEach((checkbox) => {
-    checkbox.addEventListener("change", (e) => {
-      if (e.target.checked) {
-        setSortOption(e.target.dataset.sort);
-      }
+  const sortCheckboxes = Array.from(
+    document.querySelectorAll(".sort-checkbox"),
+  );
+  if (sortCheckboxes) {
+    sortCheckboxes.forEach((checkbox) => {
+      checkbox.addEventListener("change", (e) => {
+        if (e.target.checked) {
+          setSortOption(e.target.dataset.sort);
+        }
+      });
+    });
+  }
+
+  // Sidebar card focus management
+  const sidebarCards = document.querySelectorAll(".sidebar-card");
+  sidebarCards.forEach((card) => {
+    card.addEventListener("focus", () => {
+      // Remove active from all other cards
+      document
+        .querySelectorAll(".sidebar-card")
+        .forEach((c) => c.classList.remove("active"));
+      card.classList.add("active");
+    });
+    card.addEventListener("blur", () => {
+      // Keep Sort card active while its dialog is open
+      if (card.dataset.action === "sort" && isSortOptionsOpen) return;
+      card.classList.remove("active");
     });
   });
+
+  setSortOption("default");
 
   document.addEventListener("keydown", (e) => {
     const navigationFocus = localStorage.getItem("navigationFocus");
@@ -650,6 +786,14 @@ function initNavbar() {
     ];
     if (NAVBAR_INACTIVE_PAGES.includes(currentPage)) {
       return; // Don't process any navbar keydown events on these pages
+    }
+
+    if (isSortOptionsOpen) {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      handleSortOptionsKeys(e);
+      return;
     }
 
     const isSearchFocused = document.activeElement === searchInput;
@@ -715,32 +859,13 @@ function initNavbar() {
       return;
     }
 
-    if (isSortOptionsOpen) {
-      if (
-        [
-          "ArrowUp",
-          "ArrowDown",
-          "Enter",
-          "Escape",
-          "Backspace",
-          "XF86Back",
-        ].includes(key) ||
-        isBackKey
-      ) {
-        e.preventDefault();
-        // Prevent underlying page from also handling the same key
-        e.stopPropagation();
-        e.stopImmediatePropagation();
-        handleSortOptionsKeys(e);
-        return;
-      }
-    }
-
     if (sidebar && !sidebar.classList.contains("option-remove")) {
       if (
         [
           "ArrowUp",
           "ArrowDown",
+          "ArrowLeft",
+          "ArrowRight",
           "Enter",
           "Escape",
           "Backspace",
@@ -1097,20 +1222,53 @@ function initNavbar() {
   function openSidebar() {
     buildDynamicSidebarOptions();
     sidebar.classList.remove("option-remove");
-    // Manually set display block
-    sidebar.style.display = "block";
+    sidebar.classList.add("active");
+    sidebar.style.display = "flex";
     localStorage.setItem("navigationFocus", "sidebar");
-    isSortOptionsOpen = false;
-    const items = Array.from(
-      sidebar.querySelectorAll("li.sidebar-link"),
-    ).filter(
-      (item) =>
-        !item.classList.contains("option-remove") &&
-        item.style.display !== "none",
+
+    // Switch to main view by default
+    showSidebarSection("main");
+
+    // Populate user info
+    const selectedPlaylist = JSON.parse(
+      localStorage.getItem("selectedPlaylist") || "{}",
     );
-    updateSidebarSelection(items, 0);
-    const firstItem = items[0];
-    if (firstItem) firstItem.focus();
+    const username =
+      selectedPlaylist.username || selectedPlaylist.playlistName || "User";
+
+    const headerName = document.querySelector(".sidebar-user-info span");
+    if (headerName) headerName.textContent = `For ${username}`;
+
+    const infoName = document.querySelector(".username-val");
+    if (infoName) infoName.textContent = username;
+
+    const info = selectedPlaylist.subscription || {};
+    if (document.querySelector(".status-val"))
+      document.querySelector(".status-val").textContent = info.status || "N/A";
+    if (document.querySelector(".expiry-val"))
+      document.querySelector(".expiry-val").textContent = info.expiry_date
+        ? new Date(info.expiry_date * 1000).toLocaleDateString()
+        : "Unlimited";
+    if (document.querySelector(".connections-val"))
+      document.querySelector(".connections-val").textContent =
+        info.active_cons || "N/A";
+
+    // Focus first card
+    const firstCard = document.querySelector(".sidebar-card");
+    if (firstCard) firstCard.focus();
+  }
+
+  function showSidebarSection(section) {
+    const mainSection = document.getElementById("main-sidebar-section");
+    const infoSection = document.getElementById("playlist-info-section");
+
+    if (section === "main") {
+      mainSection.classList.add("active");
+      infoSection.classList.remove("active");
+    } else {
+      mainSection.classList.remove("active");
+      infoSection.classList.add("active");
+    }
   }
 
   window.setNavbarFocus = function (pageName) {
@@ -1123,18 +1281,13 @@ function initNavbar() {
   };
 
   function closeSidebar() {
-    sidebar.classList.add("option-remove");
-    // Manually set display none
-    sidebar.style.display = "none";
+    sidebar.classList.remove("active");
+    setTimeout(() => {
+      sidebar.classList.add("option-remove");
+      sidebar.style.display = "none";
+    }, 300);
 
-    // Cleanup sort options if open
-    if (sortOptions) {
-      sortOptions.classList.add("option-remove");
-      sortOptions.style.display = "none";
-    }
-    if (arrowIcon) {
-      arrowIcon.classList.remove("rotated");
-    }
+    localStorage.setItem("navigationFocus", "navbar");
 
     localStorage.setItem("navigationFocus", "navbar");
     isSortOptionsOpen = false;
@@ -1182,8 +1335,156 @@ function initNavbar() {
     closeSidebar();
   }
 
+  function handleSidebarKeys(e) {
+    if (isSortOptionsOpen) {
+      handleSortOptionsKeys(e);
+      return;
+    }
+
+    const activeSection = document.querySelector(".sidebar-section.active");
+    if (!activeSection) return;
+
+    const focusableItems = Array.from(
+      activeSection.querySelectorAll('[tabindex="0"]'),
+    );
+    let activeIndex = focusableItems.indexOf(document.activeElement);
+
+    if (activeSection.id === "main-sidebar-section") {
+      // Grid Navigation for Main Section
+      const gridItems = Array.from(
+        activeSection.querySelectorAll(".sidebar-card:not(.option-remove)"),
+      );
+      const footerBtn = activeSection.querySelector(".footer-link-primary");
+
+      let gridIndex = gridItems.indexOf(document.activeElement);
+
+      switch (e.key) {
+        case "ArrowRight":
+          if (
+            gridIndex !== -1 &&
+            gridIndex % 2 === 0 &&
+            gridIndex + 1 < gridItems.length
+          ) {
+            gridItems[gridIndex + 1].focus();
+          }
+          break;
+        case "ArrowLeft":
+          if (gridIndex !== -1 && gridIndex % 2 !== 0) {
+            gridItems[gridIndex - 1].focus();
+          }
+          break;
+        case "ArrowDown":
+          if (gridIndex !== -1) {
+            if (gridIndex + 2 < gridItems.length) {
+              gridItems[gridIndex + 2].focus();
+            } else {
+              if (footerBtn) {
+                footerBtn.focus();
+              }
+            }
+          }
+          break;
+        case "ArrowUp":
+          if (gridIndex !== -1) {
+            if (gridIndex - 2 >= 0) {
+              gridItems[gridIndex - 2].focus();
+            }
+          } else if (document.activeElement === footerBtn) {
+            gridItems[gridItems.length - 1].focus();
+          }
+          break;
+        case "Enter":
+          const action = document.activeElement.dataset.action;
+          if (action === "sort") {
+            toggleSortMenu();
+          } else if (action === "settings") {
+            disposeLiveTvPlayer();
+            Router.showPage("settingsPage");
+            closeSidebar();
+          } else if (action === "playlist-info") {
+            showSidebarSection("info");
+            setTimeout(() => document.querySelector(".back-btn").focus(), 10);
+          } else if (
+            action === "switch-playlist" ||
+            action === "switch-playlist-footer"
+          ) {
+            disposeLiveTvPlayer();
+            localStorage.removeItem("selectedPlaylist");
+            localStorage.setItem("isLogin", false);
+            Router.showPage("listPage");
+            closeSidebar();
+          } else if (action === "add-playlist") {
+            handleLogOut();
+          } else if (action === "remove-all-movies") {
+            removeAllRecentlyWatchedMovies();
+            closeSidebar();
+            Router.showPage("moviesPage");
+          } else if (action === "remove-all-series") {
+            removeAllRecentlyWatchedSeries();
+            closeSidebar();
+            Router.showPage("seriesPage");
+          } else if (action === "clear-channel-history") {
+            removeAllChannelHistory();
+            closeSidebar();
+            if (localStorage.getItem("currentPage") === "liveTvPage") {
+              Router.showPage("liveTvPage");
+            }
+          } else if (action === "remove-movie") {
+            const mid = localStorage.getItem("selectedMovieId");
+            removeRecentlyWatchedMovieById(mid);
+            closeSidebar();
+            Router.showPage("movieDetailPage");
+          } else if (action === "remove-series") {
+            const sid = localStorage.getItem("selectedSeriesId");
+            removeRecentlyWatchedSeriesById(sid);
+            closeSidebar();
+            Router.showPage("seriesDetailPage");
+          } else if (action === "dark-mode" || action === "change-theme") {
+            alert("This feature will be available soon!");
+          }
+          break;
+        case "Escape":
+        case "Backspace":
+        case "XF86Back":
+          closeSidebar();
+          break;
+      }
+    } else if (activeSection.id === "playlist-info-section") {
+      // Navigation for Playlist Info Section
+      switch (e.key) {
+        case "Enter":
+          if (document.activeElement.classList.contains("back-btn")) {
+            showSidebarSection("main");
+            setTimeout(
+              () =>
+                document.querySelector('[data-action="playlist-info"]').focus(),
+              10,
+            );
+          }
+          break;
+        case "Escape":
+        case "Backspace":
+        case "XF86Back":
+          showSidebarSection("main");
+          setTimeout(
+            () =>
+              document.querySelector('[data-action="playlist-info"]').focus(),
+            10,
+          );
+          break;
+      }
+    }
+  }
+
+  function updateSidebarSelection(items, index) {
+    // Legacy helper - no longer needed with native focus but keeping for safety if called elsewhere
+    if (items[index]) items[index].focus();
+  }
+
   function toggleSortMenu() {
-    const expanded = !sortOptions.classList.contains("option-remove");
+    const sortDialog = document.getElementById("sort-dialog");
+    if (!sortDialog) return;
+    const expanded = !sortDialog.classList.contains("option-remove");
     if (expanded) {
       closeSortMenu();
     } else {
@@ -1192,13 +1493,20 @@ function initNavbar() {
   }
 
   function openSortMenu() {
-    sortOptions.classList.remove("option-remove");
-    sortOptions.style.display = "block"; // Manually set display block
-    arrowIcon.classList.add("rotated");
+    const sortDialog = document.getElementById("sort-dialog");
+    if (!sortDialog) return;
+
+    sortDialog.classList.remove("option-remove");
     isSortOptionsOpen = true;
 
+    // Ensure sort menu item stays active
+    const sortMenuItem = sidebar.querySelector('[data-action="sort"]');
+    if (sortMenuItem) {
+      sortMenuItem.classList.add("active");
+    }
+
     const sortOptionItems = Array.from(
-      sortOptions.querySelectorAll(".sort-option"),
+      sortDialog.querySelectorAll(".sort-option"),
     );
     if (sortOptionItems.length > 0) {
       updateSortOptionsSelection(sortOptionItems, 0);
@@ -1206,33 +1514,28 @@ function initNavbar() {
   }
 
   function closeSortMenu() {
-    sortOptions.classList.add("option-remove");
-    sortOptions.style.display = "none"; // Manually set display none
-    arrowIcon.classList.remove("rotated");
+    const sortDialog = document.getElementById("sort-dialog");
+    if (!sortDialog) return;
+    sortDialog.classList.add("option-remove");
     isSortOptionsOpen = false;
 
-    // Focus back on the Sort menu item
-    const sortMenuItem = sidebar.querySelector(".sidebar-sort");
+    const sortMenuItem = sidebar.querySelector('[data-action="sort"]');
     if (sortMenuItem) {
-      sortMenuItem.focus();
-      const sidebarItems = Array.from(
-        sidebar.querySelectorAll("li.sidebar-link"),
-      ).filter(
-        (item) =>
-          !item.classList.contains("option-remove") &&
-          item.style.display !== "none",
-      );
-      const sortIndex = sidebarItems.indexOf(sortMenuItem);
-      updateSidebarSelection(sidebarItems, sortIndex);
+      // Remove active from any other card first
+      document
+        .querySelectorAll(".sidebar-card")
+        .forEach((c) => c.classList.remove("active"));
+
+      setTimeout(() => {
+        sortMenuItem.classList.add("active");
+        sortMenuItem.focus();
+      }, 10);
     }
   }
 
   function setSortOption(sortType) {
-    // Prevent unnecessary page re-renders when the selected sort hasn't changed
-    // (Pages listen to `sortChanged` and call `Router.showPage(...)` which looks like a reload)
     const prevSort = localStorage.getItem("sortvalue") || "";
     if (String(prevSort) === String(sortType)) {
-      // Ensure UI stays consistent even if called redundantly
       const selectedCheckbox = document.querySelector(
         `.sort-checkbox[data-sort="${sortType}"]`,
       );
@@ -1240,11 +1543,13 @@ function initNavbar() {
       return;
     }
 
+    const sortCheckboxes = Array.from(
+      document.querySelectorAll(".sort-checkbox"),
+    );
     sortCheckboxes.forEach((checkbox) => {
       checkbox.checked = false;
     });
 
-    // Check the selected one
     const selectedCheckbox = document.querySelector(
       `.sort-checkbox[data-sort="${sortType}"]`,
     );
@@ -1254,7 +1559,6 @@ function initNavbar() {
 
     localStorage.setItem("sortvalue", sortType);
 
-    // Dispatch sort changed event
     const sortEvent = new CustomEvent("sortChanged", {
       detail: {
         sortType: sortType,
@@ -1263,122 +1567,15 @@ function initNavbar() {
     });
     document.dispatchEvent(sortEvent);
 
-    console.log(`Sorting by: ${sortType}`);
-
-    // FIX: Restore navigationFocus to sidebar because page re-render might have stolen it
     if (sidebar && !sidebar.classList.contains("option-remove")) {
       localStorage.setItem("navigationFocus", "sidebar");
     }
   }
 
-  function handleSidebarKeys(e) {
-    if (isSortOptionsOpen) return;
-
-    const items = Array.from(
-      sidebar.querySelectorAll("li.sidebar-link"),
-    ).filter(
-      (item) =>
-        !item.classList.contains("option-remove") &&
-        item.style.display !== "none",
-    );
-    if (!items.length) return;
-
-    let activeIndex = items.findIndex((item) =>
-      item.classList.contains("active"),
-    );
-    if (activeIndex === -1) activeIndex = 0;
-
-    const activeItem = items[activeIndex];
-    const text = activeItem.textContent.trim();
-
-    switch (e.key) {
-      case "ArrowDown":
-        activeIndex = (activeIndex + 1) % items.length;
-        updateSidebarSelection(items, activeIndex);
-        break;
-      case "ArrowUp":
-        activeIndex = (activeIndex - 1 + items.length) % items.length;
-        updateSidebarSelection(items, activeIndex);
-        break;
-      case "Enter":
-        // Handle dynamic page-specific options
-        if (activeItem.classList.contains("dynamic-sidebar-option")) {
-          const action = activeItem.dataset.action;
-          if (action === "remove-all-movies") {
-            removeAllFromHistory("continueWatchingMovies");
-            Router.showPage("moviesPage");
-            document.body.style.backgroundImage = "none";
-            document.body.style.backgroundColor = "black";
-          } else if (action === "remove-all-series") {
-            removeAllFromHistory("continueWatchingSeries");
-            Router.showPage("seriesPage");
-            document.body.style.backgroundImage = "none";
-            document.body.style.backgroundColor = "black";
-          } else if (action === "remove-movie") {
-            removeItemFromHistoryById(
-              localStorage.getItem("selectedMovieId"),
-              "continueWatchingMovies",
-            );
-            localStorage.setItem("isContinueWatchingMovie", "false");
-            Router.showPage("movieDetailPage");
-            document.body.style.backgroundImage = "none";
-            document.body.style.backgroundColor = "black";
-          } else if (action === "remove-series") {
-            localStorage.setItem("isContinueWatchingSeries", "false");
-            removeItemFromHistoryById(
-              localStorage.getItem("selectedSeriesId"),
-              "continueWatchingSeries",
-            );
-
-            Router.showPage("seriesDetailPage");
-            document.body.style.backgroundImage = "none";
-            document.body.style.backgroundColor = "black";
-          } else if (action === "clear-channel-history") {
-            removeAllChannelHistory();
-            disposeLiveTvPlayer();
-            Router.showPage("liveTvPage");
-          }
-          closeSidebar();
-          break;
-        }
-
-        if (text === "Sort") {
-          openSortMenu();
-        } else if (text === "Sign Out") {
-          handleLogOut();
-        } else if (text === "Settings") {
-          disposeLiveTvPlayer();
-          resetParentalControlState();
-          Router.showPage("settingsPage");
-          closeSidebar();
-        } else if (text === "List User") {
-          disposeLiveTvPlayer();
-          resetParentalControlState();
-          localStorage.removeItem("currentPlaylistData");
-          localStorage.removeItem("selectedPlaylist");
-          localStorage.setItem("navigationFocus", "");
-          localStorage.setItem("isLogin", false);
-          Router.showPage("listPage");
-
-          closeSidebar();
-        } else if (text === "My Account") {
-          disposeLiveTvPlayer();
-          resetParentalControlState();
-          Router.showPage("accountPage");
-          closeSidebar();
-        }
-        break;
-      case "Escape":
-      case "Backspace":
-      case "XF86Back":
-        closeSidebar();
-        break;
-    }
-  }
-
   function handleSortOptionsKeys(e) {
+    const sortDialog = document.getElementById("sort-dialog");
     const sortOptionItems = Array.from(
-      sortOptions.querySelectorAll(".sort-option"),
+      sortDialog.querySelectorAll(".sort-option"),
     );
     if (!sortOptionItems.length) return;
 
@@ -1403,32 +1600,20 @@ function initNavbar() {
         if (checkbox) {
           checkbox.checked = true;
           setSortOption(checkbox.dataset.sort);
-
-          // Close sort menu after selection
           closeSortMenu();
         }
         break;
       case "Escape":
       case "Backspace":
+      case "Back":
+      case "BrowserBack":
       case "XF86Back":
+      case "10009":
+      case "461":
+      case 10009:
+      case 461:
         closeSortMenu();
         break;
-    }
-  }
-
-  function updateSidebarSelection(items, index) {
-    items.forEach((item) => {
-      item.classList.remove("active");
-      const logo = item.querySelector(".sidebar-link-logo");
-      if (logo) logo.classList.remove("sidebar-link-logo-focused");
-    });
-
-    const activeItem = items[index];
-    if (activeItem) {
-      activeItem.classList.add("active");
-      const activeLogo = activeItem.querySelector(".sidebar-link-logo");
-      if (activeLogo) activeLogo.classList.add("sidebar-link-logo-focused");
-      activeItem.focus();
     }
   }
 
@@ -1436,7 +1621,6 @@ function initNavbar() {
     items.forEach((item) => {
       item.classList.remove("active");
     });
-
     const activeItem = items[index];
     if (activeItem) {
       activeItem.classList.add("active");

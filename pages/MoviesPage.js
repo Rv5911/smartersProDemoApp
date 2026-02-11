@@ -2137,12 +2137,16 @@ function validateAndAdjustRestoredMoviesState() {
   }
 
   setTimeout(() => {
-    updateMoviesFocus();
+    const navFocus = localStorage.getItem("navigationFocus");
+    if (navFocus === "moviesPage") {
+      updateMoviesFocus();
+    }
 
     // Only remove loader if we successfully focused something (or if we timed out waiting)
     const checkFocusAndRemoveLoader = () => {
+      const navFocus = localStorage.getItem("navigationFocus");
       const focusedCard = document.querySelector(".movie-card.focused");
-      if (focusedCard) {
+      if (focusedCard || navFocus !== "moviesPage") {
         const loader = document.getElementById("movies-page-loader");
         if (loader) loader.remove();
       } else {
@@ -2282,7 +2286,8 @@ function MoviesPage() {
   localStorage.setItem("currentPage", "moviesPage");
   const activeEl = document.activeElement;
   const isSearchFocused = activeEl && activeEl.id === "search-input";
-  if (!isSearchFocused) {
+  const navFocus = localStorage.getItem("navigationFocus");
+  if (!isSearchFocused && navFocus !== "sidebar") {
     localStorage.setItem("navigationFocus", "moviesPage");
   }
 

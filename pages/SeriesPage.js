@@ -2219,12 +2219,16 @@ function validateAndAdjustRestoredSeriesState() {
   }
 
   setTimeout(() => {
-    updateSeriesFocus();
+    const navFocus = localStorage.getItem("navigationFocus");
+    if (navFocus === "seriesPage") {
+      updateSeriesFocus();
+    }
 
     // Only remove loader if we successfully focused something (or if we timed out waiting)
     const checkFocusAndRemoveLoader = () => {
+      const navFocus = localStorage.getItem("navigationFocus");
       const focusedCard = document.querySelector(".series-card.focused");
-      if (focusedCard) {
+      if (focusedCard || navFocus !== "seriesPage") {
         const loader = document.getElementById("series-page-loader");
         if (loader) loader.remove();
       } else {
@@ -2351,7 +2355,8 @@ function SeriesPage() {
 
   const activeEl = document.activeElement;
   const isSearchFocused = activeEl && activeEl.id === "search-input";
-  if (!isSearchFocused) {
+  const navFocus = localStorage.getItem("navigationFocus");
+  if (!isSearchFocused && navFocus !== "sidebar") {
     // Fix: Default to 'navbar' focus when entering the page.
     // Only focus content ('seriesPage') if we are returning from the Detail Page.
     if (previousPageVal === "seriesDetailPage") {
