@@ -639,6 +639,7 @@ function initNavbar() {
     const navigationFocus = localStorage.getItem("navigationFocus");
     const currentPage = localStorage.getItem("currentPage");
     const key = e.key;
+    const keyCode = e.keyCode;
 
     // Pages where navbar should not be active
     const NAVBAR_INACTIVE_PAGES = [
@@ -655,6 +656,10 @@ function initNavbar() {
 
     const backKeys = [
       10009,
+      100079,
+      8,
+      461,
+      27,
       "Escape",
       "Back",
       "BrowserBack",
@@ -662,7 +667,9 @@ function initNavbar() {
       "Backspace",
     ];
 
-    if (backKeys.includes(key)) {
+    const isBackKey = backKeys.includes(key) || backKeys.includes(keyCode);
+
+    if (isBackKey) {
       if (sidebar && !sidebar.classList.contains("option-remove")) {
         e.preventDefault();
         // CRITICAL: prevent page-level "back" handlers from firing
@@ -677,18 +684,17 @@ function initNavbar() {
         if (currentPage === "movieDetailPage") {
           e.preventDefault();
           localStorage.removeItem("selectedMovieId");
-          // removed premature setItem currentPage
           Router.showPage("moviesPage");
           return;
         }
         if (currentPage === "seriesDetailPage") {
-          const seasonsDropdown = document.querySelector(".seasons-dropdown");
-          if (seasonsDropdown && seasonsDropdown.style.display !== "none") {
+          const dropdownList = document.getElementById("season-dropdown-list");
+          if (dropdownList && !dropdownList.classList.contains("hidden")) {
+            // Let SeriesDetailPage handle closing the dropdown
             return;
           }
           e.preventDefault();
           localStorage.removeItem("selectedSeriesId");
-          // removed premature setItem currentPage
           Router.showPage("seriesPage");
           return;
         }
@@ -718,7 +724,8 @@ function initNavbar() {
           "Escape",
           "Backspace",
           "XF86Back",
-        ].includes(key)
+        ].includes(key) ||
+        isBackKey
       ) {
         e.preventDefault();
         // Prevent underlying page from also handling the same key
@@ -738,7 +745,8 @@ function initNavbar() {
           "Escape",
           "Backspace",
           "XF86Back",
-        ].includes(key)
+        ].includes(key) ||
+        isBackKey
       ) {
         e.preventDefault();
         // Prevent underlying page from also handling the same key
@@ -809,6 +817,12 @@ function initNavbar() {
           e.preventDefault();
           e.stopImmediatePropagation();
 
+          if (
+            document.activeElement &&
+            typeof document.activeElement.blur === "function"
+          ) {
+            document.activeElement.blur();
+          }
           searchInput.blur();
 
           navItems.forEach((item) => item.classList.remove("active"));
@@ -1011,22 +1025,9 @@ function initNavbar() {
       case "Escape":
       case "Backspace":
       case "XF86Back":
+        // This block is now mostly redundant due to isBackKey check at the top
         if (sidebar && !sidebar.classList.contains("option-remove")) {
           closeSidebar();
-        } else {
-          // Handle back navigation from Navbar for Detail Pages
-          if (currentPage === "seriesDetailPage") {
-            localStorage.removeItem("selectedSeriesId");
-            localStorage.removeItem("lastPlayedEpisodeId");
-            Router.showPage("seriesPage");
-            document.body.style.backgroundImage = "none";
-            document.body.style.backgroundColor = "black";
-          } else if (currentPage === "movieDetailPage") {
-            localStorage.removeItem("selectedMovieId");
-            Router.showPage("moviesPage");
-            document.body.style.backgroundImage = "none";
-            document.body.style.backgroundColor = "black";
-          }
         }
         break;
     }
@@ -1172,11 +1173,11 @@ function initNavbar() {
     //   Router.showPage("login");
     // }
 
-          resetParentalControlState();
-      localStorage.removeItem("currentPlaylistData");
-      localStorage.removeItem("selectedPlaylist");
-      localStorage.setItem("currentPage", "login");
-      Router.showPage("login");
+    resetParentalControlState();
+    localStorage.removeItem("currentPlaylistData");
+    localStorage.removeItem("selectedPlaylist");
+    localStorage.setItem("currentPage", "login");
+    Router.showPage("login");
 
     closeSidebar();
   }

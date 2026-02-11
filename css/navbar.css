@@ -13,7 +13,7 @@
   transition: transform 0.3s ease-in-out;
 }
 
-.navbar-logo{
+.navbar-logo {
   width: 350px;
   margin-top: 20px;
   height: 50px;
@@ -45,7 +45,7 @@
   padding-bottom: 15px;
   padding-left: 70px;
   background: rgba(33, 33, 33, 0.624);
-border-radius: 12px;
+  border-radius: 12px;
   padding-right: 87px;
   border: 1px solid white;
   width: 390px;
@@ -67,18 +67,16 @@ border-radius: 12px;
   display: flex;
   margin-top: -5px;
   align-items: center;
-} 
+}
 
 .nav-item {
   font-size: 28px;
   margin-top: 40px;
   margin-right: 30px;
-  border-radius: 6px;
   white-space: nowrap;
   padding-bottom: 10px;
   padding-left: 30px;
   padding-right: 30px;
-  border-radius: 30px;
   opacity: 0.4;
   font-weight: 600;
   border: 6px solid transparent;
@@ -91,19 +89,13 @@ border-radius: 12px;
 .nav-item:focus,
 .nav-item:hover {
   /* background: #ffffff1a; */
-  padding-top: 10px;
-  padding-bottom: 10px;
-  padding-left: 30px;
-  padding-right: 30px;
-  border-radius: 30px;
   opacity: 1;
   font-weight: 600;
-  border-bottom: 6px solid #ffffff;
+  border-bottom: 6px solid var(--app-text-color);
   outline: none;
-  
 }
 
-.navbar-profile{
+.navbar-profile {
   cursor: pointer;
   align-items: end;
   display: flex;
@@ -114,10 +106,9 @@ border-radius: 12px;
 .navbar-profile-icon {
   width: 48px;
   height: 48px;
-  border-radius: 50%;
   opacity: 0.4;
 
-    border: 2px solid transparent;
+  border: 2px solid transparent;
   object-fit: cover;
   cursor: pointer;
 }
@@ -218,9 +209,9 @@ border-radius: 12px;
 .sidebar-content li.active,
 .sidebar-content li:focus,
 .sidebar-content li:hover {
-      border: none;
-outline: none;
-    background: var(--light-gradient)
+  border: none;
+  outline: none;
+  background: var(--light-gradient);
   /* background-color: var(--dark-gold) !important;
   color: black;
   outline: none; */
@@ -288,7 +279,7 @@ outline: none;
   visibility: visible;
 }
 
-.account-navbar{
+.account-navbar {
   display: none !important;
 }
 
@@ -298,7 +289,9 @@ outline: none;
   padding: 10px 0;
   border-radius: 5px;
   cursor: pointer;
-  transition: background 0.2s ease, color 0.2s ease;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
 }
 
 .sort-option:hover,

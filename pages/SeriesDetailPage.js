@@ -11,7 +11,7 @@ async function SeriesDetailPage() {
   let selectedSeason = 1;
   let lastFocused = null;
   let focusableEls = [];
-  let currentFocusIndex = 0;
+  let isDropdownOpen = false;
 
   const seriesDetailId = localStorage.getItem("selectedSeriesId");
 
@@ -32,6 +32,7 @@ async function SeriesDetailPage() {
   function handleBackNavigationDuringLoading(e) {
     if (
       (e.keyCode === 10009 ||
+        e.keyCode === 100079 ||
         e.key === "Escape" ||
         e.key === "Back" ||
         e.key === "BrowserBack" ||
@@ -108,10 +109,6 @@ async function SeriesDetailPage() {
 
   localStorage.setItem("selectedSeason", selectedSeason.toString());
 
-  // Setup Cast Data
-  // NOTE: Simplified cast loading; assuming getSeriesCast or existing data is used if needed.
-  // For now we initialize empty or load if available.
-
   const currentPlaylistName = JSON.parse(
     localStorage.getItem("selectedPlaylist"),
   ).playlistName;
@@ -129,7 +126,7 @@ async function SeriesDetailPage() {
   const continueWatchingMap = {};
   (continueWatchingEpisodes || []).forEach((item) => {
     if (!item || !item.episodeId) return;
-    const seasonKey = 1; // Simplify mapping if necessary, or use real season
+    const seasonKey = 1; // Simplify mapping if necessary
     const episodeKey = Number(item.episodeId);
     if (!continueWatchingMap[seasonKey]) continueWatchingMap[seasonKey] = {};
     const progress = item.duration
@@ -139,7 +136,6 @@ async function SeriesDetailPage() {
   });
 
   document.removeEventListener("keydown", handleBackNavigationDuringLoading);
-  // Loader removal moved to setTimeout below
 
   const seriesInfo = seriesDetailData.info || {};
 
@@ -153,16 +149,13 @@ async function SeriesDetailPage() {
   };
 
   const formatTime = (seconds) => {
-    if (!seconds || isNaN(seconds)) return "0:00:00";
+    if (!seconds || isNaN(seconds)) return "0 min";
     const hours = Math.floor(seconds / 3600);
     const mins = Math.floor((seconds % 3600) / 60);
-    const secs = Math.floor(seconds % 60);
     if (hours > 0) {
-      return `${hours}:${mins < 10 ? "0" : ""}${mins}:${
-        secs < 10 ? "0" : ""
-      }${secs}`;
+      return `${hours}h ${mins}m`;
     } else {
-      return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
+      return `${mins} min`;
     }
   };
 
@@ -193,11 +186,8 @@ async function SeriesDetailPage() {
     el.focus();
     lastFocused = el;
 
-    // Navbar Visibility Logic
-    if (
-      el.classList.contains("seasons-episodes-item") ||
-      el.classList.contains("season-tab")
-    ) {
+    // Navbar Visibility Logic - UPDATED: Only hide on episodes
+    if (el.classList.contains("seasons-episodes-item")) {
       toggleNavbar(false);
     } else {
       toggleNavbar(true);
@@ -209,27 +199,15 @@ async function SeriesDetailPage() {
     );
 
     if (el.classList.contains("seasons-episodes-item")) {
-      if (scrollContainer) {
-        scrollContainer.scrollTo({
-          top: scrollContainer.scrollHeight,
-          behavior: smoothScroll ? "smooth" : "auto",
-        });
-      }
-
       el.scrollIntoView({
         block: "center",
-        inline: "center",
-        behavior: smoothScroll ? "smooth" : "auto",
-      });
-    } else if (el.classList.contains("season-tab")) {
-      el.scrollIntoView({
-        block: "nearest",
-        inline: "center",
+        inline: "nearest",
         behavior: smoothScroll ? "smooth" : "auto",
       });
     } else if (
       el.classList.contains("series-detail-play-button") ||
-      el.classList.contains("series-detail-fav-button")
+      el.classList.contains("series-detail-fav-button") ||
+      el.id === "season-dropdown-btn"
     ) {
       if (scrollContainer) {
         scrollContainer.scrollTo({
@@ -237,42 +215,36 @@ async function SeriesDetailPage() {
           behavior: smoothScroll ? "smooth" : "auto",
         });
       }
-    } else {
-      // Fallback for other elements
+    } else if (el.classList.contains("dropdown-item")) {
+      // Ensure dropdown item is visible in dropdown list
       el.scrollIntoView({
         block: "nearest",
-        inline: "nearest",
-        behavior: smoothScroll ? "smooth" : "auto",
+        behavior: "auto",
       });
     }
   };
 
   const rebuildFocusable = () => {
-    const topButtons = Array.from(
-      document.querySelectorAll(".series-detail-buttons button"),
-    );
-    const seasonTabs = Array.from(document.querySelectorAll(".season-tab"));
-    const episodeItems = Array.from(
-      document.querySelectorAll(".seasons-episodes-item"),
-    );
-
-    focusableEls = [...topButtons, ...seasonTabs, ...episodeItems];
-  };
-
-  const updateSeasonTabsStyles = () => {
-    const tabs = document.querySelectorAll(".season-tab");
-    tabs.forEach((tab) => {
-      const seasonNum = parseInt(tab.dataset.season);
-      if (seasonNum === selectedSeason) {
-        tab.classList.add("active");
-      } else {
-        tab.classList.remove("active");
-      }
-    });
+    if (isDropdownOpen) {
+      focusableEls = Array.from(
+        document.querySelectorAll("#season-dropdown-list .dropdown-item"),
+      );
+    } else {
+      const topButtons = Array.from(
+        document.querySelectorAll(".series-detail-buttons button"),
+      );
+      const episodeItems = Array.from(
+        document.querySelectorAll(".seasons-episodes-item"),
+      );
+      focusableEls = [...topButtons, ...episodeItems];
+    }
   };
 
   const renderEpisodes = () => {
     const container = document.querySelector(".series-detail-cast");
+    const headerTitle = document.querySelector("#current-season-display-title");
+    if (headerTitle) headerTitle.textContent = `Season ${selectedSeason}`;
+
     if (!container) return;
 
     const seasonEpisodes = episodes[selectedSeason.toString()] || [];
@@ -289,43 +261,90 @@ async function SeriesDetailPage() {
           progress = continueWatchingMap[seasonKey][episodeKey];
         }
 
+        const durationStr = formatTime(getEpisodeDurationInSeconds(episode));
+
         return `
                <div class="seasons-episodes-item" tabindex="0" data-episode-index="${j}" data-episode-id="${episode.id}">
-                 <div class="episode-image-container">
-                    <div class="episode-card-inner" style="background-image: url('${episode.info.movie_image || seriesInfo.cover || "./assets/placeholder-img.png"}')">
-                        <div class="play-icon-overlay">
-                            <img src="./assets/playicon.png" />
+                 <div class="episode-row-left">
+                     <div class="episode-image-container">
+                        <div class="episode-card-inner" style="background-image: url('${episode.info.movie_image || seriesInfo.cover || "./assets/placeholder-img.png"}')">
+                            <div class="play-icon-overlay">
+                                <img src="./assets/playicon.png" />
+                            </div>
+                            ${
+                              progress > 0
+                                ? `
+                            <div class="episode-red-progress-container">
+                                <div class="episode-red-progress-bar" style="width: ${progress}%;"></div>
+                            </div>`
+                                : ""
+                            }
                         </div>
-                      
-                        
-                        <!-- Red Progress Bar at the very bottom -->
-                        ${
-                          progress > 0
-                            ? `
-                        <div class="episode-red-progress-container">
-                            <div class="episode-red-progress-bar" style="width: ${progress}%;"></div>
-                        </div>`
-                            : ""
-                        }
-                    </div>
+                     </div>
                  </div>
-                 <div class="episode-info-container">
-                    <div class="episode-info-row-1">
-                        <span class="episode-number-title">${j + 1}. ${episode.title || `Episode ${episode.episode_num}`}</span>
+                 <div class="episode-row-right">
+                    <div class="episode-number-title-row">
+                         <span class="episode-number-title">${j + 1}. ${episode.title || `Episode ${episode.episode_num}`} (${seriesDetailData.info.releaseDate ? seriesDetailData.info.releaseDate.split("-")[0] : ""}) - S${selectedSeason.toString().padStart(2, "0")}E${(episode.episode_num || j + 1).toString().padStart(2, "0")} - ${episode.title || "Unknown"}</span>
                     </div>
-                    <div class="episode-info-divider"></div>
-                    <p class="episode-description">${episode.info.plot || episode.plot || seriesInfo.plot || "No description available."}</p>
-                 ${getEpisodeDurationInSeconds(episode) > 0 ? `<div class="episode-duration">${formatTime(getEpisodeDurationInSeconds(episode))}</div>` : ""}
-                    </div>
-                 <!-- Rating outside the image container -->
-                 <span class="episode-rating-outside"><i class="fas fa-star"></i>${episode.info.rating_5based || seriesInfo.rating_5based || "N/A"}</span>
+                    ${durationStr ? `<div class="episode-duration-text">${durationStr}</div>` : ""}
+                     <p class="episode-description">${episode.info.plot || episode.plot || seriesInfo.plot || "No description available."}</p>
+                 </div>
                </div>
              `;
       })
       .join("");
 
-    container.innerHTML = episodeHtml; // Episodes are direct children of container now
+    container.innerHTML = episodeHtml;
     rebuildFocusable();
+  };
+
+  const updateSeasonButtonText = (season) => {
+    const btn = document.querySelector("#season-dropdown-btn");
+    if (btn) {
+      // Provide icon if not 'no-dropdown'
+      const isStatic = btn.classList.contains("no-dropdown");
+      btn.innerHTML = `Season ${season} ${!isStatic ? '<i class="fas fa-chevron-down dropdown-icon" style="margin-left: 10px;"></i>' : ""}`;
+    }
+  };
+
+  const toggleDropdown = () => {
+    const dropdown = document.getElementById("season-dropdown-list");
+    const container = document.querySelector(".season-dropdown-container");
+    const icon = document.querySelector("#season-dropdown-btn .dropdown-icon");
+
+    if (!dropdown) return;
+
+    if (isDropdownOpen) {
+      // Close
+      dropdown.classList.add("hidden");
+      if (container) container.classList.remove("open");
+      isDropdownOpen = false;
+
+      if (icon) icon.className = "fas fa-chevron-down dropdown-icon";
+
+      // Restore Focus to Button
+      const btn = document.getElementById("season-dropdown-btn");
+      if (btn) {
+        setFocus(btn);
+      }
+    } else {
+      // Open
+      dropdown.classList.remove("hidden");
+      if (container) container.classList.add("open");
+      isDropdownOpen = true;
+
+      if (icon) icon.className = "fas fa-chevron-up dropdown-icon";
+
+      rebuildFocusable();
+      // Focus selected season or first
+      let selectedItem = dropdown.querySelector(
+        `.dropdown-item[data-season="${selectedSeason}"]`,
+      );
+      if (!selectedItem)
+        selectedItem = dropdown.querySelector(".dropdown-item");
+
+      if (selectedItem) setFocus(selectedItem);
+    }
   };
 
   const playEpisode = (episodeId, episodeIndex, startFromBeginning = false) => {
@@ -391,14 +410,82 @@ async function SeriesDetailPage() {
   const seriesDetailPageKeydownHandler = (e) => {
     if (localStorage.getItem("currentPage") !== "seriesDetailPage") return;
 
+    // Helper to detect back keys consistently
+    const isBackKey = (event) => {
+      return (
+        ["Escape", "Back", "BrowserBack", "XF86Back", "Backspace"].includes(
+          event.key,
+        ) || [10009, 100079, 8, 461, 27].includes(event.keyCode)
+      );
+    };
+
+    // Robust check for dropdown state using DOM visibility
+    const dropdownList = document.getElementById("season-dropdown-list");
+    const actuallyOpen =
+      dropdownList && !dropdownList.classList.contains("hidden");
+
+    // Force sync local variable with actual state
+    if (actuallyOpen !== isDropdownOpen) {
+      isDropdownOpen = actuallyOpen;
+    }
+
+    // Check dropdown state FIRST
+    if (isDropdownOpen) {
+      // If dropdown is open, handle keys exclusively
+      if (isBackKey(e)) {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        toggleDropdown();
+        return;
+      }
+
+      const activeEl = document.activeElement;
+
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        rebuildFocusable(); // Update focusableEls
+        const idx = focusableEls.indexOf(activeEl);
+        if (idx < focusableEls.length - 1) setFocus(focusableEls[idx + 1]);
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        rebuildFocusable(); // Update focusableEls
+        const idx = focusableEls.indexOf(activeEl);
+        if (idx > 0) setFocus(focusableEls[idx - 1]);
+      } else if (e.key === "Enter") {
+        e.preventDefault();
+        const season = parseInt(activeEl.getAttribute("data-season"));
+        if (!isNaN(season)) {
+          if (season !== selectedSeason) {
+            selectedSeason = season;
+            localStorage.setItem("selectedSeason", selectedSeason.toString());
+            updateSeasonButtonText(selectedSeason);
+            renderEpisodes();
+          }
+          toggleDropdown(); // Close and focus button
+        }
+      }
+      return; // BLOCK other interactions while dropdown is open
+    }
+
     rebuildFocusable();
     const activeEl = document.activeElement;
 
-    // Back Navigation
-    if (
-      ["Escape", "Back", "BrowserBack", "XF86Back"].includes(e.key) ||
-      e.keyCode === 10009
-    ) {
+    // Back Navigation (Normal)
+    if (isBackKey(e)) {
+      // Re-verify dropdown state just in case
+      const dropdownListInner = document.getElementById("season-dropdown-list");
+      if (
+        dropdownListInner &&
+        !dropdownListInner.classList.contains("hidden")
+      ) {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        toggleDropdown();
+        return;
+      }
+
       // Check if sidebar is open - if so, let navbar handle it
       const sidebar = document.querySelector(".sidebar");
       if (sidebar && !sidebar.classList.contains("option-remove")) {
@@ -419,38 +506,40 @@ async function SeriesDetailPage() {
     // Identify Section
     const isTopButton =
       activeEl.classList.contains("series-detail-play-button") ||
-      activeEl.classList.contains("series-detail-more-info-button") ||
-      activeEl.classList.contains("series-detail-fav-button");
-    const isSeasonTab = activeEl.classList.contains("season-tab");
+      activeEl.classList.contains("series-detail-fav-button") ||
+      activeEl.id === "season-dropdown-btn";
+
     const isEpisode = activeEl.classList.contains("seasons-episodes-item");
 
     if (e.key === "ArrowDown") {
       e.preventDefault();
       if (isTopButton) {
-        // alert("isTopButton");
-        const activeTab =
-          document.querySelector(".season-tab.active") ||
-          document.querySelector(".season-tab");
-        if (activeTab) setFocus(activeTab);
-      } else if (isSeasonTab) {
-        // Focus first episode
-
         const firstEpisode = document.querySelector(".seasons-episodes-item");
         if (firstEpisode) setFocus(firstEpisode);
+      } else if (isEpisode) {
+        const idx = focusableEls.indexOf(activeEl);
+        // Find next episode
+        if (idx !== -1 && idx < focusableEls.length - 1) {
+          setFocus(focusableEls[idx + 1]);
+        }
       }
-      // If episode, do nothing (or scroll down if grid)
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
       if (isEpisode) {
-        // Focus active season tab
-        const activeTab =
-          document.querySelector(".season-tab.active") ||
-          document.querySelector(".season-tab");
-        if (activeTab) setFocus(activeTab);
-      } else if (isSeasonTab) {
-        // Focus Play button
-        const playBtn = document.querySelector(".series-detail-play-button");
-        if (playBtn) setFocus(playBtn);
+        const idx = focusableEls.indexOf(activeEl);
+        // Filter focusableEls to just episodes to find index within episodes
+        const episodes = document.querySelectorAll(".seasons-episodes-item");
+        const epArray = Array.from(episodes);
+        const epIndex = epArray.indexOf(activeEl);
+
+        if (epIndex > 0) {
+          setFocus(epArray[epIndex - 1]);
+        } else {
+          // Go to play button or active top button
+          // Default to Play button
+          const playBtn = document.querySelector(".series-detail-play-button");
+          if (playBtn) setFocus(playBtn);
+        }
       } else if (isTopButton) {
         // Go to Navbar
         const scrollContainer = document.querySelector(
@@ -474,50 +563,39 @@ async function SeriesDetailPage() {
       }
     } else if (e.key === "ArrowRight") {
       e.preventDefault();
-      const idx = focusableEls.indexOf(activeEl);
-      if (idx !== -1 && idx < focusableEls.length - 1) {
-        // Strict section check
-        const nextEl = focusableEls[idx + 1];
-        if (
-          isTopButton &&
-          !nextEl.classList.contains("series-detail-play-button") &&
-          !nextEl.classList.contains("series-detail-more-info-button") &&
-          !nextEl.classList.contains("series-detail-fav-button")
-        )
-          return;
-
-        if (isSeasonTab && !nextEl.classList.contains("season-tab")) return;
-
-        if (isEpisode && !nextEl.classList.contains("seasons-episodes-item"))
-          return;
-
-        setFocus(nextEl);
+      if (isTopButton) {
+        const idx = focusableEls.indexOf(activeEl);
+        if (idx !== -1 && idx < focusableEls.length - 1) {
+          const next = focusableEls[idx + 1];
+          if (
+            next.classList.contains("series-detail-fav-button") ||
+            next.id === "season-dropdown-btn"
+          ) {
+            setFocus(next);
+          }
+        }
       }
+      // Episodes are vertical, Right/Left does nothing or ignores
     } else if (e.key === "ArrowLeft") {
       e.preventDefault();
-      const idx = focusableEls.indexOf(activeEl);
-      if (idx > 0) {
-        const prevEl = focusableEls[idx - 1];
-        if (
-          isTopButton &&
-          !prevEl.classList.contains("series-detail-play-button") &&
-          !prevEl.classList.contains("series-detail-more-info-button") &&
-          !prevEl.classList.contains("series-detail-fav-button")
-        )
-          return; // Maybe go to menu?
-
-        if (isSeasonTab && !prevEl.classList.contains("season-tab")) return;
-
-        if (isEpisode && !prevEl.classList.contains("seasons-episodes-item"))
-          return;
-
-        setFocus(prevEl);
+      if (isTopButton) {
+        const idx = focusableEls.indexOf(activeEl);
+        if (idx > 0) {
+          const prev = focusableEls[idx - 1];
+          if (
+            prev.classList.contains("series-detail-play-button") ||
+            prev.classList.contains("series-detail-fav-button") ||
+            prev.id === "season-dropdown-btn"
+          ) {
+            setFocus(prev);
+          }
+        }
       }
     } else if (e.key === "Enter") {
       e.preventDefault();
       if (isTopButton) {
         if (activeEl.classList.contains("series-detail-play-button")) {
-          // Play Logic (simplified default)
+          // Play Logic
           const dataSeason =
             activeEl.getAttribute("data-last-season") ||
             Object.keys(episodes)[0];
@@ -529,8 +607,9 @@ async function SeriesDetailPage() {
             // Switch to that season if different
             if (parseInt(dataSeason) !== selectedSeason) {
               selectedSeason = parseInt(dataSeason);
-              updateSeasonTabsStyles();
               renderEpisodes();
+              // Check if we need to update button text too
+              updateSeasonButtonText(selectedSeason);
             }
             playEpisode(dataEpId, parseInt(dataEpIndex));
           }
@@ -545,21 +624,18 @@ async function SeriesDetailPage() {
             icon.className = result.isFav
               ? "fa-solid fa-heart"
               : "fa-regular fa-heart";
-            icon.style.color = "#ff4d4d"; // Red color in real-time
+            icon.style.color = "#ff4d4d";
             icon.style.opacity = result.isFav ? "1" : "0.6";
           }
           Toaster.showToast(
             result.isFav ? "success" : "error",
             result.isFav ? "Added to Favorites" : "Removed from Favorites",
           );
-        }
-      } else if (isSeasonTab) {
-        const seasonNum = parseInt(activeEl.dataset.season);
-        if (seasonNum !== selectedSeason) {
-          selectedSeason = seasonNum;
-          localStorage.setItem("selectedSeason", selectedSeason.toString());
-          updateSeasonTabsStyles();
-          renderEpisodes();
+        } else if (activeEl.id === "season-dropdown-btn") {
+          const hasMultipleSeasons = Object.keys(episodes).length > 1;
+          if (hasMultipleSeasons) {
+            toggleDropdown();
+          }
         }
       } else if (isEpisode) {
         const epIndex = parseInt(activeEl.dataset.episodeIndex);
@@ -634,7 +710,6 @@ async function SeriesDetailPage() {
       "favouriteSeries",
     );
 
-    // Updated heart icon HTML with inline styles for initial state (matching MovieDetailPage)
     var heartIconHtml = `<i class="${isFavorite ? "fa-solid" : "fa-regular"} fa-heart" 
         style="color: ${isFavorite ? "#ff4d4d" : "white"}; opacity: ${isFavorite ? "1" : "0.6"};"></i>`;
 
@@ -644,7 +719,7 @@ async function SeriesDetailPage() {
     // Rating logic
     let originalRating = seriesInfo.rating_5based || 0;
     let normalizedRating = parseFloat(originalRating);
-    if (normalizedRating > 5) normalizedRating = normalizedRating / 2; // Assuming 10-base if > 5
+    if (normalizedRating > 5) normalizedRating = normalizedRating / 2;
     const ratingStr = normalizedRating.toFixed(1);
 
     function getStarRatingHtml(rating) {
@@ -666,6 +741,25 @@ async function SeriesDetailPage() {
     }
     const starsHtml = getStarRatingHtml(normalizedRating);
 
+    // Dropdown HTML
+    const hasMultipleSeasons = sortedSeasons.length > 1;
+    const seasonBtnHtml = `
+        <div class="season-dropdown-container">
+            <button id="season-dropdown-btn" class="series-detail-season-button gradient-btn ${!hasMultipleSeasons ? "no-dropdown" : ""}" tabindex="0">
+                Season ${selectedSeason} ${hasMultipleSeasons ? '<i class="fas fa-chevron-down dropdown-icon" style="margin-left: 10px;"></i>' : ""}
+            </button>
+            <ul id="season-dropdown-list" class="season-dropdown-list hidden">
+                ${sortedSeasons
+                  .map(
+                    (s) => `
+                    <li class="dropdown-item" tabindex="0" data-season="${s.season}">Season ${s.season}</li>
+                `,
+                  )
+                  .join("")}
+            </ul>
+        </div>
+    `;
+
     return `
         <div class="series-detail-page-container">
             <img class="series-detail-backdrop-image" src="${backdrop}" onerror="this.src='./assets/demo-img-card.png'" />
@@ -680,41 +774,32 @@ async function SeriesDetailPage() {
                      ${!seriesInfo.logo_path ? `<h1 class="series-detail-title">${seriesInfo.name || "Unknown Series"}</h1>` : ""}
                     
                     <div class="series-detail-meta">
-                         <span class="series-detail-rating-stars">${starsHtml}</span>
-                         <span class="series-detail-rating-value">${ratingStr}</span>
+                         <span class="series-detail-season-count">${sortedSeasons.length} Seasons</span>
                          <span class="series-detail-date">${seriesInfo.releaseDate ? seriesInfo.releaseDate.split("-")[0] : "N/A"}</span>
                          <span class="series-detail-resolution-badge">HD</span>
                     </div>
 
                      <div class="series-detail-credits">
-                        <p><strong>Directed By :</strong> ${seriesInfo.director || "N/A"}</p>
-                        <p><strong>Genre :</strong> ${seriesInfo.genre || "N/A"}</p>
+                        <p><strong>Genre:</strong> ${seriesInfo.genre || "N/A"}</p>
                      </div>
 
                     <p class="series-detail-description">${seriesInfo.plot || seriesInfo.description || "No description available."}</p>
 
                     <div class="series-detail-buttons">
                         ${playButtonHtml}
-                        <!-- More Info button removed -->
                         <button class="series-detail-fav-button gradient-btn" tabindex="0">
                             <span class="heart-icon">${heartIconHtml}</span>
                         </button>
+                         ${seasonBtnHtml}
                     </div>
+
                  </div>
 
-                 <!-- BOTTOM: Tabs & Episodes -->
+                 <!-- Episodes List -->
                  <div class="series-episodes-container">
-                    <div class="seasons-tabs-container">
-                         ${sortedSeasons
-                           .map(
-                             (s) => `
-                             <button class="season-tab ${s.season === selectedSeason ? "active" : ""}" 
-                                     data-season="${s.season}" tabindex="0">
-                                 Seasons ${s.season.toString().padStart(2, "0")}
-                             </button>
-                         `,
-                           )
-                           .join("")}
+                    <div class="seasons-header">
+                        <h2 id="current-season-display-title">Season ${selectedSeason}</h2>
+                        <span class="episodes-label">Episodes</span>
                     </div>
                     
                     <div class="series-detail-cast">
@@ -728,10 +813,8 @@ async function SeriesDetailPage() {
 
   setTimeout(() => {
     renderEpisodes();
-    updateSeasonTabsStyles();
     rebuildFocusable();
 
-    // Check if we should focus a specific episode (ONLY when returning from video player)
     const isReturning =
       localStorage.getItem("isReturningFromPlayer") === "true";
     const lastEpId = localStorage.getItem("lastPlayedEpisodeId");
@@ -743,21 +826,17 @@ async function SeriesDetailPage() {
       );
       if (epEl) {
         setFocus(epEl);
-        // Remove loader after focus is set
         const loader = document.getElementById("series-detail-loader");
         if (loader) loader.remove();
         return;
       }
     }
 
-    // Always clear the flag
     localStorage.removeItem("isReturningFromPlayer");
 
-    // Default: Focus Play button (for all other navigation scenarios)
     const firstBtn = document.querySelector(".series-detail-play-button");
     if (firstBtn) setFocus(firstBtn);
 
-    // Remove loader after focus is set
     const loader = document.getElementById("series-detail-loader");
     if (loader) loader.remove();
   }, 500);
