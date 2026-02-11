@@ -75,14 +75,13 @@ window.onload = function() {
 
         const isLogin = localStorage.getItem("isLogin") === "true";
 
+
         if (paymentDueDate) {
             localStorage.setItem("currentPage", "paymentPage");
             Router.showPage("paymentPage");
         } else if (!isPolicyAgreed && !paymentDueDate) {
-            // localStorage.setItem("currentPage", "policyPage");
-            // Router.showPage("policyPage");
-                        localStorage.setItem("currentPage", "login");
-            Router.showPage("login");
+            localStorage.setItem("currentPage", "policyPage");
+            Router.showPage("policyPage");
         } else if (isLogin) {
             localStorage.setItem("currentPage", "preLoginPage");
             Router.showPage("preLoginPage");
@@ -94,7 +93,8 @@ window.onload = function() {
             localStorage.setItem("currentPage", "login");
             Router.showPage("login");
         }
-    }, 5000);
+         
+    }, 0);
 
     // if (typeof logAllDnsEntries === "function") logAllDnsEntries();
     if (typeof getTmbdId === "function") getTmbdId();

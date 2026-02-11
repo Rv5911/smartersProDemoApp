@@ -1,226 +1,203 @@
 .policy-page-container {
-  display: flex;
-  width: 100%;
-  color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  overflow: hidden;
-  box-sizing: border-box;
-  /* animation: fadeInOut 1s ease-in-out; */
-  background-size: cover;
-  background-position: center;
-  position: fixed;
-background:
-  /* Top-left dark vignette */
-  radial-gradient(
-    circle at 8% 12%,
-    rgba(0, 0, 0, 0.55) 0%,
-    rgba(0, 0, 0, 0.38) 18%,
-    rgba(0, 0, 0, 0.18) 35%,
-    rgba(0, 0, 0, 0) 60%
-  ),
-
-  /* Bottom-right dark vignette */
-  radial-gradient(
-    circle at 92% 88%,
-    rgba(0, 0, 0, 0.5) 0%,
-    rgba(0, 0, 0, 0.34) 20%,
-    rgba(0, 0, 0, 0.16) 38%,
-    rgba(0, 0, 0, 0) 65%
-  ),
-
-  /* Main background gradient */
-  linear-gradient(
-    135deg,
-    #4f7ea6 0%,
-    #3f5f86 22%,
-    #4a4678 42%,
-    #6a3b7f 65%,
-    #7a3a8c 82%,
-    #6a2f7b 100%
-  );
+    display: flex;
+    width: 100%;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+    box-sizing: border-box;
+    /* animation: fadeInOut 1s ease-in-out; */
+    background-size: cover;
+    background-position: center;
+    position: fixed;
+    background: var(--app-bg);
 
 }
 
 
-.policy-page-content{
-  width: 100%;
-}
-.policy-page-logo-img{
-  width: 500px;
-  zoom: 1.3;
-  height: 70px;
-  object-fit: contain;
+.policy-page-content {
+    width: 100%;
+    max-width: 100%;
+    padding: 0 20px;
+    box-sizing: border-box;
 }
 
-.privacy-policy-heading img{
-  width: 60px;
-  height: 70px;
-  object-fit: contain;
-  margin-right: 30px;
-}
-
-.privacy-policy-heading{
-  display: flex;
-  font-weight: 550;
-  background: #635CED;
-  padding-left: 40px;
-  padding-top: 30px;
-  padding-bottom: 30px;
-  padding-right: 40px;
-  /* border-top-left-radius: 20px; */
-  /* border-top-right-radius: 20px; */
-align-items: center;
-font-size: 34px;
-}
-
-.policy-page-content{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.list-containerr {
+    list-style: none;
+    padding-left: 60px;
+    padding-right: 60px;
+    margin: 0;
+    zoom: 0.8;
 
 }
 
-.privacy-policy-text{
-  padding-top: 55px;
-  padding-left: 60px;
-font-weight: 400;
-font-style: Regular;
-font-size: 24px;
-line-height: 192%;
-letter-spacing: 0%;
-
-  padding-right: 60px;
+.list-containerr li {
+    font-size: 26px;
+    line-height: 1.8;
+    margin-bottom: 16px;
+    color: #FFFFFF;
 }
 
-.privacy-policy-text-container{
-  margin-top: 40px;
-  overflow: hidden;
- background-color: rgba(244, 244, 244, 0.1);
-
-  border-radius: 26px;
-border: 1px solid #FFFFFF;
-width: 1600px;
-padding-bottom: 40px;
+.list-containerr h2 {
+    font-size: 32px;
+    font-weight: 600;
+    margin-top: 30px;
+    margin-bottom: 20px;
+    color: #FFFFFF;
 }
 
-.policy-accept-container{
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start; 
-  width: 100%;
-  padding-left: 40px;
-  padding-right: 40px;
-  margin-top: 30px;
+.policy-page-logo-img {
+    height: 150px;
+    object-fit: contain;
 }
 
-.policy-checkbox-wrapper{
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  width: 100%;
-  padding-left: 18px;
+.privacy-policy-heading img {
+    width: 60px;
+    height: 70px;
+    object-fit: contain;
+    margin-right: 30px;
 }
 
-.policy-checkbox{
-  -webkit-appearance: none;
-  appearance: none;
-  width: 28px;
-  height: 28px;
-  border-radius: 4px;
-  border: 2px solid rgba(255,255,255,0.3);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  cursor: pointer;
-  background-color: transparent;
-  flex-shrink: 0;
-  margin-top: 2px;
+.privacy-policy-heading {
+    display: flex;
+    font-weight: 550;
+    background: #635CED;
+    padding-left: 40px;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    padding-right: 40px;
+    /* border-top-left-radius: 20px; */
+    /* border-top-right-radius: 20px; */
+    align-items: center;
+    font-size: 30px;
 }
 
-.policy-checkbox:focus{
-  outline: none;
+.policy-page-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-height: 100vh;
+    width: 100%;
 }
 
-.policy-checkbox:checked{
-  background: linear-gradient(90deg,#6cc7ff,#ff86d1);
-  border: none;
+.privacy-policy-text-heading {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    text-align: center;
+    font-weight: 400;
+    font-style: Regular;
+    font-size: 32px;
 }
 
-.policy-checkbox:checked::after{
-  content: '✓';
-  position: absolute;
-  color: white;
-  font-size: 18px;
-  font-weight: bold;
-  line-height: 1;
+.privacy-policy-text {
+    padding-top: 55px;
+    padding-left: 60px;
+    font-weight: 400;
+    font-style: Regular;
+    font-size: 24px;
+    line-height: 192%;
+    letter-spacing: 0%;
+
+    padding-right: 60px;
 }
 
-.policy-checkbox-label{
-  font-size: 22px;
-  font-weight: 600;
-  color: #FFFFFF;
-  letter-spacing: 0.4px;
+.privacy-policy-text-container {
+    margin-top: 20px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background-color: rgba(244, 244, 244, 0.1);
+    border-radius: 26px;
+    border: 1px solid #FFFFFF;
+    width: 90%;
+    max-width: 1600px;
+    max-height: calc(100vh - 320px);
+    padding-bottom: 40px;
+    box-sizing: border-box;
 }
 
-.policy-buttons-wrapper{
-  display: flex;
-  width: 100%;
-  justify-content: center; 
-  margin-top: 28px;
+/* Scrollbar styling */
+.privacy-policy-text-container::-webkit-scrollbar {
+    width: 12px;
 }
 
-.policy-buttons{
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  align-items: center;
+.privacy-policy-text-container::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
 }
 
-.policy-buttons button{
-  width: 340px;
-  border-radius: 12px;
-  padding: 14px 20px;
-  font-size: 22px;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
-  transition: background 140ms ease, box-shadow 160ms ease, transform 120ms ease, color 140ms ease;
+.privacy-policy-text-container::-webkit-scrollbar-thumb {
+    background: white;
+    border-radius: 10px;
 }
 
-.policy-accept-all{
-  background: transparent;
-  color: #fff;
-  border: 1px solid #fff;
+.privacy-policy-text-container::-webkit-scrollbar-thumb:hover {
+    background: white;
 }
 
-.policy-agree{
- background: transparent;
+.policy-accept-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding-left: 40px;
+    padding-right: 40px;
+    margin-top: 40px;
+    padding-bottom: 20px;
+}
+
+.policy-buttons-wrapper {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    margin-top: 0;
+}
+
+.policy-buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+    align-items: center;
+}
+
+.policy-buttons button {
+    width: 340px;
+    border-radius: 12px;
+    padding: 16px 24px;
+    font-size: 24px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+    transition: background 140ms ease, box-shadow 160ms ease, transform 120ms ease, color 140ms ease;
+}
+
+.policy-accept {
+    background: transparent;
     color: #fff;
     border: 1px solid #fff;
 }
 
-.policy-buttons button:focus{
-  outline: none;
+.policy-cancel {
+    background: transparent;
+    color: #fff;
+    border: 1px solid #fff;
 }
 
-.policy-focus.policy-accept-all{
-  background: linear-gradient(90deg,#4ec4ff,#ff5ec9);
-  color: #fff;
-  transform: translateY(-2px);
+.policy-buttons button:focus {
+    outline: none;
 }
 
-.policy-focus.policy-agree{
-  background: linear-gradient(90deg,#4ec4ff,#ff5ec9);
-  color: #fff;
-  transform: translateY(-2px);
+.policy-focus.policy-accept {
+    background: linear-gradient(90deg, #4ec4ff, #ff5ec9);
+    color: #fff;
+    transform: translateY(-2px);
+    border: none;
 }
 
-
-
-.policy-checkbox.checked + .policy-checkbox-label{
-  opacity: 0.9;
+.policy-focus.policy-cancel {
+    background: linear-gradient(90deg, #4ec4ff, #ff5ec9);
+    color: #fff;
+    transform: translateY(-2px);
+    border: none;
 }

@@ -35,7 +35,7 @@ function PreLoginPage() {
   }, 0);
   return `
     <div class="prelogin-page-container">
-    <img src="/assets/splash-logo.png" alt="Logo" class="prelogin-logo" />
+    <img src="/assets/mainLogo.svg" alt="Logo" class="prelogin-logo" />
     </div>
     `;
 }
