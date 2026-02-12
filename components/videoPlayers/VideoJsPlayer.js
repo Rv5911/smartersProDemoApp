@@ -1838,7 +1838,7 @@ function VideoJsPlayer(poster = "") {
           ? ""
           : `<div class="aspect-ratio-container">
         <button class="aspect-ratio-button" id="aspectRatioButton"><i class="fa-solid fa-compress" style="color: ${
-          isAspectRatioFocused ? "var(--gold)" : "white"
+          isAspectRatioFocused ? "var(--app-text-color)" : "white"
         }"></i>Aspect Ratio</button>
       </div>`
       }

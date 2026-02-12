@@ -46,8 +46,7 @@
 
     background:
         conic-gradient(from 0deg,
-            #5AB3F4,
-            #B752E6,
+          var(--app-text-color),
             transparent 70%);
 
     -webkit-mask:
@@ -296,7 +295,7 @@
     border: none;
     border-radius: 6px;
     font-size: 16px;
-    background: var(--light-gradient);
+    background: var(--app-text-color);
     color: black;
     cursor: pointer;
 }
@@ -482,7 +481,7 @@
     height: 6px;
     border-radius: 3px;
     appearance: none;
-    background: linear-gradient(to right, var(--light-gradient) 0%, var(--light-gradient) 0%, #888 0%, #888 100%);
+    background: linear-gradient(to right, var(--app-text-color) 0%, var(--app-text-color) 0%, #888 0%, #888 100%);
     outline: none;
     transition: background 0.2s linear;
 }

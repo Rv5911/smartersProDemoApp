@@ -92,6 +92,10 @@
   padding-left: 30px;
   padding-right: 30px;
 }
+.recently-watched-container{
+  padding-left: 40px;
+
+}
 
 /* Category Headers */
 .movies-fav-container h1,

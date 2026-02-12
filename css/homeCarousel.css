@@ -1,8 +1,7 @@
 /* Carousel Container */
-.carousel-container {
+.carousel-container {   
     width: 100%;
     height: 883px;
-    /* or use height: 90vh; for responsive */
     margin: auto;
     overflow: hidden;
     position: relative;
@@ -12,26 +11,19 @@
 /* Slides Wrapper */
 .carousel-slides {
     display: block;
-    /* Changed from flex */
-    /* transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); */
     width: 100%;
     height: 100%;
     position: relative;
-    /* transition: opacity 0.8s ease-in-out; */
 }
 
-/* Individual Slide */
 .slide {
     width: 100%;
     height: 100%;
     display: flex;
     justify-content: flex-start;
-    /* transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); */
-    /* Align content to left */
     align-items: center;
     overflow: hidden;
     position: absolute;
-    /* Changed from flex item */
     top: 0;
     left: 0;
     opacity: 0;
@@ -63,7 +55,7 @@
     background:
         linear-gradient(181.38deg, rgba(15, 15, 15, 0.09) 76.76%, #000 95.16%),
         linear-gradient(1.38deg,
-            rgba(15, 15, 15, 0.09) 76.76%,
+            rgba(15, 15, 15, 0.09) 36.76%,
             rgba(0, 0, 0, 0.85) 95.16%),
         linear-gradient(270deg,
             rgba(15, 15, 15, 0.09) 34.66%,
@@ -199,21 +191,23 @@
     padding: 14px 45px;
     font-size: 22px;
     font-weight: 600;
-    border-radius: 12px;
     cursor: pointer;
     transition: all 0.2s ease;
 }
 
 .carousel-watch-now-btn {
-    background: rgba(255, 255, 255, 0.1);
+      background: var(--app-bg);
+
     color: white;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 2px solid var(--app-text-color)
 }
 
 .carousel-more-info-btn {
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--app-bg);
+
     color: white;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 2px solid var(--app-text-color)
+
 }
 
 .carousel-watch-now-btn:focus,
@@ -221,8 +215,9 @@
 .carousel-watch-now-btn.focused,
 .carousel-more-info-btn.focused,
 .gradient-btn:focus {
-    background:var(--app-text-color);
+    background: var(--app-text-color);
     color: white;
+    border: 2px solid white;
     /* border: 2px solid white; */
     /* transform: scale(1.05); */
     outline: none;
@@ -255,7 +250,7 @@
 /* Active Dot */
 .carousel-dot.active {
     width: 30px;
-    background: var(--light-gradient);
+    background: var(--app-text-color);
     border-radius: 20px;
 }
 
@@ -303,7 +298,7 @@
 }
 
 .carousel-rating-badge {
-    background-color: #515dff;
+    background-color: var(--app-text-color);
     padding-left: 14px;
     padding-right: 16px;
     border-radius: 16px;
@@ -347,7 +342,7 @@
 .carousel-loading .loading-text {
     margin-top: 15px;
     font-size: 1.2rem;
-    color: var(--gold, #fdbd0f);
+    color: var(--app-text-color);
     font-family: Arial, sans-serif;
     letter-spacing: 2px;
     animation: fadeBlink 1.5s infinite;
