@@ -622,6 +622,7 @@ async function MovieDetailPage() {
                   }
                   <button class="movie-detail-fav-button gradient-btn" tabindex="0">
                     <span class="heart-icon">${heartIconHtml}</span>
+                    <span class="fav-text" style="margin-left: 8px;">My Fav</span>
                   </button>
               </div>
           </div>

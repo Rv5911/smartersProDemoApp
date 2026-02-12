@@ -1,5 +1,5 @@
 /* Carousel Container */
-.carousel-container {   
+.carousel-container {
     width: 100%;
     height: 883px;
     margin: auto;
@@ -183,7 +183,8 @@
 }
 
 .carousel-watch-now-btn,
-.carousel-more-info-btn {
+.carousel-more-info-btn,
+.carousel-fav-btn {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -196,24 +197,26 @@
 }
 
 .carousel-watch-now-btn {
-      background: var(--app-bg);
-
-    color: white;
-    border: 2px solid var(--app-text-color)
-}
-
-.carousel-more-info-btn {
     background: var(--app-bg);
 
     color: white;
     border: 2px solid var(--app-text-color)
+}
 
+.carousel-more-info-btn,
+.carousel-fav-btn {
+    background: var(--app-bg);
+
+    color: white;
+    border: 2px solid var(--app-text-color)
 }
 
 .carousel-watch-now-btn:focus,
 .carousel-more-info-btn:focus,
+.carousel-fav-btn:focus,
 .carousel-watch-now-btn.focused,
 .carousel-more-info-btn.focused,
+.carousel-fav-btn.focused,
 .gradient-btn:focus {
     background: var(--app-text-color);
     color: white;

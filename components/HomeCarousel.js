@@ -252,7 +252,7 @@ async function HomeCarousel(contentType = "movie") {
 
       const carouselBtns = Array.from(
         mainContainer.querySelectorAll(
-          ".carousel-watch-now-btn, .carousel-more-info-btn",
+          ".carousel-watch-now-btn, .carousel-fav-btn",
         ),
       );
       carouselBtns.forEach((btn) => {
@@ -360,6 +360,14 @@ async function HomeCarousel(contentType = "movie") {
     const director = (item.info && item.info.director) || "N/A";
     const genre = (item.info && item.info.genre) || "N/A";
 
+    // Favorite state logic
+    const favType =
+      contentType === "movie" ? "favouriteMovies" : "favouriteSeries";
+    const isFavorite =
+      typeof isItemFavoriteForPlaylist === "function"
+        ? isItemFavoriteForPlaylist(item.movie_data, favType)
+        : false;
+
     return `
         <div class="slide" data-index="${index}">
           <img class="carousel-image" src="${backdrop}" alt="${name}"/>
@@ -387,9 +395,9 @@ async function HomeCarousel(contentType = "movie") {
                     <i class="fa fa-play"></i>
                     ${buttonText}
                 </button>
-                <button class="carousel-more-info-btn gradient-btn" tabindex="0" data-stream-id="${streamId}" data-content-type="${contentType}">
-                    <i class="fa fa-info-circle"></i>
-                    More Info
+                <button class="carousel-fav-btn gradient-btn" tabindex="0" data-stream-id="${streamId}" data-content-type="${contentType}">
+                    <i class="${isFavorite ? "fas" : "far"} fa-heart" style="color: ${isFavorite ? "#ff4d4d" : "white"}; opacity: ${isFavorite ? "1" : "0.6"};"></i>
+                    My Fav
                 </button>
               </div>
           </div>

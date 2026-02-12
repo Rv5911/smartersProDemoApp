@@ -38,7 +38,7 @@ async function HomePage() {
 
     // Navigation state
     let navState = {
-      focus: "carousel", // 'carousel', 'watchNow', 'moreInfo', 'categories'
+      focus: "carousel", // 'carousel', 'watchNow', 'favButton', 'categories'
       currentCategory: 0,
       currentCard: 0,
       carouselStopped: false,
@@ -70,7 +70,7 @@ async function HomePage() {
         .querySelectorAll(".focused")
         .forEach((el) => el.classList.remove("focused"));
 
-      if (navState.focus === "watchNow" || navState.focus === "moreInfo") {
+      if (navState.focus === "watchNow" || navState.focus === "favButton") {
         // Get the active index from the carousel slides container's data attribute
         const slidesContainer = container.querySelector(".carousel-slides");
         let activeIndex = 0;
@@ -89,10 +89,12 @@ async function HomePage() {
           `.slide[data-index="${activeIndex}"]`,
         );
 
-        const btnClass =
-          navState.focus === "watchNow"
-            ? ".carousel-watch-now-btn"
-            : ".carousel-more-info-btn";
+        let btnClass = "";
+        if (navState.focus === "watchNow") {
+          btnClass = ".carousel-watch-now-btn";
+        } else if (navState.focus === "favButton") {
+          btnClass = ".carousel-fav-btn";
+        }
 
         let btn = null;
 
@@ -373,7 +375,11 @@ async function HomePage() {
             updateFocus();
             return;
           }
-          if (navState.focus === "watchNow" || navState.focus === "moreInfo") {
+          if (
+            navState.focus === "watchNow" ||
+            navState.focus === "moreInfo" ||
+            navState.focus === "favButton"
+          ) {
             // Prevent immediate jump from navbar - require explicit user action
             if (navState.justTransitioned) {
               navState.justTransitioned = false;
@@ -382,7 +388,7 @@ async function HomePage() {
             // Remove focus from carousel buttons
             document
               .querySelectorAll(
-                ".carousel-watch-now-btn.focused, .carousel-more-info-btn.focused",
+                ".carousel-watch-now-btn.focused, .carousel-more-info-btn.focused, .carousel-fav-btn.focused",
               )
               .forEach((btn) => {
                 btn.classList.remove("focused");
@@ -458,12 +464,13 @@ async function HomePage() {
             return;
           } else if (
             navState.focus === "watchNow" ||
-            navState.focus === "moreInfo"
+            navState.focus === "moreInfo" ||
+            navState.focus === "favButton"
           ) {
             // Remove focus from buttons
             document
               .querySelectorAll(
-                ".carousel-watch-now-btn.focused, .carousel-more-info-btn.focused",
+                ".carousel-watch-now-btn.focused, .carousel-more-info-btn.focused, .carousel-fav-btn.focused",
               )
               .forEach((btn) => {
                 btn.classList.remove("focused");
@@ -557,7 +564,7 @@ async function HomePage() {
         case "ArrowRight":
           e.preventDefault();
           if (navState.focus === "watchNow") {
-            navState.focus = "moreInfo";
+            navState.focus = "favButton";
             updateFocus();
           } else if (navState.focus === "categories") {
             const list = document.querySelector(
@@ -574,7 +581,7 @@ async function HomePage() {
 
         case "ArrowLeft":
           e.preventDefault();
-          if (navState.focus === "moreInfo") {
+          if (navState.focus === "favButton") {
             navState.focus = "watchNow";
             updateFocus();
           } else if (navState.focus === "categories") {
@@ -588,34 +595,48 @@ async function HomePage() {
 
         case "Enter":
           e.preventDefault();
-          if (navState.focus === "moreInfo") {
+          if (navState.focus === "favButton") {
             const activeIndex = window.carouselActiveIndex || 0;
             const data = (window.homeCarouselSliderData || [])[activeIndex];
             if (!data || !data.movie_data) return;
 
+            const streamId =
+              data.movie_data.stream_id || data.movie_data.series_id;
             const type = data.contentType || "movie";
-            if (type === "movie") {
-              localStorage.setItem(
-                "selectedMovieId",
-                data.movie_data.stream_id,
+            const typeKey =
+              type === "movie" ? "favouriteMovies" : "favouriteSeries";
+
+            const result = toggleFavoriteItem(data.movie_data, typeKey);
+            if (result && result.success) {
+              const isNowFav = result.isFav;
+              if (window.showToaster) {
+                showToaster(
+                  isNowFav
+                    ? `${type === "movie" ? "Movie" : "Series"} added to favorites`
+                    : `${type === "movie" ? "Movie" : "Series"} removed from favorites`,
+                  isNowFav ? "success" : "info",
+                );
+              }
+
+              // Update the heart icon in the carousel
+              const activeSlide = document.querySelector(
+                `.carousel-${type} .slide.active`,
               );
-              localStorage.setItem(
-                "selectedMovieData",
-                JSON.stringify(data.movie_data),
-              );
-              if (HomePage.cleanup) HomePage.cleanup();
-              Router.showPage("movieDetailPage");
-            } else {
-              localStorage.setItem(
-                "selectedSeriesId",
-                data.movie_data.series_id,
-              );
-              localStorage.setItem(
-                "selectedSeriesItem",
-                JSON.stringify(data.movie_data),
-              );
-              if (HomePage.cleanup) HomePage.cleanup();
-              Router.showPage("seriesDetailPage");
+              if (activeSlide) {
+                const heartIcon = activeSlide.querySelector(
+                  ".carousel-fav-btn i",
+                );
+                if (heartIcon) {
+                  heartIcon.className = isNowFav
+                    ? "fas fa-heart"
+                    : "far fa-heart";
+                  heartIcon.style.color = isNowFav ? "#ff4d4d" : "white";
+                  heartIcon.style.opacity = isNowFav ? "1" : "0.6";
+                }
+              }
+
+              updateAllHomeCardsHeartDisplay(streamId, type, isNowFav);
+              updateHomeFavCategoryRealtime(data.movie_data, isNowFav);
             }
             return;
           } else if (navState.focus === "watchNow") {
