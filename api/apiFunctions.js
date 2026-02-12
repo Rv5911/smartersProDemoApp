@@ -1,5 +1,5 @@
-const TMBD_API_KEY = localStorage.getItem("tmbdId");
-// const TMBD_API_KEY = localStorage.getItem("tmbdId") ? localStorage.getItem("tmbdId") : "a21eeaca44af5d2a4349214ecba1b338";
+// const TMBD_API_KEY = localStorage.getItem("tmbdId")
+const TMBD_API_KEY = "e37a1d2a831714e93d1d9b5de8259a6b";
 
 const castImageUrl = "https://image.tmdb.org/t/p/w500";
 

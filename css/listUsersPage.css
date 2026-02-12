@@ -12,6 +12,10 @@
   font-family: "Inter", sans-serif;
 }
 
+.listPage-logo{
+  zoom: 3;
+}
+
 .list-users-header {
   margin-bottom: 50px;
   text-align: center;

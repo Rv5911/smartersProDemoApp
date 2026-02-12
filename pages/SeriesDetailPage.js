@@ -202,7 +202,6 @@ async function SeriesDetailPage() {
       el.scrollIntoView({
         block: "center",
         inline: "nearest",
-        behavior: smoothScroll ? "smooth" : "auto",
       });
     } else if (
       el.classList.contains("series-detail-play-button") ||
@@ -212,7 +211,6 @@ async function SeriesDetailPage() {
       if (scrollContainer) {
         scrollContainer.scrollTo({
           top: 0,
-          behavior: smoothScroll ? "smooth" : "auto",
         });
       }
     } else if (el.classList.contains("dropdown-item")) {

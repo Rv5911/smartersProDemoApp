@@ -178,7 +178,6 @@ async function HomeCarousel(contentType = "movie") {
       const dots = Array.from(mainContainer.querySelectorAll(".carousel-dot"));
       let activeIndex = 0;
 
-      slidesContainer.style.willChange = "transform";
       window.carouselActiveIndex = 0;
 
       function updateCarousel() {
@@ -190,7 +189,7 @@ async function HomeCarousel(contentType = "movie") {
           if (!slidesContainer) return;
 
           // Use translate3d for hardware acceleration
-          slidesContainer.style.transform = `translate3d(${-activeIndex * 100}%, 0, 0)`;
+          // slidesContainer.style.transform = `translate3d(${-activeIndex * 100}%, 0, 0)`;
 
           // Efficiently update dots and slides
           for (let i = 0; i < dots.length; i++) {
@@ -363,7 +362,7 @@ async function HomeCarousel(contentType = "movie") {
 
     return `
         <div class="slide" data-index="${index}">
-          <img class="carousel-image" loading="lazy" src="${backdrop}" alt="${name}"/>
+          <img class="carousel-image" src="${backdrop}" alt="${name}"/>
           <div class="carousel-content">
               <h1 class="carousel-title">${name}</h1>
               <div class="carousel-meta">

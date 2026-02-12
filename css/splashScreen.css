@@ -24,75 +24,94 @@
     height: 22%;
     object-fit: contain;
     opacity: 0;
-    animation: logoFade 5s ease-in-out forwards 0.5s;
+    animation: logoFade 2.5s ease-in-out forwards 0.5s;
     will-change: transform, opacity;
     /* Hint for hardware acceleration */
 }
 
 @keyframes splashFade {
-  0% {
-    opacity: 0;
-    transform: scale(1.05);
-  }
-  30% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  80% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(1);
-  }
+    0% {
+        opacity: 0;
+        transform: scale(1.05);
+    }
+
+    30% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    80% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
+
 @keyframes logoFade {
-  0% {
-    opacity: 0;
-    transform: scale(0);
-  }
-  40% {
-    opacity: 1;
-    transform: scale(4);
-  }
-  70% {
-    transform: scale(3); 
-  }
-  100% {
-    transform: scale(2.4);
-    opacity: 1;
-  }
+    0% {
+        opacity: 0;
+        transform: scale(0);
+    }
+
+    40% {
+        opacity: 1;
+        transform: scale(4);
+    }
+
+    70% {
+        transform: scale(3);
+    }
+
+    100% {
+        transform: scale(3);
+        opacity: 1;
+    }
 }
 
 .splash-logo {
-  width: 100px;
-  height: 100px;
-  zoom: 1.8;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  animation: logoFade 2s ease-out forwards;
+    width: 100px;
+    height: 100px;
+    zoom: 1.8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: logoFade 2s ease-out forwards;
 }
 
 
 /* Reusable fade animations */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @keyframes fadeOut {
-  from { opacity: 1; transform: translateY(0); }
-  to { opacity: 0; transform: translateY(6px); }
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateY(6px);
+    }
 }
 
 .fade-in {
-  animation: fadeIn 300ms ease forwards;
+    animation: fadeIn 300ms ease forwards;
 }
 
 .fade-out {
-  animation: fadeOut 300ms ease forwards;
+    animation: fadeOut 300ms ease forwards;
 }
-
-

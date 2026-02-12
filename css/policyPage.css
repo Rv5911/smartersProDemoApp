@@ -189,14 +189,14 @@
 }
 
 .policy-focus.policy-accept {
-    background: linear-gradient(90deg, #4ec4ff, #ff5ec9);
+    background: var(--app-text-color);
     color: #fff;
     transform: translateY(-2px);
     border: none;
 }
 
 .policy-focus.policy-cancel {
-    background: linear-gradient(90deg, #4ec4ff, #ff5ec9);
+    background: var(--app-text-color);
     color: #fff;
     transform: translateY(-2px);
     border: none;

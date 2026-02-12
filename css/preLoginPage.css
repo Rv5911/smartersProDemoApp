@@ -16,3 +16,8 @@ background: var(--app-bg);
   zoom: 1.5;
   width: 370px;
 }
+
+.prelogin-logo{
+  margin-bottom: 40px;
+  zoom: 3;
+}
