@@ -42,7 +42,6 @@ async function HomePage() {
       currentCategory: 0,
       currentCard: 0,
       carouselStopped: false,
-      justTransitioned: false, // Flag to prevent immediate jump after navbar transition
     };
 
     let enterKeyState = {
@@ -411,11 +410,6 @@ async function HomePage() {
             navState.focus === "moreInfo" ||
             navState.focus === "favButton"
           ) {
-            // Prevent immediate jump from navbar - require explicit user action
-            if (navState.justTransitioned) {
-              navState.justTransitioned = false;
-              return;
-            }
             // Remove focus from carousel buttons
             document
               .querySelectorAll(
@@ -813,7 +807,6 @@ async function HomePage() {
     const handleNavFocusChange = (e) => {
       if (e.detail && e.detail.page === "homePage") {
         navState.focus = e.detail.focus || "watchNow";
-        navState.justTransitioned = true; // Set flag to prevent immediate jump
         updateFocus();
       }
     };
