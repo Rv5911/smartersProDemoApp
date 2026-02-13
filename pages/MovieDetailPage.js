@@ -4,6 +4,7 @@ async function MovieDetailPage() {
   if (MovieDetailPage.cleanup) MovieDetailPage.cleanup();
 
   const castImageUrl = "https://image.tmdb.org/t/p/w500";
+  let getMovieCastData = [];
   // const loadingOverlay = document.getElementById("loading-overlay");
 
   // Create custom loader
@@ -21,12 +22,14 @@ async function MovieDetailPage() {
   let navigationInterrupted = false;
 
   function handleBackNavigationDuringLoading(e) {
+    const isBackKey =
+      [10009, 461, 8, 27, 10079, 100079].includes(e.keyCode) ||
+      ["Escape", "Back", "BrowserBack", "XF86Back", "Backspace"].includes(
+        e.key,
+      );
+
     if (
-      (e.keyCode === 10009 ||
-        e.key === "Escape" ||
-        e.key === "Back" ||
-        e.key === "BrowserBack" ||
-        e.key === "XF86Back") &&
+      isBackKey &&
       localStorage.getItem("currentPage") === "movieDetailPage"
     ) {
       e.preventDefault();
@@ -34,9 +37,11 @@ async function MovieDetailPage() {
 
       navigationInterrupted = true;
 
-      // if (loadingOverlay) loadingOverlay.classList.add("hidden");
-      const loader = document.getElementById("movie-detail-loader");
-      if (loader) loader.remove();
+      // Force remove any loaders
+      const loaders = document.querySelectorAll(
+        ".custom-page-loader, #movie-detail-loader",
+      );
+      loaders.forEach((l) => l.remove());
 
       document.removeEventListener(
         "keydown",
@@ -61,6 +66,11 @@ async function MovieDetailPage() {
   if (!selectedMovieItem) {
     console.error("No selectedMovieData in localStorage");
     document.removeEventListener("keydown", handleBackNavigationDuringLoading);
+    const loaders = document.querySelectorAll(
+      ".custom-page-loader, #movie-detail-loader",
+    );
+    loaders.forEach((l) => l.remove());
+    Router.showPage("moviesPage");
     return;
   }
   selectedMovieItem = JSON.parse(selectedMovieItem);
@@ -68,11 +78,20 @@ async function MovieDetailPage() {
   // if (loadingOverlay) loadingOverlay.classList.remove("hidden");
 
   // --- Fetch movie details ---
-  var movieDetailData = await getMovieDetail(movieDetailId);
+  var movieDetailData = null;
+  try {
+    movieDetailData = await getMovieDetail(movieDetailId);
+  } catch (err) {
+    console.error("Error fetching movie detail:", err);
+  }
 
   // Check if navigation was interrupted during await
   if (navigationInterrupted) {
     document.removeEventListener("keydown", handleBackNavigationDuringLoading);
+    const loaders = document.querySelectorAll(
+      ".custom-page-loader, #movie-detail-loader",
+    );
+    loaders.forEach((l) => l.remove());
     return;
   }
 
@@ -92,12 +111,20 @@ async function MovieDetailPage() {
     movieDetailData.info && movieDetailData.info.tmdb_id
       ? movieDetailData.info.tmdb_id
       : 0;
-  var getMovieCastData = await getMovieCast(tmdbId);
-  // var getMovieCastData = [];
+
+  try {
+    if (tmdbId) {
+      getMovieCastData = await getMovieCast(tmdbId);
+    }
+  } catch (err) {
+    console.error("Error fetching movie cast:", err);
+  }
 
   // Check again if navigation was interrupted during second await
   if (navigationInterrupted) {
     document.removeEventListener("keydown", handleBackNavigationDuringLoading);
+    const loader = document.getElementById("movie-detail-loader");
+    if (loader) loader.remove();
     return;
   }
 
@@ -466,6 +493,11 @@ async function MovieDetailPage() {
   document.addEventListener("keydown", moviesDetailPageKeydownHandler);
   MovieDetailPage.cleanup = function () {
     document.removeEventListener("keydown", moviesDetailPageKeydownHandler);
+    document.removeEventListener("keydown", handleBackNavigationDuringLoading);
+    const loaders = document.querySelectorAll(
+      ".custom-page-loader, #movie-detail-loader",
+    );
+    loaders.forEach((l) => l.remove());
   };
 
   return htmlContent;

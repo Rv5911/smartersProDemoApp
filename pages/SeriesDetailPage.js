@@ -1,4 +1,6 @@
 async function SeriesDetailPage() {
+  localStorage.setItem("currentPage", "seriesDetailPage");
+  localStorage.setItem("navigationFocus", "seriesDetailPage");
   if (SeriesDetailPage.cleanup) SeriesDetailPage.cleanup();
   const castImageUrl = "https://image.tmdb.org/t/p/w500";
   const selectedSeriesItem = JSON.parse(
@@ -30,13 +32,14 @@ async function SeriesDetailPage() {
   let navigationInterrupted = false;
 
   function handleBackNavigationDuringLoading(e) {
+    const isBackKey =
+      [10009, 461, 8, 27, 10079, 100079].includes(e.keyCode) ||
+      ["Escape", "Back", "BrowserBack", "XF86Back", "Backspace"].includes(
+        e.key,
+      );
+
     if (
-      (e.keyCode === 10009 ||
-        e.keyCode === 100079 ||
-        e.key === "Escape" ||
-        e.key === "Back" ||
-        e.key === "BrowserBack" ||
-        e.key === "XF86Back") &&
+      isBackKey &&
       localStorage.getItem("currentPage") === "seriesDetailPage"
     ) {
       e.preventDefault();
@@ -44,8 +47,11 @@ async function SeriesDetailPage() {
 
       navigationInterrupted = true;
 
-      const loader = document.getElementById("series-detail-loader");
-      if (loader) loader.remove();
+      // Force remove any loaders
+      const loaders = document.querySelectorAll(
+        ".custom-page-loader, #series-detail-loader",
+      );
+      loaders.forEach((l) => l.remove());
 
       document.removeEventListener(
         "keydown",
@@ -64,15 +70,46 @@ async function SeriesDetailPage() {
 
   document.addEventListener("keydown", handleBackNavigationDuringLoading);
 
-  const seriesDetailData = await getSeriesDetail(seriesDetailId);
+  let seriesDetailData = null;
+  try {
+    seriesDetailData = await getSeriesDetail(seriesDetailId);
+  } catch (err) {
+    console.error("Error fetching series detail:", err);
+  }
+
   if (navigationInterrupted) {
     document.removeEventListener("keydown", handleBackNavigationDuringLoading);
+    const loader = document.getElementById("series-detail-loader");
+    if (loader) loader.remove();
+    return;
+  }
+
+  // --- Fetch series cast ---
+  const tmdbId =
+    seriesDetailData && seriesDetailData.info && seriesDetailData.info.tmdb_id
+      ? seriesDetailData.info.tmdb_id
+      : 0;
+  try {
+    if (tmdbId) {
+      getSeriesCastData = await getSeriesCast(tmdbId);
+    }
+  } catch (err) {
+    console.error("Error fetching series cast:", err);
+  }
+
+  // Check again if navigation was interrupted during second await
+  if (navigationInterrupted) {
+    document.removeEventListener("keydown", handleBackNavigationDuringLoading);
+    const loader = document.getElementById("series-detail-loader");
+    if (loader) loader.remove();
     return;
   }
 
   if (!seriesDetailData || !seriesDetailData.info) {
-    const loader = document.getElementById("series-detail-loader");
-    if (loader) loader.remove();
+    const loaders = document.querySelectorAll(
+      ".custom-page-loader, #series-detail-loader",
+    );
+    loaders.forEach((l) => l.remove());
     document.removeEventListener("keydown", handleBackNavigationDuringLoading);
 
     Toaster.showToast("error", "No Data Found of Selected Series");
@@ -646,6 +683,11 @@ async function SeriesDetailPage() {
   document.addEventListener("keydown", seriesDetailPageKeydownHandler);
   SeriesDetailPage.cleanup = function () {
     document.removeEventListener("keydown", seriesDetailPageKeydownHandler);
+    document.removeEventListener("keydown", handleBackNavigationDuringLoading);
+    const loaders = document.querySelectorAll(
+      ".custom-page-loader, #series-detail-loader",
+    );
+    loaders.forEach((l) => l.remove());
   };
 
   // --- INITIAL RENDER ---

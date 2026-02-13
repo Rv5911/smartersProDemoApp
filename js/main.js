@@ -5,6 +5,7 @@ window.onload = function () {
   window.allseriesCategories = [];
   window.allLiveStreams = [];
   window.liveCategories = [];
+  window.notValid=true;
 
   if (typeof tizen !== "undefined" && tizen.tvinputdevice) {
     const keys = tizen.tvinputdevice.getSupportedKeys();
