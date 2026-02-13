@@ -179,6 +179,7 @@
 }
 
 .policy-cancel {
+    display: none !important;
     background: transparent;
     color: #fff;
     border: 1px solid #fff;

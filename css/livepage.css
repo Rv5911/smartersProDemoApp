@@ -370,7 +370,7 @@
 
 .lp-epg-list {
     flex: 1;
-    background: var(--app-dark-bg ) !important;
+    background: var(--app-dark-bg) !important;
     overflow-y: auto;
 }
 
@@ -1238,7 +1238,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background:  var(--app-text-color);
+    background: var(--app-text-color);
     display: flex;
     flex-direction: column;
     align-items: center;

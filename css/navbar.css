@@ -93,7 +93,7 @@
     text-decoration: underline;
     text-decoration-thickness: 5px;
     outline: none;
-    text-decoration-color: var( --app-light-text-color);
+    text-decoration-color: var(--app-light-text-color);
     text-underline-offset: 20px;
 }
 
@@ -235,7 +235,7 @@
 }
 
 .sidebar-card {
-     background: var(--app-dark-text-bg);
+    background: var(--app-dark-text-bg);
     padding: 24px;
     display: flex;
     flex-direction: column;
@@ -270,23 +270,27 @@
 }
 
 .theme-toggle {
-    width: 44px;
-    height: 24px;
-    opacity: 0.3;
+    width: 60px;
+    height: 30px;
     background: white;
-    border-radius: 12px;
+    border: 2px solid var(--app-dark-text-bg);
+    border-radius: 20px;
     position: relative;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
 .theme-toggle::after {
     content: "";
     position: absolute;
-    top: 2px;
-    right: 2px;
+    top: 50%;
+    left: 4px;
+    transform: translateY(-50%);
     width: 20px;
     height: 20px;
-    background: black;
+    background: var(--app-text-color);
     border-radius: 50%;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Playlist Info Section */
@@ -506,4 +510,90 @@
 .sidebar-content ul {
     display: none;
     /* Hide old list */
+}
+
+/* Theme Section Dots */
+.theme-dots-container {
+    display: flex;
+    justify-content: center;
+    zoom: 1.4;
+    padding: 10px 0;
+    width: 100%;
+}
+
+.theme-dot {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    margin-right: 12px;
+    cursor: pointer;
+    border: 3px solid transparent;
+    outline: none;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.theme-dot.red {
+    background-color: #e53935;
+    /* Premium Red */
+}
+
+.theme-dot.blue {
+    background-color: #3949ab;
+    /* Premium Blue */
+}
+
+.theme-dot.green {
+    background-color: #43a047;
+    /* Premium Green */
+}
+
+.theme-dot:focus,
+.theme-dot.active {
+    transform: scale(1.15);
+    border-color: white;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+}
+
+/* In-grid Card Styles */
+.theme-dots-card {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    padding: 10px !important;
+    min-height: 140px;
+    /* Match typical card height if needed */
+}
+
+.theme-dots-card .theme-dots-container {
+    padding: 0;
+    gap: 15px;
+}
+
+.theme-dots-card .theme-dot {
+    width: 65px;
+    /* Slightly larger for "big" look */
+    height: 65px;
+    border-width: 5px;
+}
+
+#theme-default-view,
+#theme-dots-view {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+}
+
+.theme-toggle.active {
+    background: var(--app-text-color);
+    border-color:white;
+}
+
+.theme-toggle.active::after {
+    left: calc(100% - 24px);
+    background: white;
+}
+
+.theme-toggle:not(.active)::after {
+    left: 4px;
 }

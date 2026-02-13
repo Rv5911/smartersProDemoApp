@@ -70,18 +70,27 @@ function Navbar() {
             </div>
             <div class="sidebar-card" data-action="dark-mode" tabindex="0">
               <div class="sidebar-card-row">
-                <i class="fa-solid fa-moon"></i>
+                <i class="fa-solid fa-moon" id="dark-mode-icon"></i>
                 <div class="theme-toggle"></div>
               </div>
-              <span>Dark Mode</span>
+              <span class="dark-mode-text">Dark Mode</span>
             </div>
             <div class="sidebar-card" data-action="sort" tabindex="0">
               <i class="fa-solid fa-filter"></i>
               <span>Sort</span>
             </div>
-            <div class="sidebar-card" data-action="change-theme" tabindex="0">
-              <i class="fa-solid fa-palette"></i>
-              <span>Change Theme</span>
+            <div class="sidebar-card" data-action="change-theme" tabindex="0" id="theme-card-container">
+              <div id="theme-default-view">
+                <i class="fa-solid fa-palette"></i>
+                <span>Change Theme</span>
+              </div>
+              <div id="theme-dots-view" class="option-remove">
+                <div class="theme-dots-container">
+                  <div class="theme-dot red" data-theme="red" tabindex="0"></div>
+                  <div class="theme-dot blue" data-theme="blue" tabindex="0"></div>
+                  <div class="theme-dot green" data-theme="green" tabindex="0"></div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -122,6 +131,7 @@ function Navbar() {
             </div>
           </div>
         </div>
+
       </div>
     </div>
 
@@ -822,6 +832,23 @@ function initNavbar() {
 
     if (isBackKey) {
       if (sidebar && !sidebar.classList.contains("option-remove")) {
+        // Handle Theme Dots logic first
+        const dotsView = document.getElementById("theme-dots-view");
+        if (dotsView && !dotsView.classList.contains("option-remove")) {
+          e.preventDefault();
+          e.stopPropagation();
+          e.stopImmediatePropagation();
+          const defaultView = document.getElementById("theme-default-view");
+          const card = document.getElementById("theme-card-container");
+          dotsView.classList.add("option-remove");
+          if (defaultView) defaultView.classList.remove("option-remove");
+          if (card) {
+            card.setAttribute("tabindex", "0");
+            setTimeout(() => card.focus(), 10);
+          }
+          return;
+        }
+
         // If we're in the Playlist Info section, go back to main sidebar instead of closing
         const infoSection = document.getElementById("playlist-info-section");
         if (infoSection && infoSection.classList.contains("active")) {
@@ -1290,17 +1317,42 @@ function initNavbar() {
     // Focus first card
     const firstCard = document.querySelector(".sidebar-card");
     if (firstCard) firstCard.focus();
+
+    // Dark Mode initialization
+    const currentPL = getCurrentPlaylist();
+    if (currentPL) {
+      const isDark = currentPL.DarkMode === true;
+      const toggle = document.querySelector(".theme-toggle");
+      const text = document.querySelector(".dark-mode-text");
+      const icon = document.getElementById("dark-mode-icon");
+      if (toggle) {
+        if (isDark) toggle.classList.add("active");
+        else toggle.classList.remove("active");
+      }
+      if (text) {
+        text.textContent = isDark ? "Dark Mode" : "Light Mode";
+      }
+      if (icon) {
+        icon.className = isDark ? "fa-solid fa-moon" : "fa-solid fa-sun";
+      }
+    }
   }
 
   function showSidebarSection(section) {
     const mainSection = document.getElementById("main-sidebar-section");
     const infoSection = document.getElementById("playlist-info-section");
 
+    mainSection.classList.remove("active");
+    infoSection.classList.remove("active");
+
     if (section === "main") {
       mainSection.classList.add("active");
-      infoSection.classList.remove("active");
-    } else {
-      mainSection.classList.remove("active");
+      // Ensure theme card is reset to default view
+      const defaultView = document.getElementById("theme-default-view");
+      const dotsView = document.getElementById("theme-dots-view");
+      if (defaultView) defaultView.classList.remove("option-remove");
+      if (dotsView) dotsView.classList.add("option-remove");
+    } else if (section === "info") {
       infoSection.classList.add("active");
     }
   }
@@ -1476,8 +1528,50 @@ function initNavbar() {
             removeRecentlyWatchedSeriesById(sid);
             closeSidebar();
             Router.showPage("seriesDetailPage");
-          } else if (action === "dark-mode" || action === "change-theme") {
-            Toaster.showToast("error", "Coming Soon");
+          } else if (action === "dark-mode") {
+            const currentPL = getCurrentPlaylist();
+            const newIsDark = !(currentPL && currentPL.DarkMode === true);
+            const playlistName = getSelectedPlaylistName();
+            if (playlistName) {
+              updatePlaylistData(playlistName, "DarkMode", newIsDark);
+
+              // Update UI
+              const toggle = document.querySelector(".theme-toggle");
+              const text = document.querySelector(".dark-mode-text");
+              const icon = document.getElementById("dark-mode-icon");
+              if (toggle) {
+                if (newIsDark) toggle.classList.add("active");
+                else toggle.classList.remove("active");
+              }
+              if (text) {
+                text.textContent = newIsDark ? "Dark Mode" : "Light Mode";
+              }
+              if (icon) {
+                icon.className = newIsDark
+                  ? "fa-solid fa-moon"
+                  : "fa-solid fa-sun";
+              }
+
+              if (typeof Toaster !== "undefined" && Toaster.showToast) {
+                Toaster.showToast(
+                  "success",
+                  `${newIsDark ? "Dark" : "Light"} mode enabled`,
+                );
+              }
+            }
+          } else if (action === "change-theme") {
+            const defaultView = document.getElementById("theme-default-view");
+            const dotsView = document.getElementById("theme-dots-view");
+            const card = document.getElementById("theme-card-container");
+            if (defaultView && dotsView) {
+              defaultView.classList.add("option-remove");
+              dotsView.classList.remove("option-remove");
+              if (card) card.removeAttribute("tabindex"); // Temporarily disable card focus
+              setTimeout(() => {
+                const firstDot = dotsView.querySelector(".theme-dot");
+                if (firstDot) firstDot.focus();
+              }, 10);
+            }
           }
           break;
         case "Escape":
@@ -1499,6 +1593,65 @@ function initNavbar() {
             10,
           );
           break;
+      }
+    }
+
+    // Handle Theme Dots logic separately
+    const dotsView = document.getElementById("theme-dots-view");
+    if (dotsView && !dotsView.classList.contains("option-remove")) {
+      const dots = Array.from(dotsView.querySelectorAll(".theme-dot"));
+      const activeIdx = dots.indexOf(document.activeElement);
+
+      if (activeIdx !== -1 || dots.includes(document.activeElement)) {
+        // If one of the dots (or something inside) is focused
+        switch (e.key) {
+          case "ArrowRight":
+            e.preventDefault();
+            if (activeIdx < dots.length - 1) {
+              dots[activeIdx + 1].focus();
+            }
+            break;
+          case "ArrowLeft":
+            e.preventDefault();
+            if (activeIdx > 0) {
+              dots[activeIdx - 1].focus();
+            }
+            break;
+          case "ArrowDown":
+          case "ArrowUp":
+            e.preventDefault(); // Lock vertical movement while on dots
+            break;
+          case "Enter":
+            e.preventDefault();
+            const selectedTheme = dots[activeIdx].dataset.theme;
+            const playlistName = getSelectedPlaylistName();
+            if (playlistName) {
+              updatePlaylistData(playlistName, "themeColor", selectedTheme);
+              if (typeof Toaster !== "undefined" && Toaster.showToast) {
+                Toaster.showToast(
+                  "success",
+                  `Theme changed to ${selectedTheme}`,
+                );
+              }
+            }
+            break;
+          case "Escape":
+          case "Backspace":
+          case "XF86Back":
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            const defaultView = document.getElementById("theme-default-view");
+            const card = document.getElementById("theme-card-container");
+            dotsView.classList.add("option-remove");
+            if (defaultView) defaultView.classList.remove("option-remove");
+            if (card) {
+              card.setAttribute("tabindex", "0");
+              setTimeout(() => card.focus(), 10);
+            }
+            break;
+        }
+        return; // Important: prevent falling through to main grid logic
       }
     }
   }

@@ -42,8 +42,14 @@ async function HomePage() {
       currentCategory: 0,
       currentCard: 0,
       carouselStopped: false,
-      isHeartFocused: false,
       justTransitioned: false, // Flag to prevent immediate jump after navbar transition
+    };
+
+    let enterKeyState = {
+      isPressed: false,
+      pressStartTime: 0,
+      longPressThreshold: 500,
+      timeoutId: null,
     };
 
     function scrollToHomeElement(element) {
@@ -133,16 +139,6 @@ async function HomePage() {
           currentCard.classList.add("focused");
           currentCard.focus();
           scrollToHomeElement(currentCard);
-
-          // Handle Heart Button focus
-          const heartBtn = currentCard.querySelector(".home-card-heart-button");
-          if (heartBtn) {
-            if (navState.isHeartFocused) {
-              heartBtn.classList.add("heart-focused");
-            } else {
-              heartBtn.classList.remove("heart-focused");
-            }
-          }
 
           // Marquee logic
           const title = currentCard.querySelector(".home-title-marquee");
@@ -444,13 +440,6 @@ async function HomePage() {
             }
             return;
           } else if (navState.focus === "categories") {
-            if (!navState.isHeartFocused) {
-              navState.isHeartFocused = true;
-              updateFocus();
-              return;
-            }
-            navState.isHeartFocused = false;
-
             const allLists = document.querySelectorAll(
               ".home-card-list[data-category]",
             );
@@ -542,12 +531,6 @@ async function HomePage() {
 
             return;
           } else if (navState.focus === "categories") {
-            if (navState.isHeartFocused) {
-              navState.isHeartFocused = false;
-              updateFocus();
-              return;
-            }
-
             const allLists = document.querySelectorAll(
               ".home-card-list[data-category]",
             );
@@ -608,7 +591,6 @@ async function HomePage() {
             const cards = list ? list.querySelectorAll(".home-card") : [];
             if (navState.currentCard < cards.length - 1) {
               navState.currentCard++;
-              navState.isHeartFocused = false;
               updateFocus();
             }
           }
@@ -622,7 +604,6 @@ async function HomePage() {
           } else if (navState.focus === "categories") {
             if (navState.currentCard > 0) {
               navState.currentCard--;
-              navState.isHeartFocused = false;
               updateFocus();
             }
           }
@@ -740,11 +721,6 @@ async function HomePage() {
             document.removeEventListener("keydown", homePageKeydownEvents);
             return;
           } else if (navState.focus === "categories") {
-            if (navState.isHeartFocused) {
-              toggleHomeFavorite();
-              return;
-            }
-
             const card = document.querySelector(
               `.home-card[data-category="${navState.currentCategory}"][data-index="${navState.currentCard}"]`,
             );
@@ -801,7 +777,36 @@ async function HomePage() {
               }
             }
           }
-          break;
+      }
+    }
+
+    function handleHomeEnterKey(e) {
+      if (localStorage.getItem("navigationFocus") !== "homePage") return;
+
+      if (e.key === "Enter") {
+        if (e.type === "keydown") {
+          if (enterKeyState.isPressed) return; // Prevent repeat keydown
+          enterKeyState.isPressed = true;
+          enterKeyState.pressStartTime = Date.now();
+
+          enterKeyState.timeoutId = setTimeout(function () {
+            if (enterKeyState.isPressed) {
+              if (navState.focus === "categories") {
+                toggleHomeFavorite();
+              }
+              enterKeyState.isPressed = false;
+            }
+          }, enterKeyState.longPressThreshold);
+        } else if (e.type === "keyup") {
+          if (enterKeyState.isPressed) {
+            let pressDuration = Date.now() - enterKeyState.pressStartTime;
+            if (pressDuration < enterKeyState.longPressThreshold) {
+              clearTimeout(enterKeyState.timeoutId);
+              // Enter logic is already handled by homePageKeydownEvents
+            }
+            enterKeyState.isPressed = false;
+          }
+        }
       }
     }
 
@@ -821,6 +826,8 @@ async function HomePage() {
     };
 
     document.addEventListener("keydown", homePageKeydownEvents);
+    document.addEventListener("keydown", handleHomeEnterKey);
+    document.addEventListener("keyup", handleHomeEnterKey);
     window.addEventListener("navigation-focus-change", handleNavFocusChange);
     window.addEventListener(
       "carousel-slide-changed",
@@ -829,6 +836,8 @@ async function HomePage() {
 
     HomePage.cleanup = function () {
       document.removeEventListener("keydown", homePageKeydownEvents);
+      document.removeEventListener("keydown", handleHomeEnterKey);
+      document.removeEventListener("keyup", handleHomeEnterKey);
       window.removeEventListener(
         "navigation-focus-change",
         handleNavFocusChange,
@@ -946,22 +955,22 @@ async function HomePage() {
                   image || "./assets/placeholder-img.png"
                 }')">
                     <img src="${image}" style="display: none;" onerror="this.parentElement.style.backgroundImage = 'url(./assets/placeholder-img.png)'" />
+                    <div class="home-card-heart-container">
+                        <i class="${
+                          isFav ? "fas" : "far"
+                        } fa-heart home-card-heart" style="color: ${
+                          isFav ? "#ff4d4d" : "white"
+                        }; opacity: ${isFav ? "1" : "0.6"};"></i>
+                    </div>
                     <div class="home-card-rating">
        <i class="fas fa-star"></i>                        ${rating}
                     </div>
                     <div class="home-card-play-div">
                         <img src="./assets/card-play-icon.png" alt="Play" class="home-card-play" />
                     </div>
-                </div>
-                <div class="home-card-text">
-                    <h2 class="home-title-marquee">${name}</h2>
-                </div>
-                <div class="home-card-heart-button">
-                    <i class="${
-                      isFav ? "fas" : "far"
-                    } fa-heart home-card-heart" style="color: ${
-                      isFav ? "#ff4d4d" : "white"
-                    }; opacity: ${isFav ? "1" : "0.6"};"></i>
+                    <div class="home-card-text">
+                        <h2 class="home-title-marquee">${name}</h2>
+                    </div>
                 </div>
             </div>
         `;

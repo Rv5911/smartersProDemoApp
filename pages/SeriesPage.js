@@ -3,7 +3,6 @@ let seriesNavigationState = {
   currentCardIndex: 0,
   lastFocusedCategory: 0,
   lastFocusedCard: 0,
-  isHeartFocused: false,
   focus: "categories", // 'carousel', 'watchNow', 'categories'
   justTransitioned: false, // Flag to prevent immediate jump after navbar transition
 };
@@ -348,12 +347,20 @@ function createSeriesCard(seriesData, size, categoryIndex, seriesIndex) {
             data-series-id="${seriesId}" 
             data-is-adult="${isAdult}"
             data-is-locked="${isLocked}"
-            data-image-url="${imageUrl}">
+            data-image-url="${imageUrl}"
+            tabindex="0">
             <div class="series-card-inner" style="background-image: url('${
               imageUrl ? imageUrl : "./assets/placeholder-img.png"
             }')">
                 <img src="${imageUrl}" style="display: none;" onerror="this.parentElement.style.backgroundImage = 'url(./assets/placeholder-img.png)'" />
                 ${overlayHtml}
+                <div class="series-card-heart-container">
+                    <i class="${
+                      isSeriesFav ? "fas" : "far"
+                    } fa-heart series-card-heart" style="color: ${
+                      isSeriesFav ? "#ff4d4d" : "white"
+                    }; opacity: ${isSeriesFav ? "1" : "0.6"};"></i>
+                </div>
                 <div class="movie-card-rating">
                   <i class="fas fa-star"></i>
                     ${seriesData.rating ? seriesData.rating : "0"}
@@ -361,16 +368,9 @@ function createSeriesCard(seriesData, size, categoryIndex, seriesIndex) {
                 <div class="series-card-play-div">
                     <img src="./assets/card-play-icon.png" alt="Play" class="series-card-play" />
                 </div>
-            </div>
-            <div class="series-card-text">
-                <h2 class="${titleClass}">${seriesData.title || "Unknown"}</h2>
-            </div>
-            <div class="series-card-heart-button">
-                <i class="${
-                  isSeriesFav ? "fas" : "far"
-                } fa-heart series-card-heart" style="color: ${
-                  isSeriesFav ? "#ff4d4d" : "white"
-                }; opacity: ${isSeriesFav ? "1" : "0.6"};"></i>
+                <div class="series-card-text">
+                    <h2 class="${titleClass}">${seriesData.title || "Unknown"}</h2>
+                </div>
             </div>
         </div>`;
 }
@@ -809,7 +809,7 @@ function handleSeriesSimpleEnter() {
     return;
   }
 
-  if (seriesNavigationState.isHeartFocused) {
+  if (seriesNavigationState.focus === "favButton") {
     handleSeriesLongPressEnter();
     return;
   }
@@ -1578,7 +1578,6 @@ function moveSeriesRight() {
 
   if (seriesNavigationState.currentCardIndex < loadedCount - 1) {
     seriesNavigationState.currentCardIndex++;
-    seriesNavigationState.isHeartFocused = false;
     updateSeriesFocus();
 
     // Pre-fetch
@@ -1615,7 +1614,6 @@ function moveSeriesLeft() {
 
   if (seriesNavigationState.currentCardIndex > 0) {
     seriesNavigationState.currentCardIndex--;
-    seriesNavigationState.isHeartFocused = false;
     updateSeriesFocus();
   }
 
@@ -1651,18 +1649,10 @@ function moveSeriesDown() {
       seriesNavigationState.focus = "categories";
       seriesNavigationState.currentCategoryIndex = firstCategoryIdx;
       seriesNavigationState.currentCardIndex = 0;
-      seriesNavigationState.isHeartFocused = false;
       updateSeriesFocus();
     }
     return;
   }
-
-  if (!seriesNavigationState.isHeartFocused) {
-    seriesNavigationState.isHeartFocused = true;
-    updateSeriesFocus();
-    return;
-  }
-  seriesNavigationState.isHeartFocused = false;
 
   let allCategories = window.allSeriesCategories || [];
   if (allCategories.length === 0) return;
@@ -1752,12 +1742,6 @@ function moveSeriesUp() {
         seriesNavItem.classList.add("active");
       }
     }, 50);
-    return;
-  }
-
-  if (seriesNavigationState.isHeartFocused) {
-    seriesNavigationState.isHeartFocused = false;
-    updateSeriesFocus();
     return;
   }
 
@@ -2066,12 +2050,6 @@ function updateSeriesFocus() {
             ".series-title-marquee",
           );
           if (oldTitle) oldTitle.classList.remove("marquee-active");
-
-          // Reset heart button state on previous card
-          const oldHeart = currentFocusedSeriesElement.querySelector(
-            ".series-card-heart-button",
-          );
-          if (oldHeart) oldHeart.classList.remove("heart-focused");
         }
 
         currentCard.classList.add("focused");
@@ -2091,16 +2069,6 @@ function updateSeriesFocus() {
           seriesNavigationState.currentCategoryIndex;
         seriesNavigationState.lastFocusedCard =
           seriesNavigationState.currentCardIndex;
-
-        // Handle Heart Button focus
-        const heartBtn = currentCard.querySelector(".series-card-heart-button");
-        if (heartBtn) {
-          if (seriesNavigationState.isHeartFocused) {
-            heartBtn.classList.add("heart-focused");
-          } else {
-            heartBtn.classList.remove("heart-focused");
-          }
-        }
 
         activateSeriesMarquee(currentCard);
       }

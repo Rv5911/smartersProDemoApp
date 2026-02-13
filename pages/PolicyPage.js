@@ -6,7 +6,7 @@ function PolicyPage() {
 
         const acceptBtn = document.querySelector(".policy-accept");
         const cancelBtn = document.querySelector(".policy-cancel");
-        const focusables = [acceptBtn, cancelBtn].filter(Boolean);
+        const focusables = [acceptBtn].filter(Boolean);
 
         if (!acceptBtn || !cancelBtn) return;
 

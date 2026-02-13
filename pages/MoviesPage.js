@@ -3,7 +3,6 @@ let moviesNavigationState = {
   currentCardIndex: 0,
   lastFocusedCategory: 0,
   lastFocusedCard: 0,
-  isHeartFocused: false,
   focus: "categories", // 'carousel', 'watchNow', 'categories'
   justTransitioned: false, // Flag to prevent immediate jump after navbar transition
 };
@@ -354,12 +353,20 @@ function createMovieCard(movieData, size, categoryIndex, movieIndex) {
             data-stream-id="${movieId}" 
             data-is-adult="${isAdult}"
             data-is-locked="${isLocked}"
-            data-image-url="${imageUrl}">
+            data-image-url="${imageUrl}"
+            tabindex="0">
             <div class="movie-card-inner" style="background-image: url('${
               imageUrl ? imageUrl : "./assets/placeholder-img.png"
             }')">
                 <img src="${imageUrl}" style="display: none;" onerror="this.parentElement.style.backgroundImage = 'url(./assets/placeholder-img.png)'" />
                 ${overlayHtml}
+                <div class="movie-card-heart-container">
+                    <i class="${
+                      isMovieFav ? "fas" : "far"
+                    } fa-heart movie-card-heart" style="color: ${
+                      isMovieFav ? "#ff4d4d" : "white"
+                    }; opacity: ${isMovieFav ? "1" : "0.6"};"></i>
+                </div>
                 <div class="movie-card-rating">
                 <i class="fas fa-star"></i>
                     ${movieData.rating ? movieData.rating : "0"}
@@ -367,16 +374,9 @@ function createMovieCard(movieData, size, categoryIndex, movieIndex) {
                 <div class="movie-card-play-div">
                     <img src="./assets/card-play-icon.png" alt="Play" loading="lazy" class="movie-card-play" />
                 </div>
-            </div>
-            <div class="movie-card-text">
-                <h2 class="${titleClass}">${movieData.title || "Unknown"}</h2>
-            </div>
-            <div class="movie-card-heart-button">
-                <i class="${
-                  isMovieFav ? "fas" : "far"
-                } fa-heart movie-card-heart" style="color: ${
-                  isMovieFav ? "#ff4d4d" : "white"
-                }; opacity: ${isMovieFav ? "1" : "0.6"};"></i>
+                <div class="movie-card-text">
+                    <h2 class="${titleClass}">${movieData.title || "Unknown"}</h2>
+                </div>
             </div>
         </div>`;
 }
@@ -823,7 +823,8 @@ function handleMoviesSimpleEnter() {
     return;
   }
 
-  if (moviesNavigationState.isHeartFocused) {
+  if (moviesNavigationState.focus === "favButton") {
+    // In case favButton focus is still around, handle it
     handleMoviesLongPressEnter();
     return;
   }
@@ -1485,7 +1486,6 @@ function moveMoviesRight() {
 
   if (moviesNavigationState.currentCardIndex < loadedCount - 1) {
     moviesNavigationState.currentCardIndex++;
-    moviesNavigationState.isHeartFocused = false; // Reset heart focus on horizontal move
     updateMoviesFocus();
 
     // Pre-fetch: triggered when we are close to the end (e.g., 2 items away)
@@ -1523,7 +1523,6 @@ function moveMoviesLeft() {
 
   if (moviesNavigationState.currentCardIndex > 0) {
     moviesNavigationState.currentCardIndex--;
-    moviesNavigationState.isHeartFocused = false; // Reset heart focus on horizontal move
     updateMoviesFocus();
   } else {
     // Already at index 0, stay here (don't move to navbar/sidebar)
@@ -1566,14 +1565,6 @@ function moveMoviesDown() {
     }
     return;
   }
-
-  // Hierarchical navigation: Card -> Heart -> Next Row
-  if (!moviesNavigationState.isHeartFocused) {
-    moviesNavigationState.isHeartFocused = true;
-    updateMoviesFocus();
-    return;
-  }
-  moviesNavigationState.isHeartFocused = false;
 
   let allCategories = window.allMoviesCategories || [];
   if (allCategories.length === 0) return;
@@ -1664,12 +1655,6 @@ function moveMoviesUp() {
         moviesNavItem.classList.add("active");
       }
     }, 50);
-    return;
-  }
-
-  if (moviesNavigationState.isHeartFocused) {
-    moviesNavigationState.isHeartFocused = false;
-    updateMoviesFocus();
     return;
   }
 
@@ -2005,16 +1990,6 @@ function updateMoviesFocus() {
           moviesNavigationState.currentCategoryIndex;
         moviesNavigationState.lastFocusedCard =
           moviesNavigationState.currentCardIndex;
-
-        // Handle Heart Button focus
-        const heartBtn = currentCard.querySelector(".movie-card-heart-button");
-        if (heartBtn) {
-          if (moviesNavigationState.isHeartFocused) {
-            heartBtn.classList.add("heart-focused");
-          } else {
-            heartBtn.classList.remove("heart-focused");
-          }
-        }
 
         activateMoviesMarquee(currentCard);
       }
