@@ -717,8 +717,17 @@ function handleMoviesEnterKey(e) {
 
 function handleMoviesSimpleEnter() {
   if (moviesNavigationState.focus === "watchNow") {
-    const activeIndex = window.carouselActiveIndex || 0;
-    const data = (window.homeCarouselSliderData || [])[activeIndex];
+    const activeEl = document.activeElement;
+    const streamId = activeEl ? activeEl.getAttribute("data-stream-id") : null;
+
+    const data = (window.homeCarouselSliderData || []).find(
+      (d) =>
+        d &&
+        d.movie_data &&
+        String(d.movie_data.stream_id || d.movie_data.series_id) ===
+          String(streamId),
+    );
+
     if (!data || !data.movie_data) return;
 
     const playlist = JSON.parse(
@@ -743,11 +752,74 @@ function handleMoviesSimpleEnter() {
   }
 
   if (moviesNavigationState.focus === "moreInfo") {
-    const activeIndex = window.carouselActiveIndex || 0;
-    const data = (window.homeCarouselSliderData || [])[activeIndex];
+    const activeEl = document.activeElement;
+    const streamId = activeEl ? activeEl.getAttribute("data-stream-id") : null;
+
+    const data = (window.homeCarouselSliderData || []).find(
+      (d) =>
+        d &&
+        d.movie_data &&
+        String(d.movie_data.stream_id || d.movie_data.series_id) ===
+          String(streamId),
+    );
+
     if (!data || !data.movie_data) return;
 
-    proceedToMovieDetail(0, 0, data.movie_data.stream_id);
+    const result = toggleFavoriteItem(
+      data.movie_data,
+      "favouriteMovies",
+      getCurrentPlaylistUsername(),
+    );
+
+    // Invalidate Carousel Cache
+    const cacheKey = "homeCarouselCachedSliderData_movie";
+    if (window[cacheKey]) delete window[cacheKey];
+
+    // Update ALL cards heart display on CURRENT page
+    updateAllMovieCardsHeartDisplay(streamId, result.isFav);
+
+    // Show toast
+    if (typeof Toaster !== "undefined" && Toaster.showToast) {
+      Toaster.showToast(
+        result.isFav ? "success" : "error",
+        result.isFav ? "Added to Favorites" : "Removed from Favorites",
+      );
+    }
+
+    // Update the heart icon in the carousel (for all slides matching this ID)
+    document
+      .querySelectorAll(`.carousel-fav-btn[data-stream-id="${streamId}"] i`)
+      .forEach((icon) => {
+        icon.className = result.isFav ? "fas fa-heart" : "far fa-heart";
+        icon.style.color = result.isFav ? "#ff4d4d" : "white";
+        icon.style.opacity = result.isFav ? "1" : "0.6";
+      });
+
+    // Cross-page Sync: Notify other pages
+    const syncItem = {
+      ...data.movie_data,
+      type: "movie",
+    };
+
+    // Update current page
+    updateMyFavCategoryRealtime(streamId, result.isFav, 0, 0);
+
+    // Update HomePage if registered
+    if (window.updateHomePageFavorites) {
+      window.updateHomePageFavorites(syncItem, result.isFav);
+    }
+    if (window.updateAllHomeCardsHeartDisplay) {
+      window.updateAllHomeCardsHeartDisplay(streamId, "movie", result.isFav);
+    }
+
+    // Update SeriesPage if registered
+    if (window.updateSeriesPageFavorites) {
+      window.updateSeriesPageFavorites(streamId, result.isFav);
+    }
+    if (window.updateAllSeriesCardsHeartDisplay) {
+      window.updateAllSeriesCardsHeartDisplay(streamId, result.isFav);
+    }
+
     return;
   }
 
@@ -874,9 +946,15 @@ function handleMoviesLongPressEnter() {
 
     const moviesContainer = document.querySelector(".movies-page-container");
 
+    const movieObj = (window.allMoviesStreams || []).find(
+      (m) => String(m.stream_id) === String(streamId),
+    );
+
     // Toggle favorite
     const result = toggleFavoriteItem(
-      Number(streamId),
+      movieObj || {
+        stream_id: streamId,
+      },
       "favouriteMovies",
       getCurrentPlaylistUsername(),
     );
@@ -899,6 +977,27 @@ function handleMoviesLongPressEnter() {
       categoryIndex,
       cardIndex,
     );
+
+    // Cross-page Sync: Notify other pages
+    const syncItem = {
+      ...(movieObj || {
+        stream_id: streamId,
+      }),
+      type: "movie",
+    };
+
+    if (window.updateHomePageFavorites) {
+      window.updateHomePageFavorites(syncItem, result.isFav);
+    }
+    if (window.updateAllHomeCardsHeartDisplay) {
+      window.updateAllHomeCardsHeartDisplay(streamId, "movie", result.isFav);
+    }
+    if (window.updateSeriesPageFavorites) {
+      window.updateSeriesPageFavorites(streamId, result.isFav);
+    }
+    if (window.updateAllSeriesCardsHeartDisplay) {
+      window.updateAllSeriesCardsHeartDisplay(streamId, result.isFav);
+    }
 
     // FIX: Restore visual position relative to viewport AFTER changes
     // We do this immediately if possible, but also ensure focus is kept
@@ -1812,7 +1911,7 @@ function updateMoviesFocus() {
       const btnClass =
         moviesNavigationState.focus === "watchNow"
           ? ".carousel-watch-now-btn"
-          : ".carousel-more-info-btn";
+          : ".carousel-fav-btn";
 
       let btn = null;
 
@@ -2488,3 +2587,5 @@ window.updateMoviesFocus = updateMoviesFocus;
 window.saveMoviesNavigationState = saveMoviesNavigationState;
 window.rerenderMoviesPage = MoviesPage;
 window.focusFirstMoviesCard = focusFirstMoviesCard;
+window.updateMoviesPageFavorites = updateMyFavCategoryRealtime;
+window.updateAllMovieCardsHeartDisplay = updateAllMovieCardsHeartDisplay;

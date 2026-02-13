@@ -81,12 +81,16 @@ h1.clear-title {
   justify-content: center;
   margin-top: 12px;
 }
+
+.saveBtnExit{
+  border-radius: 0px;
+}
 .btn {
   border: none;
   padding: 16px 36px;
   font-weight: 700;
   font-size: 18px;
-  border-radius: 40px;
+  /* border-radius: 40px; */
   cursor: pointer;
   min-width: 160px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);

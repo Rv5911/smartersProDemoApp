@@ -713,8 +713,17 @@ function handleSeriesEnterKey(e) {
 
 function handleSeriesSimpleEnter() {
   if (seriesNavigationState.focus === "watchNow") {
-    const activeIndex = window.carouselActiveIndex || 0;
-    const data = (window.homeCarouselSliderData || [])[activeIndex];
+    const activeEl = document.activeElement;
+    const streamId = activeEl ? activeEl.getAttribute("data-stream-id") : null;
+
+    const data = (window.homeCarouselSliderData || []).find(
+      (d) =>
+        d &&
+        d.movie_data &&
+        String(d.movie_data.stream_id || d.movie_data.series_id) ===
+          String(streamId),
+    );
+
     if (!data || !data.movie_data) return;
 
     localStorage.setItem("selectedSeriesId", data.movie_data.series_id);
@@ -728,11 +737,75 @@ function handleSeriesSimpleEnter() {
   }
 
   if (seriesNavigationState.focus === "moreInfo") {
-    const activeIndex = window.carouselActiveIndex || 0;
-    const data = (window.homeCarouselSliderData || [])[activeIndex];
+    const activeEl = document.activeElement;
+    const streamId = activeEl ? activeEl.getAttribute("data-stream-id") : null;
+
+    const data = (window.homeCarouselSliderData || []).find(
+      (d) =>
+        d &&
+        d.movie_data &&
+        String(d.movie_data.stream_id || d.movie_data.series_id) ===
+          String(streamId),
+    );
+
     if (!data || !data.movie_data) return;
 
-    proceedToSeriesDetail(0, 0, data.movie_data.series_id);
+    const seriesId = data.movie_data.series_id;
+    const result = toggleFavoriteItem(
+      data.movie_data,
+      "favouriteSeries",
+      getCurrentPlaylistUsername(),
+    );
+
+    // Invalidate Carousel Cache
+    const cacheKey = "homeCarouselCachedSliderData_series";
+    if (window[cacheKey]) delete window[cacheKey];
+
+    // Update ALL cards heart display
+    updateAllSeriesCardsHeartDisplay(seriesId, result.isFav);
+
+    // Show toast
+    if (typeof Toaster !== "undefined" && Toaster.showToast) {
+      Toaster.showToast(
+        result.isFav ? "success" : "error",
+        result.isFav ? "Added to Favorites" : "Removed from Favorites",
+      );
+    }
+
+    // Update the heart icon in the carousel (for all slides matching this ID)
+    document
+      .querySelectorAll(`.carousel-fav-btn[data-stream-id="${seriesId}"] i`)
+      .forEach((icon) => {
+        icon.className = result.isFav ? "fas fa-heart" : "far fa-heart";
+        icon.style.color = result.isFav ? "#ff4d4d" : "white";
+        icon.style.opacity = result.isFav ? "1" : "0.6";
+      });
+
+    // Cross-page Sync
+    const syncItem = {
+      ...data.movie_data,
+      type: "series",
+    };
+
+    // Update current page
+    updateMyFavSeriesCategoryRealtime(seriesId, result.isFav, 0, 0);
+
+    // Update HomePage if registered
+    if (window.updateHomePageFavorites) {
+      window.updateHomePageFavorites(syncItem, result.isFav);
+    }
+    if (window.updateAllHomeCardsHeartDisplay) {
+      window.updateAllHomeCardsHeartDisplay(seriesId, "series", result.isFav);
+    }
+
+    // Update MoviesPage if registered
+    if (window.updateMoviesPageFavorites) {
+      window.updateMoviesPageFavorites(seriesId, result.isFav);
+    }
+    if (window.updateAllMovieCardsHeartDisplay) {
+      window.updateAllMovieCardsHeartDisplay(seriesId, result.isFav);
+    }
+
     return;
   }
 
@@ -844,14 +917,20 @@ function handleSeriesLongPressEnter() {
 
     const seriesContainer = document.querySelector(".series-page-container");
 
+    const seriesObj = (window.allSeriesStreams || []).find(
+      (s) => String(s.series_id) === String(seriesId),
+    );
+
     // Toggle favorite
     const result = toggleFavoriteItem(
-      Number(seriesId),
+      seriesObj || {
+        series_id: seriesId,
+      },
       "favouriteSeries",
       getCurrentPlaylistUsername(),
     );
 
-    // Update ALL cards across ALL categories with the same series_id
+    // Update ALL cards heart display
     updateAllSeriesCardsHeartDisplay(seriesId, result.isFav);
 
     // Show toast
@@ -869,6 +948,27 @@ function handleSeriesLongPressEnter() {
       categoryIndex,
       cardIndex,
     );
+
+    // Cross-page Sync: Notify other pages
+    const syncItem = {
+      ...(seriesObj || {
+        series_id: seriesId,
+      }),
+      type: "series",
+    };
+
+    if (window.updateHomePageFavorites) {
+      window.updateHomePageFavorites(syncItem, result.isFav);
+    }
+    if (window.updateAllHomeCardsHeartDisplay) {
+      window.updateAllHomeCardsHeartDisplay(seriesId, "series", result.isFav);
+    }
+    if (window.updateMoviesPageFavorites) {
+      window.updateMoviesPageFavorites(seriesId, result.isFav);
+    }
+    if (window.updateAllMovieCardsHeartDisplay) {
+      window.updateAllMovieCardsHeartDisplay(seriesId, result.isFav);
+    }
 
     // FIX: Restore visual position relative to viewport AFTER changes
     if (seriesContainer) {
@@ -967,17 +1067,20 @@ function updateMyFavSeriesCategoryRealtime(
       (s) => s && String(s.series_id) === String(seriesId),
     );
     if (newSeries) {
-      const currentCards = favList.querySelectorAll(".series-card");
-      const newIndex = currentCards.length;
-      const cardHTML = createSeriesCard(
-        newSeries,
-        "normal",
-        favCategoryIndex,
-        newIndex,
-      );
-      favList.insertAdjacentHTML("beforeend", cardHTML);
+      const seriesData = formatSeriesData(newSeries);
+      if (seriesData) {
+        const currentCardsInList = favList.querySelectorAll(".series-card");
+        const newIndex = currentCardsInList.length;
+        const cardHTML = createSeriesCard(
+          seriesData,
+          "normal",
+          favCategoryIndex,
+          newIndex,
+        );
+        favList.insertAdjacentHTML("beforeend", cardHTML);
 
-      setSeriesLoadedChunkCount(favCategoryIndex, currentCards.length + 1);
+        setSeriesLoadedChunkCount(favCategoryIndex, newIndex + 1);
+      }
 
       if (window.allSeriesCategories && window.allSeriesCategories[0]) {
         if (!window.allSeriesCategories[0].series)
@@ -1894,7 +1997,7 @@ function updateSeriesFocus() {
       const btnClass =
         seriesNavigationState.focus === "watchNow"
           ? ".carousel-watch-now-btn"
-          : ".carousel-more-info-btn";
+          : ".carousel-fav-btn";
 
       let btn = null;
 
@@ -2566,4 +2669,6 @@ window.seriesNavigationState = seriesNavigationState;
 window.updateSeriesFocus = updateSeriesFocus;
 window.saveSeriesNavigationState = saveSeriesNavigationState;
 window.rerenderSeriesPage = SeriesPage;
+window.updateSeriesPageFavorites = updateMyFavSeriesCategoryRealtime;
+window.updateAllSeriesCardsHeartDisplay = updateAllSeriesCardsHeartDisplay;
 window.focusFirstSeriesCard = focusFirstSeriesCard;

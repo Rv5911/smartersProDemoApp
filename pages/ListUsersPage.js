@@ -59,9 +59,8 @@ function ListUsersPage() {
         card.classList.add("playlist-card-focused");
 
         card.scrollIntoView({
-          behavior: "smooth",
-          block: "nearest",
-          inline: "nearest",
+          block: "center",
+          inline: "center",
         });
       }
     }
@@ -350,30 +349,42 @@ function ListUsersPage() {
     };
   }, 0);
 
+  const colors = [
+    "#4FE291",
+    "#9b59b6",
+    "#3498db",
+    "#e67e22",
+    "#e74c3c",
+    "#f1c40f",
+    "#1abc9c",
+    "#d35400",
+  ];
   const cardsHTML = listPlaylistsData
-    .map(
-      (user, index) => `
+    .map((user, index) => {
+      const randomBodyColor = colors[index % colors.length];
+      return `
       <div class="playlist-card" data-index="${index}">
         <div class="playlist-icon-wrapper user-icon-wrapper">
-             <img src="./assets/account-user.png" alt="User" class="user-avatar" />
+          <svg width="176" height="205" viewBox="0 0 176 205" fill="none" xmlns="http://www.w3.org/2000/svg"> 
+            <path d="M87.7082 204.703C64.2597 204.703 40.8091 204.729 17.3606 204.692C6.80232 204.675 -0.252919 197.488 0.0670946 186.957C0.192967 182.82 0.478846 178.632 1.27035 174.581C7.41248 143.158 31.2642 120.275 62.9775 115.248C65.4608 114.856 67.9954 114.628 70.5085 114.611C81.7133 114.538 92.9202 114.391 104.121 114.598C135.885 115.184 164.059 136.95 172.798 167.483C174.581 173.713 175.571 180.062 175.674 186.56C175.846 197.678 169.011 204.692 157.834 204.699C134.458 204.711 111.082 204.703 87.7082 204.703Z" fill="${randomBodyColor}"></path> 
+            <path d="M142.507 55.0326C142.543 85.1651 117.996 109.723 87.842 109.721C57.701 109.719 33.1346 85.1352 33.1837 55.0241C33.2327 24.9321 57.5922 0.585455 87.7375 0.495851C117.921 0.406247 142.471 24.851 142.507 55.0326Z" fill="#F0B696"></path> 
+          </svg>
         </div>
         <div class="playlist-card-content">
           <p class="playlist-card-title">${user ? user.playlistName : "N/A"}</p>
-          <p class="playlist-card-username">${
-            user ? user.playlistUsername : "N/A"
-          }</p>
         </div>
       </div>
-    `,
-    )
+    `;
+    })
     .join("");
 
   // Add Playlist Card HTML
   const addPlaylistCardHTML = `
-      <div class="playlist-card" data-action="add-playlist">
-        <div class="playlist-icon-wrapper add-icon-wrapper">
-             <!-- Use text logic for perfect green circle plus if image fails, or use image -->
-             <span style="font-size: 60px; color: white; line-height: 0; padding-bottom: 8px;">+</span>
+      <div class="playlist-card add-playlist" data-action="add-playlist">
+        <div class="playlist-icon-wrapper">
+          <div class="plus-circle">
+            <span style="font-size: 60px; color: white; line-height: 0;">+</span>
+          </div>
         </div>
         <div class="playlist-card-content">
           <p class="playlist-card-title">Add Playlist</p>
