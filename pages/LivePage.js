@@ -1014,16 +1014,22 @@ function LivePage() {
       if (!element) return;
       const textElement = element.querySelector(selector);
       if (textElement) {
-        textElement.classList.remove("lp-marquee-active");
-        textElement.removeAttribute("data-marquee");
-        textElement.style.removeProperty("--duration");
+        // Clear any other active marquees first, except this one
+        const activeMarquees = document.querySelectorAll(".lp-marquee-active");
+        activeMarquees.forEach((el) => {
+          if (el !== textElement) {
+            el.classList.remove("lp-marquee-active");
+            el.removeAttribute("data-marquee");
+            el.style.removeProperty("--duration");
+          }
+        });
+
+        if (textElement.classList.contains("lp-marquee-active")) return;
 
         if (textElement.scrollWidth > textElement.clientWidth) {
-          textElement.setAttribute(
-            "data-marquee",
-            textElement.textContent || "",
-          );
-          const pxPerSecond = 50; // Adjust for speed
+          const text = (textElement.textContent || "").trim();
+          textElement.setAttribute("data-marquee", text);
+          const pxPerSecond = 50;
           const durationSeconds = Math.max(
             8,
             Math.round(textElement.scrollWidth / pxPerSecond),
@@ -1044,7 +1050,7 @@ function LivePage() {
 
     clearFast("lp-focused");
     clearFast("lp-control-focused");
-    clearMarquees();
+    // clearMarquees(); removed from here, handled in handleMarquee
 
     // Blur inputs if not in search
     if (
