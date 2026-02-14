@@ -3,7 +3,7 @@
   width: 100%;
   animation: fadeInOut 1s ease-in-out;
   min-height: 100vh;
-  color: white;
+  color: var(--app-text-white);
   background: var(--app-bg);
   overflow-x: hidden;
 }
@@ -31,7 +31,7 @@
 
   top: 0;
   background:
-    linear-gradient(181.38deg, rgba(15, 15, 15, 0.07) 76.76%, #0d0e3b 95.16%),
+    var(--app-overlay-gradient),
     linear-gradient(
       1.38deg,
       rgba(15, 15, 15, 0.07) 76.76%,
@@ -61,7 +61,7 @@
   font-size: 30px;
   font-weight: 600;
   margin: 20px 60px 16px;
-  color: white;
+  color: var(--app-text-white);
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
@@ -210,7 +210,7 @@
 
 .home-card-text h2 {
   font-size: 24px;
-  color: white;
+  color: var(--app-text-white);
   font-weight: 700;
   margin: 0;
   padding: 0 15px;
@@ -338,7 +338,7 @@
   width: 50%;
   font-size: 16px;
   font-weight: 400;
-  color: white;
+  color: var(--app-text-white);
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
 }
 

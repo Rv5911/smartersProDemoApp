@@ -3,7 +3,7 @@ function FlowLivePlayerComponent(
   srcUrl = "",
   poster = "/assets/placeholder.png",
   height = "100%",
-  channelName = ""
+  channelName = "",
 ) {
   const id = "flowplayer-live";
   const aspectRatioBtn = document.querySelector(".flow-aspect-ratio-div");
@@ -16,7 +16,7 @@ function FlowLivePlayerComponent(
     : "";
   const currentPlaylist = playlistsData
     ? JSON.parse(playlistsData).filter(
-        (pl) => pl.playlistName === currentPlaylistName
+        (pl) => pl.playlistName === currentPlaylistName,
       )[0]
     : {};
   const timeFormat =
@@ -67,8 +67,8 @@ function FlowLivePlayerComponent(
         return `
           <div class="livetv-player-epg-item">
             <p class="livetv-player-epg-title">${startTime} - ${endTime} ${
-          decodeBase64(epg.title) || "Untitled"
-        }</p>
+              decodeBase64(epg.title) || "Untitled"
+            }</p>
             <p class="livetv-player-epg-description">${
               decodeBase64(epg.description) || "No description available"
             }</p>
@@ -471,7 +471,7 @@ function FlowLivePlayerComponent(
         window.VideoAspectRatio.showOverlay(newLabel);
       } else {
         console.warn(
-          "Aspect ratio handler: No video element or VideoAspectRatio module found"
+          "Aspect ratio handler: No video element or VideoAspectRatio module found",
         );
       }
     };
@@ -505,7 +505,7 @@ function FlowLivePlayerComponent(
       <div class="live-video-controls">
 
         <div id="lp-fullscreen-btn" class="lp-fullscreen-btn">
-          <i class="fa-sharp fa-solid fa-expand lp-fullscreen-icon"></i>
+          <i class="fa-sharp fa-solid fa-expand lp-fullscreen-icon" style="color:var(--app-text-color)"></i>
         </div>
       </div>
       <div id="${id}" class="flowplayer" style="height:100%; width:100%;">
@@ -514,7 +514,7 @@ function FlowLivePlayerComponent(
             /\.ts(\?.*)?$/i,
             function (m, q) {
               return `.m3u8${q || ""}`;
-            }
+            },
           )}">
         </video>
       </div>

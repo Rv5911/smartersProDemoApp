@@ -184,21 +184,58 @@ async function MovieDetailPage() {
   var focusableEls = [];
 
   function setFocus(el) {
+    const navbar = document.querySelector("#navbar-root");
     for (var i = 0; i < focusableEls.length; i++) {
-      if (focusableEls[i])
+      if (focusableEls[i]) {
         focusableEls[i].classList.remove("movie-detail-button-focused");
+        focusableEls[i].classList.remove("focused");
+        const marquee = focusableEls[i].querySelector(".movie-title-marquee");
+        if (marquee) marquee.classList.remove("marquee-active");
+      }
     }
 
     if (el) {
-      el.classList.add("movie-detail-button-focused");
+      const isMovieCard = el.classList.contains("movie-card");
+      if (isMovieCard) {
+        el.classList.add("focused");
+        activateMoviesMarquee(el);
+        // Hide navbar when focus is on "More Like This" cards
+        if (navbar) navbar.style.display = "none";
+      } else {
+        el.classList.add("movie-detail-button-focused");
+        // Show navbar when focus is on top buttons
+        const isTopBtn =
+          el.classList.contains("movie-detail-play-button") ||
+          el.classList.contains("movie-detail-from-start-button") ||
+          el.classList.contains("movie-detail-fav-button");
+        if (isTopBtn && navbar) navbar.style.display = "flex";
+      }
+
       try {
         el.focus();
-        if (el.scrollIntoViewIfNeeded) el.scrollIntoViewIfNeeded(true);
-        else if (el.scrollIntoView)
-          el.scrollIntoView({
-            block: "nearest",
-            inline: "nearest",
-          });
+
+        const isTopBtn =
+          el.classList.contains("movie-detail-play-button") ||
+          el.classList.contains("movie-detail-from-start-button") ||
+          el.classList.contains("movie-detail-fav-button");
+
+        if (isTopBtn) {
+          // Force scroll to top when focused on top buttons
+          const container = document.querySelector(
+            ".movie-detail-page-container",
+          );
+          if (container) {
+            container.scrollTo({ top: 0, behavior: "smooth" });
+          }
+        } else {
+          if (el.scrollIntoViewIfNeeded) el.scrollIntoViewIfNeeded(true);
+          else if (el.scrollIntoView) {
+            el.scrollIntoView({
+              block: "center",
+              inline: "nearest",
+            });
+          }
+        }
       } catch (err) {}
     }
   }
@@ -219,6 +256,15 @@ async function MovieDetailPage() {
     if (castEls && castEls.length > 0) {
       for (var j = 0; j < castEls.length; j++) {
         focusableEls.push(castEls[j]);
+      }
+    }
+
+    var moreLikeThisEls = document.querySelectorAll(
+      ".movie-detail-more-like-this-list .movie-card",
+    );
+    if (moreLikeThisEls && moreLikeThisEls.length > 0) {
+      for (var k = 0; k < moreLikeThisEls.length; k++) {
+        focusableEls.push(moreLikeThisEls[k]);
       }
     }
 
@@ -378,6 +424,21 @@ async function MovieDetailPage() {
           } else {
             alert(res.message || "Unable to update favorites");
           }
+          return;
+        }
+
+        if (focused.classList.contains("movie-card")) {
+          const streamId = focused.getAttribute("data-stream-id");
+          const movie = window.allMoviesStreams.find(
+            (m) => String(m.stream_id) === String(streamId),
+          );
+          if (movie) {
+            localStorage.setItem("selectedMovieId", streamId);
+            localStorage.setItem("selectedMovieData", JSON.stringify(movie));
+            // Re-render the detail page for the selected movie
+            MovieDetailPage.cleanup();
+            Router.showPage("movieDetailPage");
+          }
         }
       }
 
@@ -402,6 +463,11 @@ async function MovieDetailPage() {
         (el) => el && el.offsetParent !== null,
       );
       var castArr = Array.from(castItems);
+      var mltCards = Array.from(
+        document.querySelectorAll(
+          ".movie-detail-more-like-this-list .movie-card",
+        ),
+      );
 
       if (e.key === "ArrowRight") {
         if (buttons.includes(focused)) {
@@ -415,6 +481,12 @@ async function MovieDetailPage() {
           if (idx < castArr.length - 1) {
             setFocus(castArr[idx + 1]);
             currentFocusIndex = focusableEls.indexOf(castArr[idx + 1]);
+          }
+        } else if (mltCards.includes(focused)) {
+          var idx = mltCards.indexOf(focused);
+          if (idx < mltCards.length - 1) {
+            setFocus(mltCards[idx + 1]);
+            currentFocusIndex = focusableEls.indexOf(mltCards[idx + 1]);
           }
         }
       } else if (e.key === "ArrowLeft") {
@@ -430,13 +502,20 @@ async function MovieDetailPage() {
             setFocus(castArr[idx - 1]);
             currentFocusIndex = focusableEls.indexOf(castArr[idx - 1]);
           }
+        } else if (mltCards.includes(focused)) {
+          var idx = mltCards.indexOf(focused);
+          if (idx > 0) {
+            setFocus(mltCards[idx - 1]);
+            currentFocusIndex = focusableEls.indexOf(mltCards[idx - 1]);
+          }
         }
       } else if (e.key === "ArrowUp") {
         const allDetailBtns = document.querySelectorAll(
-          ".movie-detail-button-focused",
+          ".movie-detail-button-focused, .focused",
         );
         allDetailBtns.forEach((btn) => {
           btn.classList.remove("movie-detail-button-focused");
+          btn.classList.remove("focused");
         });
 
         if (buttons.includes(focused)) {
@@ -450,8 +529,14 @@ async function MovieDetailPage() {
           return;
         } else if (castArr.includes(focused)) {
           if (buttons.length > 0) {
-            // Default to first button (Play) or maintain last focused button?
-            // Standard behavior usually implies going to the primary action.
+            setFocus(buttons[0]);
+            currentFocusIndex = focusableEls.indexOf(buttons[0]);
+          }
+        } else if (mltCards.includes(focused)) {
+          if (castArr.length > 0) {
+            setFocus(castArr[0]);
+            currentFocusIndex = focusableEls.indexOf(castArr[0]);
+          } else if (buttons.length > 0) {
             setFocus(buttons[0]);
             currentFocusIndex = focusableEls.indexOf(buttons[0]);
           }
@@ -461,6 +546,14 @@ async function MovieDetailPage() {
           if (castArr.length > 0) {
             setFocus(castArr[0]);
             currentFocusIndex = focusableEls.indexOf(castArr[0]);
+          } else if (mltCards.length > 0) {
+            setFocus(mltCards[0]);
+            currentFocusIndex = focusableEls.indexOf(mltCards[0]);
+          }
+        } else if (castArr.includes(focused)) {
+          if (mltCards.length > 0) {
+            setFocus(mltCards[0]);
+            currentFocusIndex = focusableEls.indexOf(mltCards[0]);
           }
         }
         // If focused is menuBtn, maybe go to PlayBtn?
@@ -613,58 +706,97 @@ async function MovieDetailPage() {
       durationFormatted = `${h}h ${m}m`;
     }
 
+    // --- More Like This logic ---
+    const allMovies = window.allMoviesStreams || [];
+    const currentCatId = data.movie_data ? data.movie_data.category_id : null;
+    const currentStreamId = data.movie_data ? data.movie_data.stream_id : null;
+
+    let relatedMovies = [];
+    if (currentCatId) {
+      relatedMovies = allMovies
+        .filter(
+          (m) =>
+            m &&
+            String(m.category_id) === String(currentCatId) &&
+            String(m.stream_id) !== String(currentStreamId),
+        )
+        .slice(0, 20);
+    }
+
+    let moreLikeThisHtml = "";
+    if (relatedMovies.length > 0) {
+      moreLikeThisHtml = `
+        <div class="movie-detail-more-like-this-section">
+          <h3 class="movie-detail-cast-heading">More Like This</h3>
+          <div class="movie-detail-more-like-this-list">
+            ${relatedMovies
+              .map((m, idx) => {
+                // We use createMovieCard from MoviesPage.js which is globally available
+                const movieData = formatMovieData(m);
+                return createMovieCard(movieData, "normal", 999, idx);
+              })
+              .join("")}
+          </div>
+        </div>
+      `;
+    }
+
     return `
       <div class="movie-detail-page-container">
           <img class="movie-detail-backdrop-image" src="${backdrop}" onerror="this.src='./assets/demo-img-card.png'" />
           <div class="movie-detail-overlay"></div>
           
-          <div class="movie-detail-content-wrapper">
-              <h1 class="movie-detail-title">${movieName}</h1>
-              
-              <div class="movie-detail-meta">
-                  <span class="movie-detail-rating-stars">
-                     ${starsHtml}
-                  </span>
-                  <span class="movie-detail-rating-value">${ratingStr}</span>
-                  <span class="movie-detail-duration"><i class="far fa-clock" style="margin-right: 8px;"></i>${durationFormatted}</span>
-                  <span class="movie-detail-resolution-badge">HD</span>
-                  <span class="movie-detail-date">${releaseDate}</span>
-              </div>
+          <div class="movie-detail-scroll-container">
+            <div class="movie-detail-content-wrapper">
+                <h1 class="movie-detail-title">${movieName}</h1>
+                
+                <div class="movie-detail-meta">
+                    <span class="movie-detail-rating-stars">
+                       ${starsHtml}
+                    </span>
+                    <span class="movie-detail-rating-value">${ratingStr}</span>
+                    <span class="movie-detail-duration"><i class="far fa-clock" style="margin-right: 8px;"></i>${durationFormatted}</span>
+                    <span class="movie-detail-resolution-badge">HD</span>
+                    <span class="movie-detail-date">${releaseDate}</span>
+                </div>
 
-               <div class="movie-detail-credits">
-                <p><strong>Directed By :</strong> ${director}</p>
-                <p><strong>Genre :</strong> ${genre}</p>
-              </div>
+                 <div class="movie-detail-credits">
+                  <p><strong>Directed By :</strong> ${director}</p>
+                  <p><strong>Genre :</strong> ${genre}</p>
+                </div>
 
-              <p class="movie-detail-description">${description}</p>
+                <p class="movie-detail-description">${description}</p>
 
-              <div class="movie-detail-buttons">
-                  <button class="movie-detail-play-button gradient-btn" tabindex="0">
-                      <i class="fa fa-play"></i>
-                      ${isContinueWatchingMovie ? "Resume" : "Play Now"}
-                  </button>
-                  ${
-                    isContinueWatchingMovie
-                      ? '<button class="movie-detail-from-start-button gradient-btn" tabindex="0"><i class="fa fa-undo"></i> Start from beginning</button>'
-                      : ""
-                  }
-                  ${
-                    data.info && data.info.youtube_trailer
-                      ? '<button class="movie-detail-more-info-button gradient-btn" style="display: none;" tabindex="0"><i class="fa fa-film"></i> Watch Trailer</button>'
-                      : ""
-                  }
-                  <button class="movie-detail-fav-button gradient-btn" tabindex="0">
-                    <span class="heart-icon">${heartIconHtml}</span>
-                    <span class="fav-text" style="margin-left: 8px;">My Fav</span>
-                  </button>
-              </div>
-          </div>
+                <div class="movie-detail-buttons">
+                    <button class="movie-detail-play-button gradient-btn" tabindex="0">
+                        <i class="fa fa-play"></i>
+                        ${isContinueWatchingMovie ? "Resume" : "Play Now"}
+                    </button>
+                    ${
+                      isContinueWatchingMovie
+                        ? '<button class="movie-detail-from-start-button gradient-btn" tabindex="0"><i class="fa fa-undo"></i> Start from beginning</button>'
+                        : ""
+                    }
+                    ${
+                      data.info && data.info.youtube_trailer
+                        ? '<button class="movie-detail-more-info-button gradient-btn" style="display: none;" tabindex="0"><i class="fa fa-film"></i> Watch Trailer</button>'
+                        : ""
+                    }
+                    <button class="movie-detail-fav-button gradient-btn" tabindex="0">
+                      <span class="heart-icon">${heartIconHtml}</span>
+                      <span class="fav-text" style="margin-left: 8px;">My Fav</span>
+                    </button>
+                </div>
+            </div>
 
-          <div class="movie-detail-cast-section">
-             <h3 class="movie-detail-cast-heading">Cast & Crew</h3>
-             <div class="movie-detail-cast-list">
-                ${castHtml || '<p class="movie-no-cast-text">No cast information available</p>'}
-             </div>
+            <div class="movie-detail-cast-section-relative">
+               <h3 class="movie-detail-cast-heading">Cast & Crew</h3>
+               <div class="movie-detail-cast-list">
+                  ${castHtml || '<p class="movie-no-cast-text">No cast information available</p>'}
+               </div>
+            </div>
+
+            ${moreLikeThisHtml}
           </div>
       </div>
     `;

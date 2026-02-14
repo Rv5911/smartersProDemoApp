@@ -133,6 +133,11 @@ const Router = (function () {
 
     currentPageName = name;
     localStorage.setItem("currentPage", name);
+
+    // Apply global theme on every page show
+    if (typeof applyTheme === "function") {
+      applyTheme();
+    }
   }
 
   return {

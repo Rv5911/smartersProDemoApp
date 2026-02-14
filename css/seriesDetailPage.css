@@ -7,7 +7,7 @@
   overflow-y: auto;
   /* Allow full page scrolling */
   background: var(--app-bg);
-  color: white;
+  color: var(--app-text-white);
   font-family: "Poppins", sans-serif;
 }
 
@@ -31,7 +31,7 @@
   right: 0;
   bottom: 0;
   background:
-    linear-gradient(181.38deg, rgba(15, 15, 15, 0.09) 15.76%, #000 95.16%),
+    var(--app-overlay-gradient),
     linear-gradient(
       1.38deg,
       rgba(15, 15, 15, 0.09) 76.76%,
@@ -77,7 +77,7 @@
   margin-bottom: 20px;
   line-height: 1.1;
   text-transform: uppercase;
-  color: #fff;
+  color: var(--app-text-white);
   letter-spacing: -2px;
 }
 
@@ -93,7 +93,7 @@
 
 .series-detail-season-count {
   font-weight: 700;
-  color: white;
+  color: var(--app-text-white);
 }
 
 .series-detail-resolution-badge {

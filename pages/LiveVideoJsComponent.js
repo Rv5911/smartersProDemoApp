@@ -3,7 +3,7 @@ function LiveVideoJsComponent(
   srcUrl = "",
   poster = "/assets/placeholder.png",
   height = "100%",
-  channelName = ""
+  channelName = "",
 ) {
   const id = "live-videojs-player";
   let epgData = [];
@@ -24,10 +24,10 @@ function LiveVideoJsComponent(
   console.log(srcUrl, "srcUrlsrcUrlsrcUrl");
 
   const currentPlaylistName = JSON.parse(
-    localStorage.getItem("selectedPlaylist")
+    localStorage.getItem("selectedPlaylist"),
   ).playlistName;
   const currentPlaylist = JSON.parse(
-    localStorage.getItem("playlistsData")
+    localStorage.getItem("playlistsData"),
   ).filter((pl) => pl.playlistName === currentPlaylistName)[0];
 
   const streamFormat = currentPlaylist.streamFormat;
@@ -265,7 +265,7 @@ function LiveVideoJsComponent(
     if (isTsStream && typeof flowplayer !== "undefined") {
       const hlsUrl = srcUrl.replace(
         /\.ts(\?.*)?$/i,
-        (m, q) => `.m3u8${q || ""}`
+        (m, q) => `.m3u8${q || ""}`,
       );
       const fpContainer = document.getElementById("flowplayer-live");
       if (fpContainer) {
@@ -510,7 +510,7 @@ function LiveVideoJsComponent(
         if (fullscreenBtn) {
           fullscreenBtn.addEventListener("click", () => {
             const playerContainer = document.querySelector(
-              ".live-video-player-div"
+              ".live-video-player-div",
             );
 
             if (!document.fullscreenElement) {
@@ -618,7 +618,7 @@ function LiveVideoJsComponent(
         window.VideoAspectRatio.showOverlay(newLabel);
       } else {
         console.warn(
-          "Aspect ratio handler: No video element or VideoAspectRatio module found"
+          "Aspect ratio handler: No video element or VideoAspectRatio module found",
         );
       }
     };
@@ -697,7 +697,7 @@ function LiveVideoJsComponent(
       </div>
       <div class="live-video-controls">
         <div id="lp-fullscreen-btn" class="lp-fullscreen-btn">
-          <i class="fa-sharp fa-solid fa-expand lp-fullscreen-icon"></i>
+          <i class="fa-sharp fa-solid fa-expand lp-fullscreen-icon" style="color:var(--app-text-color)"></i>
         </div>
       </div>
       ${
@@ -706,7 +706,7 @@ function LiveVideoJsComponent(
              <video>
                <source type="application/x-mpegURL" src="${srcUrl.replace(
                  /\.ts(\?.*)?$/i,
-                 (m, q) => `.m3u8${q || ""}`
+                 (m, q) => `.m3u8${q || ""}`,
                )}">
              </video>
            </div>`

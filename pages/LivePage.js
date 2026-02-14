@@ -774,7 +774,7 @@ function LivePage() {
           </div> 
         </div>
         <div class="lp-channel-info-wrapper">
-          <div class="lp-channel-name">${stream.name}</div>
+          <div class="lp-channel-name-container"><div class="lp-channel-name">${stream.name}</div></div>
           <div class="lp-program-info">Program info Entertainment</div>
           <div class="lp-progress-container">
       <div class="lp-progress-bar">
@@ -1953,6 +1953,7 @@ function LivePage() {
     } else if (focusedSection === "sidebar") {
       focusedSection = "channels";
     } else if (focusedSection === "channelSearch") {
+      if (!currentPlayingStream) return;
       focusedSection = "player";
       playerSubFocus = 1; // Focus Play/Pause
     } else if (focusedSection === "channels") {
@@ -1964,6 +1965,7 @@ function LivePage() {
       ) {
         buttonFocusIndex = 1; // Focus Remove Button
       } else {
+        if (!currentPlayingStream) return;
         focusedSection = "player";
         playerSubFocus = 1; // Focus Play/Pause
         buttonFocusIndex = -1;
