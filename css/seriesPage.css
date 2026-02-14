@@ -76,6 +76,7 @@
 
 .series-fav-container {
   padding-left: 40px;
+  padding-top: 40px;
   padding-right: 40px;
 }
 
@@ -236,15 +237,25 @@
   width: auto;
   position: absolute;
   top: 10px;
-  right: 7px;
-  background: #fea807;
+  left: 10px;
+  background: var(--app-text-color) !important;
   zoom: 1.2;
   white-space: nowrap;
   color: white;
   padding: 2px 10px;
   border-radius: 12px;
   font-size: 14px;
+  border: 1px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   z-index: 15;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.series-card.focused .movie-card-rating {
+  opacity: 1;
 }
 
 /* Large Card Overrides */
@@ -293,9 +304,12 @@
   transition: opacity 0.2s ease;
 }
 
-.series-card.focused .series-card-heart {
-  opacity: 1;
+.series-card-heart.fas {
+  opacity: 1 !important;
+  color: #ff4d4d !important;
 }
+
+/* Removed opacity: 0 on focus to keep heart visible */
 
 .series-card-play-div {
   display: flex;

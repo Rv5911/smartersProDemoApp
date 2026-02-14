@@ -114,7 +114,8 @@ async function MovieDetailPage() {
 
   try {
     if (tmdbId) {
-      getMovieCastData = await getMovieCast(tmdbId);
+      // getMovieCastData = await getMovieCast(tmdbId);
+      getMovieCastData = [];
     }
   } catch (err) {
     console.error("Error fetching movie cast:", err);

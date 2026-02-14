@@ -5,7 +5,7 @@ window.onload = function () {
   window.allseriesCategories = [];
   window.allLiveStreams = [];
   window.liveCategories = [];
-  window.notValid=true;
+  window.notValid = true;
 
   if (typeof tizen !== "undefined" && tizen.tvinputdevice) {
     const keys = tizen.tvinputdevice.getSupportedKeys();
@@ -94,7 +94,7 @@ window.onload = function () {
       localStorage.setItem("currentPage", "login");
       Router.showPage("login");
     }
-  }, 3000);
+  }, 5000);
 
   // if (typeof logAllDnsEntries === "function") logAllDnsEntries();
   if (typeof getTmbdId === "function") getTmbdId();

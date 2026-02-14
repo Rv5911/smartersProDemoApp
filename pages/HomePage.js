@@ -173,13 +173,9 @@ async function HomePage() {
             if (isFav) {
               icon.classList.remove("far");
               icon.classList.add("fas");
-              icon.style.color = "#ff4d4d";
-              icon.style.opacity = "1";
             } else {
               icon.classList.remove("fas");
               icon.classList.add("far");
-              icon.style.color = "white";
-              icon.style.opacity = "0.6";
             }
           }
         });
@@ -747,8 +743,31 @@ async function HomePage() {
                     JSON.stringify(movie),
                   );
 
-                if (HomePage.cleanup) HomePage.cleanup();
-                Router.showPage("movieDetailPage");
+                // Skip detail page for "Continue Watching" category (category 1)
+                if (navState.currentCategory === 1 && movie) {
+                  const playlist = JSON.parse(
+                    localStorage.getItem("currentPlaylistData") || "{}",
+                  );
+                  const url = playlist.server_info
+                    ? `${playlist.server_info.server_protocol}://${playlist.server_info.url}:${playlist.server_info.port}/movie/${playlist.user_info.username}/${playlist.user_info.password}/${movie.stream_id}.${movie.container_extension}`
+                    : "";
+
+                  localStorage.setItem(
+                    "playingItemData",
+                    JSON.stringify(movie),
+                  );
+                  localStorage.setItem("selectedVideoItemUrl", url);
+                  localStorage.setItem("selectedMovieId", movie.stream_id);
+                  localStorage.setItem("from", "movie");
+                  localStorage.setItem("fromHome", "true");
+                  localStorage.setItem("currentPage", "videojsPlayer");
+
+                  if (HomePage.cleanup) HomePage.cleanup();
+                  Router.showPage("videoJsPlayer");
+                } else {
+                  if (HomePage.cleanup) HomePage.cleanup();
+                  Router.showPage("movieDetailPage");
+                }
               } else if (type === "series") {
                 localStorage.setItem(
                   "seriesCategoryIndex",
@@ -942,6 +961,27 @@ async function HomePage() {
         ? favMoviesIds.includes(String(id))
         : favSeriesIds.includes(String(id));
 
+    let progressHtml = "";
+    if (type === "movie" && catIdx === 1) {
+      try {
+        const currentPlaylist = getCurrentPlaylist();
+        const recentData = currentPlaylist.continueWatchingMovies || [];
+        const matched = recentData.find(
+          (item) => item && String(item.itemId) === String(id),
+        );
+        if (matched && matched.duration > 0) {
+          const progress = (matched.resumeTime / matched.duration) * 100;
+          progressHtml = `
+            <div class="home-movie-progress-container">
+              <div class="home-movie-progress-bar" style="width: ${progress}%"></div>
+            </div>
+          `;
+        }
+      } catch (e) {
+        console.error("Error calculating progress in createHomeCard:", e);
+      }
+    }
+
     return `
             <div class="home-card" data-category="${catIdx}" data-index="${cardIdx}" data-stream-id="${id}" data-type="${type}" data-image-url="${image}" tabindex="0">
                 <div class="home-card-inner" style="background-image: url('${
@@ -951,9 +991,7 @@ async function HomePage() {
                     <div class="home-card-heart-container">
                         <i class="${
                           isFav ? "fas" : "far"
-                        } fa-heart home-card-heart" style="color: ${
-                          isFav ? "#ff4d4d" : "white"
-                        }; opacity: ${isFav ? "1" : "0.6"};"></i>
+                        } fa-heart home-card-heart"></i>
                     </div>
                     <div class="home-card-rating">
        <i class="fas fa-star"></i>                        ${rating}
@@ -964,6 +1002,7 @@ async function HomePage() {
                     <div class="home-card-text">
                         <h2 class="home-title-marquee">${name}</h2>
                     </div>
+                    ${progressHtml}
                 </div>
             </div>
         `;
@@ -992,7 +1031,7 @@ async function HomePage() {
               allRecent.length > 0
                 ? `
                 <div class="home-recent-container">
-                    <h1>Recently Watched</h1>
+                    <h1>Continue Watching</h1>
                     <div class="home-card-list" data-category="1">${allRecent
                       .map((it, idx) => createHomeCard(it, 1, idx))
                       .join("")}</div>

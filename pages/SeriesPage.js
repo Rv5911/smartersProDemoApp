@@ -357,9 +357,7 @@ function createSeriesCard(seriesData, size, categoryIndex, seriesIndex) {
                 <div class="series-card-heart-container">
                     <i class="${
                       isSeriesFav ? "fas" : "far"
-                    } fa-heart series-card-heart" style="color: ${
-                      isSeriesFav ? "#ff4d4d" : "white"
-                    }; opacity: ${isSeriesFav ? "1" : "0.6"};"></i>
+                    } fa-heart series-card-heart"></i>
                 </div>
                 <div class="movie-card-rating">
                   <i class="fas fa-star"></i>
@@ -1007,13 +1005,9 @@ function updateAllSeriesCardsHeartDisplay(seriesId, isFav) {
         if (isFav) {
           heartEl.classList.remove("far");
           heartEl.classList.add("fas");
-          heartEl.style.color = "#ff4d4d";
-          heartEl.style.opacity = "1";
         } else {
           heartEl.classList.remove("fas");
           heartEl.classList.add("far");
-          heartEl.style.color = "white";
-          heartEl.style.opacity = "0.6";
         }
       }
     });
@@ -2487,7 +2481,7 @@ function SeriesPage() {
     // Pass current sort option to getAPISeriesCategories
     let apiCategories = getAPISeriesCategories(currentSort);
 
-    // ALWAYS show these three categories at the top, in this specific order
+    // ALWAYS show these two categories at the top, in this specific order
     let fixedTopCategories = [
       {
         title: "My Fav",
@@ -2496,13 +2490,7 @@ function SeriesPage() {
         containerClass: "series-fav-container",
       },
       {
-        title: "Popular Series",
-        series: popularSeries,
-        id: "popular",
-        containerClass: "series-popular-container",
-      },
-      {
-        title: "Recently Watched",
+        title: "Continue Watching",
         series: recentSeriesArray,
         id: "recent",
         containerClass: "recently-watched-container",

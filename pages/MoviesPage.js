@@ -347,6 +347,15 @@ function createMovieCard(movieData, size, categoryIndex, movieIndex) {
     }
   }
 
+  let progressHtml = "";
+  if (movieData.progress && movieData.progress > 0) {
+    progressHtml = `
+      <div class="movie-progress-container">
+        <div class="movie-progress-bar" style="width: ${movieData.progress}%"></div>
+      </div>
+    `;
+  }
+
   return `<div class="${cardClass}" 
             data-category="${categoryIndex}" 
             data-index="${movieIndex}" 
@@ -363,9 +372,7 @@ function createMovieCard(movieData, size, categoryIndex, movieIndex) {
                 <div class="movie-card-heart-container">
                     <i class="${
                       isMovieFav ? "fas" : "far"
-                    } fa-heart movie-card-heart" style="color: ${
-                      isMovieFav ? "#ff4d4d" : "white"
-                    }; opacity: ${isMovieFav ? "1" : "0.6"};"></i>
+                    } fa-heart movie-card-heart"></i>
                 </div>
                 <div class="movie-card-rating">
                 <i class="fas fa-star"></i>
@@ -377,6 +384,7 @@ function createMovieCard(movieData, size, categoryIndex, movieIndex) {
                 <div class="movie-card-text">
                     <h2 class="${titleClass}">${movieData.title || "Unknown"}</h2>
                 </div>
+                ${progressHtml}
             </div>
         </div>`;
 }
@@ -418,6 +426,23 @@ function loadMoviesChunk(category, categoryIndex) {
 
     let movieData = formatMovieData(movieStream);
     if (!movieData) continue;
+
+    // Add progress calculation for "Recently Watched" category
+    if (category.id === "recent") {
+      try {
+        const currentPlaylist = getCurrentPlaylist();
+        const recentData = currentPlaylist.continueWatchingMovies || [];
+        const movieId = String(movieStream.stream_id || movieStream.num);
+        const matched = recentData.find(
+          (item) => item && String(item.itemId) === movieId,
+        );
+        if (matched && matched.duration > 0) {
+          movieData.progress = (matched.resumeTime / matched.duration) * 100;
+        }
+      } catch (e) {
+        console.error("Error calculating movie progress:", e);
+      }
+    }
 
     let size = category.id === "popular" ? "normal" : "normal";
     cardsHTML += createMovieCard(movieData, size, categoryIndex, i);
@@ -914,12 +939,32 @@ function proceedToMovieDetail(categoryIndex, cardIndex, streamId) {
 
   saveMoviesNavigationState(); // Save state before navigating
 
-  cleanupMoviesNavigation();
+  // Skip detail page for "Continue Watching" category (id: "recent")
+  const category = (window.allMoviesCategories || [])[categoryIndex];
+  if (category && category.id === "recent" && selectedMovieItem) {
+    const playlist = JSON.parse(
+      localStorage.getItem("currentPlaylistData") || "{}",
+    );
+    const url = playlist.server_info
+      ? `${playlist.server_info.server_protocol}://${playlist.server_info.url}:${playlist.server_info.port}/movie/${playlist.user_info.username}/${playlist.user_info.password}/${selectedMovieItem.stream_id}.${selectedMovieItem.container_extension}`
+      : "";
 
-  localStorage.setItem("currentPage", "movieDetailPage");
-  localStorage.setItem("navigationFocus", "movieDetailPage");
+    localStorage.setItem("playingItemData", JSON.stringify(selectedMovieItem));
+    localStorage.setItem("selectedVideoItemUrl", url);
+    localStorage.setItem("selectedMovieId", selectedMovieItem.stream_id);
+    localStorage.setItem("from", "movie");
+    localStorage.setItem("currentPage", "videojsPlayer");
 
-  Router.showPage("movieDetailPage");
+    cleanupMoviesNavigation();
+    Router.showPage("videoJsPlayer");
+    if (document.querySelector("#navbar-root"))
+      document.querySelector("#navbar-root").style.display = "none";
+  } else {
+    cleanupMoviesNavigation();
+    localStorage.setItem("currentPage", "movieDetailPage");
+    localStorage.setItem("navigationFocus", "movieDetailPage");
+    Router.showPage("movieDetailPage");
+  }
 }
 
 function handleMoviesLongPressEnter() {
@@ -1043,13 +1088,9 @@ function updateAllMovieCardsHeartDisplay(streamId, isFav) {
         if (isFav) {
           heartEl.classList.remove("far");
           heartEl.classList.add("fas");
-          heartEl.style.color = "#ff4d4d";
-          heartEl.style.opacity = "1";
         } else {
           heartEl.classList.remove("fas");
           heartEl.classList.add("far");
-          heartEl.style.color = "white";
-          heartEl.style.opacity = "0.6";
         }
       }
     });
@@ -2409,7 +2450,7 @@ function MoviesPage() {
     // Pass current sort option to getAPICategories
     let apiCategories = getAPICategories(currentSort);
 
-    // ALWAYS show these three categories at the top, in this specific order
+    // ALWAYS show these two categories at the top, in this specific order
     let fixedTopCategories = [
       {
         title: "My Fav",
@@ -2418,13 +2459,7 @@ function MoviesPage() {
         containerClass: "movies-fav-container",
       },
       {
-        title: "Popular Movies",
-        movies: popularMovies,
-        id: "popular",
-        containerClass: "movies-popular-container",
-      },
-      {
-        title: "Recently Watched",
+        title: "Continue Watching",
         movies: recentMoviesArray,
         id: "recent",
         containerClass: "recently-watched-container",

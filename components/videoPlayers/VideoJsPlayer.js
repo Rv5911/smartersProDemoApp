@@ -201,7 +201,7 @@ function VideoJsPlayer(poster = "") {
             100;
         }
         seekBar.style.background = `linear-gradient(to right,
-          white 0%, white ${percent}%,
+          var(--app-text-color) 0%, var(--app-text-color) ${percent}%,
           #aaa ${percent}%, #aaa ${bufferedPercent}%,
           #888 ${bufferedPercent}%, #888 100%)`;
       } catch (err) {
@@ -469,7 +469,7 @@ function VideoJsPlayer(poster = "") {
       showControls();
       aspectRatioButton.classList.add("focused");
       const icon = aspectRatioButton.querySelector("i");
-      if (icon) icon.style.color = "var(--gold)";
+      if (icon) icon.style.color = "white";
 
       // Remove focused class from play overlay and seek bar
       if (playOverlay) playOverlay.classList.remove("focused");
@@ -708,7 +708,7 @@ function VideoJsPlayer(poster = "") {
         }
 
         seekBar.style.background = `linear-gradient(to right,
-          white 0%, white ${percent}%,
+          var(--app-text-color) 0%, var(--app-text-color) ${percent}%,
           #aaa ${percent}%, #aaa ${bufferedPercent}%,
           #888 ${bufferedPercent}%, #888 100%)`;
       });
