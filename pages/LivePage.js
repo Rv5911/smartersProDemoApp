@@ -22,6 +22,7 @@ function LivePage() {
   let currentEpgData = [];
   let currentPlayingStream = null;
   let lastToggleTime = 0;
+  let isVideoLoading = false; // Track video player loading state
 
   // Search State
   let categorySearchQuery = "";
@@ -1204,6 +1205,7 @@ function LivePage() {
     }
 
     currentPlayingStream = stream; // Set early to prevent multiple reloads
+    isVideoLoading = true; // Set loading state
 
     // Show loading indicator
     const videoWrapper = document.querySelector(".lp-video-wrapper");
@@ -1283,6 +1285,11 @@ function LivePage() {
         } else {
           videoWrapper.innerHTML = `<video src="${liveVideoUrl}" controls autoplay style="width:100%; height:100%;" data-stream-id="${stream.stream_id}"></video>`;
         }
+
+        // Clear loading state after a short delay to allow player initialization
+        setTimeout(() => {
+          isVideoLoading = false;
+        }, 1000);
       } else {
         if (window.livePlayer && typeof window.livePlayer.play === "function") {
           window.livePlayer.play();
@@ -1631,6 +1638,20 @@ function LivePage() {
       navigationFocus !== "channelSearch"
     ) {
       return; // Don't process keydown events until user navigates into the page
+    }
+
+    // Block navigation when video is loading
+    if (
+      isVideoLoading &&
+      ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Enter"].includes(
+        e.key,
+      )
+    ) {
+      e.preventDefault();
+      if (window.Toaster) {
+        window.Toaster.showToast("info", "Please wait, loading channel...");
+      }
+      return;
     }
 
     // Cross-browser fullscreen detection

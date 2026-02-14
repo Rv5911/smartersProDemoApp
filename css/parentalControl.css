@@ -22,13 +22,12 @@
   display: flex;
   margin-bottom: 40px;
   align-items: center;
-    border: 2px solid #afafaf64;
+  border: 2px solid transparent;
   padding-top: 18px;
   padding-bottom: 18px;
   padding-left: 30px;
   padding-right: 30px;
   background: #00000099;
-  border-radius: 10px;
   cursor: pointer;
   transition: all 0.3s ease;
 }
@@ -67,7 +66,7 @@
 }
 
 .parental-field.parental-focused {
- border: 2px solid #60AAF8;
+  border: 2px solid var(--app-text-color);
 }
 
 .parental-input:focus {
@@ -79,11 +78,10 @@
   padding-right: 45px;
   padding-top: 14px;
   padding-bottom: 14px;
-  border-radius: 50px;
-    color: white;
+  color: white;
   white-space: nowrap;
-    border: 2px solid #FFFFFF;
-    background-color: transparent;
+  border: 2px solid #ffffff;
+  background-color: transparent;
   font-size: 22px;
   text-align: center;
   font-weight: 600;
@@ -97,8 +95,8 @@
 }
 
 #parentalSaveBtn:focus {
-   background: var(--light-gradient) !important;
-    outline: none;
+  background: var(--app-text-color) !important;
+  outline: none;
 }
 
 #parentalSaveBtn:active {
@@ -106,8 +104,8 @@
 }
 
 .parental-save-btn-focused {
-   background: var(--light-gradient) !important;
-    outline: none;
+  background: var(--app-text-color) !important;
+  outline: none;
 }
 
 .parental-saveBtn-div {
@@ -122,11 +120,10 @@
   padding-top: 14px;
   margin-left: 20px;
   padding-bottom: 14px;
-    white-space: nowrap;
-  border-radius: 50px;
-    color: white;
-    border: 2px solid #FFFFFF;
-    background-color: transparent;
+  white-space: nowrap;
+  color: white;
+  border: 2px solid #ffffff;
+  background-color: transparent;
   font-size: 22px;
   text-align: center;
   font-weight: 600;
@@ -140,8 +137,8 @@
 }
 
 #parentalClearBtn:focus {
-   background: var(--light-gradient) !important;
-    outline: none;
+  background: var(--app-text-color) !important;
+  outline: none;
 }
 
 #parentalClearBtn:active {

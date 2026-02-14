@@ -1,53 +1,52 @@
 .account-info-container {
-    width: 100%;
-    height: 100%;
-    padding: 0;
-    color: white;
-    outline: none;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  color: white;
+  outline: none;
 }
 
 .account-header {
-    font-size: 40px;
-    font-weight: 500;
-    padding-left: 40px !important;
-    padding-top: 30px !important;
-    padding-bottom: 26px !important;
-    /* padding-left: 40px; */
-    display: flex;
-        border-radius: 12px;
+  font-size: 40px;
+  font-weight: 500;
+  padding-left: 40px !important;
+  padding-top: 30px !important;
+  padding-bottom: 26px !important;
+  /* padding-left: 40px; */
+  display: flex;
 
-    background: #5D5D5D !important;
-    align-items: center;
+  background: var(--app-text-color) !important;
+  align-items: center;
 }
 
 .account-details-list {
-    display: flex;
+  display: flex;
 
-    flex-direction: column;
+  flex-direction: column;
 }
 
 .account-detail-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 40px;
-    padding-bottom: 40px;
-     padding-left: 30px;
-    padding-right: 30px;
-    border-bottom: 2.5px solid #515151;
-    font-size: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  padding-left: 30px;
+  padding-right: 30px;
+  border-bottom: 2.5px solid var(--app-text-color);
+  font-size: 30px;
 }
 
 .detail-label {
-    color: #e0e0e0;
+  color: #e0e0e0;
 }
 
 .detail-value {
-    color: #bbb;
-    font-weight: 400;
+  color: #bbb;
+  font-weight: 400;
 }
 
 .status-active {
-    color: #4CAF50;
-    /* Green color for Active status */
+  color: #4caf50;
+  /* Green color for Active status */
 }

@@ -869,6 +869,7 @@
 
 /* Scrollbars */
 .lp-category-list::-webkit-scrollbar,
+.lp-channels-list::-webkit-scrollbar,
 .lp-channels-grid::-webkit-scrollbar,
 .lp-epg-list::-webkit-scrollbar {
   /* display: none; */
@@ -882,6 +883,7 @@
 }
 
 .lp-category-list::-webkit-scrollbar-thumb,
+.lp-channels-list::-webkit-scrollbar-thumb,
 .lp-channels-grid::-webkit-scrollbar-thumb,
 .lp-epg-list::-webkit-scrollbar-thumb {
   background: var(--app-text-color);
@@ -889,6 +891,7 @@
 }
 
 .lp-category-list::-webkit-scrollbar-thumb:hover,
+.lp-channels-list::-webkit-scrollbar-thumb:hover,
 .lp-channels-grid::-webkit-scrollbar-thumb:hover,
 .lp-epg-list::-webkit-scrollbar-thumb:hover {
   background: var(--app-text-color);
