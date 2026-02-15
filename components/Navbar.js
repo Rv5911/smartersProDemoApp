@@ -732,6 +732,11 @@ function initNavbar() {
       if (searchInput) searchInput.value = "";
 
       const page = item.getAttribute("data-page");
+
+      if (page === "masterSearchPage") {
+        localStorage.setItem("forceMasterSearchReset", "true");
+      }
+
       disposeLiveTvPlayer();
       resetParentalControlState();
       Router.showPage(page);
@@ -1207,6 +1212,11 @@ function initNavbar() {
             window.cleanupSeriesNavigation();
           }
           const page = navItems[currentIndex - 1].getAttribute("data-page");
+
+          if (page === "masterSearchPage") {
+            localStorage.setItem("forceMasterSearchReset", "true");
+          }
+
           window.searchQuery = "";
           clearMoviesAndSeriesLocalStorage();
           disposeLiveTvPlayer();

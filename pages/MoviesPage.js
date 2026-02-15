@@ -910,6 +910,7 @@ function handleMoviesSimpleEnter() {
 
 function proceedToMovieDetail(categoryIndex, cardIndex, streamId) {
   let isContinueWatchingMovie = false;
+  localStorage.setItem("previousPage", "moviesPage");
   localStorage.setItem("moviesCategoryIndex", categoryIndex);
   localStorage.setItem("moviesCardIndex", cardIndex);
   localStorage.setItem("moviesSelectedCategoryId", categoryIndex);
@@ -2371,8 +2372,11 @@ function MoviesPage() {
       </div>
     `;
 
+    const prevPage = localStorage.getItem("previousPage");
     const previousPageVal = localStorage.getItem("currentPage");
-    localStorage.setItem("previousPage", previousPageVal || "");
+    if (prevPage !== "masterSearchPage") {
+      localStorage.setItem("previousPage", previousPageVal || "");
+    }
     localStorage.setItem("currentPage", "moviesPage");
 
     const activeEl = document.activeElement;
@@ -2405,10 +2409,13 @@ function MoviesPage() {
     "</div>" +
     "</div>";
 
-  localStorage.setItem(
-    "previousPage",
-    localStorage.getItem("currentPage") || "",
-  );
+  const prevPage = localStorage.getItem("previousPage");
+  if (prevPage !== "masterSearchPage") {
+    localStorage.setItem(
+      "previousPage",
+      localStorage.getItem("currentPage") || "",
+    );
+  }
   localStorage.setItem("currentPage", "moviesPage");
   const activeEl = document.activeElement;
   const isSearchFocused = activeEl && activeEl.id === "search-input";

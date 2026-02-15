@@ -59,8 +59,19 @@ async function SeriesDetailPage() {
       );
 
       localStorage.removeItem("selectedSeriesId");
-      localStorage.setItem("currentPage", "seriesPage");
-      Router.showPage("seriesPage");
+
+      const shouldReturnToSearch =
+        localStorage.getItem("returnToMasterSearch") === "true";
+      const prev = localStorage.getItem("previousPage");
+
+      if (shouldReturnToSearch || prev === "masterSearchPage") {
+        localStorage.removeItem("returnToMasterSearch");
+        localStorage.setItem("currentPage", "masterSearchPage");
+        Router.showPage("masterSearchPage");
+      } else {
+        localStorage.setItem("currentPage", "seriesPage");
+        Router.showPage("seriesPage");
+      }
       document.body.style.backgroundImage = "none";
       document.body.style.backgroundColor = "black";
 
@@ -531,8 +542,19 @@ async function SeriesDetailPage() {
       e.preventDefault();
       localStorage.removeItem("selectedSeriesId");
       localStorage.removeItem("lastPlayedEpisodeId");
-      localStorage.setItem("currentPage", "seriesPage");
-      Router.showPage("seriesPage");
+
+      const shouldReturnToSearch =
+        localStorage.getItem("returnToMasterSearch") === "true";
+      const prev = localStorage.getItem("previousPage");
+
+      if (shouldReturnToSearch || prev === "masterSearchPage") {
+        localStorage.removeItem("returnToMasterSearch");
+        localStorage.setItem("currentPage", "masterSearchPage");
+        Router.showPage("masterSearchPage");
+      } else {
+        localStorage.setItem("currentPage", "seriesPage");
+        Router.showPage("seriesPage");
+      }
       document.body.style.backgroundImage = "none";
       document.body.style.backgroundColor = "black";
       return;

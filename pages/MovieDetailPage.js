@@ -49,8 +49,19 @@ async function MovieDetailPage() {
       );
 
       localStorage.removeItem("selectedMovieId");
-      localStorage.setItem("currentPage", "moviesPage");
-      Router.showPage("moviesPage");
+
+      const shouldReturnToSearch =
+        localStorage.getItem("returnToMasterSearch") === "true";
+      const prev = localStorage.getItem("previousPage");
+
+      if (shouldReturnToSearch || prev === "masterSearchPage") {
+        localStorage.removeItem("returnToMasterSearch");
+        localStorage.setItem("currentPage", "masterSearchPage");
+        Router.showPage("masterSearchPage");
+      } else {
+        localStorage.setItem("currentPage", "moviesPage");
+        Router.showPage("moviesPage");
+      }
       document.body.style.backgroundImage = "none";
       document.body.style.backgroundColor = "black";
 
@@ -571,8 +582,19 @@ async function MovieDetailPage() {
         e.key === "XF86Back"
       ) {
         localStorage.removeItem("selectedMovieId");
-        localStorage.setItem("currentPage", "moviesPage");
-        Router.showPage("moviesPage");
+
+        const shouldReturnToSearch =
+          localStorage.getItem("returnToMasterSearch") === "true";
+        const prev = localStorage.getItem("previousPage");
+
+        if (shouldReturnToSearch || prev === "masterSearchPage") {
+          localStorage.removeItem("returnToMasterSearch");
+          localStorage.setItem("currentPage", "masterSearchPage");
+          Router.showPage("masterSearchPage");
+        } else {
+          localStorage.setItem("currentPage", "moviesPage");
+          Router.showPage("moviesPage");
+        }
         document.body.style.backgroundImage = "none";
         document.body.style.backgroundColor = "black";
         return;

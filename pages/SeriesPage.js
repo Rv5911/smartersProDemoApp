@@ -867,6 +867,7 @@ function handleSeriesSimpleEnter() {
 }
 
 function proceedToSeriesDetail(categoryIndex, cardIndex, seriesId) {
+  localStorage.setItem("previousPage", "seriesPage");
   localStorage.setItem("seriesCategoryIndex", categoryIndex);
   localStorage.setItem("seriesCardIndex", cardIndex);
   localStorage.setItem("seriesSelectedCategoryId", categoryIndex);
@@ -2416,10 +2417,13 @@ function SeriesPage() {
       </div>
     `;
 
-    localStorage.setItem(
-      "previousPage",
-      localStorage.getItem("currentPage") || "",
-    );
+    const prevPage = localStorage.getItem("previousPage");
+    if (prevPage !== "masterSearchPage") {
+      localStorage.setItem(
+        "previousPage",
+        localStorage.getItem("currentPage") || "",
+      );
+    }
     localStorage.setItem("currentPage", "seriesPage");
     const activeEl = document.activeElement;
     const isSearchFocused = activeEl && activeEl.id === "search-input";
@@ -2437,8 +2441,11 @@ function SeriesPage() {
     "</div>" +
     "</div>";
 
+  const prevPage = localStorage.getItem("previousPage");
   const previousPageVal = localStorage.getItem("currentPage");
-  localStorage.setItem("previousPage", previousPageVal || "");
+  if (prevPage !== "masterSearchPage") {
+    localStorage.setItem("previousPage", previousPageVal || "");
+  }
   localStorage.setItem("currentPage", "seriesPage");
 
   const activeEl = document.activeElement;
