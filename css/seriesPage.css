@@ -76,7 +76,6 @@
 
 .series-fav-container {
   padding-left: 40px;
-  padding-top: 40px;
   padding-right: 40px;
 }
 
@@ -106,8 +105,9 @@
 .series-card-list {
   display: flex;
   overflow-y: hidden;
-  margin-bottom: 40px;
-  padding: 60px 30px;
+  padding-top: 60px;
+  padding-left: 30px;
+  padding-right: 30px;
   /* Higher padding to prevent cutting when focused */
 }
 

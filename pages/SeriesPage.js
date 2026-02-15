@@ -624,13 +624,16 @@ function createSeriesCategorySection(category, categoryIndex) {
   let size = category.id === "popular" ? "large" : "normal";
   const isEmptyFav =
     category.id === "fav" && (!category.series || category.series.length === 0);
+  const isEmptyRecent =
+    category.id === "recent" &&
+    (!category.series || category.series.length === 0);
 
   let html =
     '<div class="' +
     category.containerClass +
-    (isEmptyFav ? " empty-fav" : "") +
+    (isEmptyFav || isEmptyRecent ? " empty-fav" : "") +
     '" style="' +
-    (isEmptyFav ? "display: none;" : "") +
+    (isEmptyFav || isEmptyRecent ? "display: none;" : "") +
     '">';
   html += "<h1>" + category.title + "</h1>";
   html +=
@@ -1050,7 +1053,7 @@ function updateMyFavSeriesCategoryRealtime(
     }
   }
 
-  const favCategoryIndex = 0; // Fixed index
+  const favCategoryIndex = 1; // Fixed index
   const isCurrentlyInFavCategory = currentCategoryIndex === favCategoryIndex;
 
   if (isFav) {
@@ -1076,13 +1079,13 @@ function updateMyFavSeriesCategoryRealtime(
         setSeriesLoadedChunkCount(favCategoryIndex, newIndex + 1);
       }
 
-      if (window.allSeriesCategories && window.allSeriesCategories[0]) {
-        if (!window.allSeriesCategories[0].series)
-          window.allSeriesCategories[0].series = [];
-        const exists = window.allSeriesCategories[0].series.some(
+      if (window.allSeriesCategories && window.allSeriesCategories[1]) {
+        if (!window.allSeriesCategories[1].series)
+          window.allSeriesCategories[1].series = [];
+        const exists = window.allSeriesCategories[1].series.some(
           (s) => String(s.series_id) === String(seriesId),
         );
-        if (!exists) window.allSeriesCategories[0].series.push(newSeries);
+        if (!exists) window.allSeriesCategories[1].series.push(newSeries);
       }
     }
   } else {
@@ -1100,8 +1103,8 @@ function updateMyFavSeriesCategoryRealtime(
 
       setSeriesLoadedChunkCount(favCategoryIndex, remainingCards.length);
 
-      if (window.allSeriesCategories && window.allSeriesCategories[0]) {
-        window.allSeriesCategories[0].series = favouriteSeries;
+      if (window.allSeriesCategories && window.allSeriesCategories[1]) {
+        window.allSeriesCategories[1].series = favouriteSeries;
       }
 
       if (remainingCards.length === 0) {
@@ -1132,7 +1135,7 @@ function createMyFavSeriesCategory() {
 
   // FIX: Removed scroll capture from here
 
-  // Create My Fav category at the top (index 0)
+  // Create My Fav category at index 1
   const favCategory = {
     title: "My Fav",
     series: [], // Will be populated by adding cards
@@ -1143,32 +1146,40 @@ function createMyFavSeriesCategory() {
   // Create the HTML structure for My Fav category
   let html = '<div class="' + favCategory.containerClass + '">';
   html += "<h1>" + favCategory.title + "</h1>";
-  html += '<div class="series-card-list fav-list" data-category="0">';
+  html += '<div class="series-card-list fav-list" data-category="1">';
   html += "</div>";
   html += "</div>";
 
-  // Insert at the beginning of the page
-  pageContainer.insertAdjacentHTML("afterbegin", html);
+  // Insert after the first category (index 0, which is Continue Watching)
+  const firstCategory = pageContainer.querySelector(".series-card-list");
+  if (firstCategory && firstCategory.parentElement) {
+    firstCategory.parentElement.insertAdjacentHTML("afterend", html);
+  } else {
+    pageContainer.insertAdjacentHTML("afterbegin", html);
+  }
 
-  // Shift all chunk loading states by 1 index
+  // Shift all chunk loading states from index 1 onwards
   const oldChunks = {
     ...seriesChunkLoadingState.loadedChunks,
   };
   seriesChunkLoadingState.loadedChunks = {};
-  seriesChunkLoadingState.loadedChunks[0] = 0; // My Fav starts with 0 loaded
+  seriesChunkLoadingState.loadedChunks[0] = oldChunks[0] || 0; // Keep Continue Watching
+  seriesChunkLoadingState.loadedChunks[1] = 0; // My Fav starts with 0 loaded
 
   Object.keys(oldChunks).forEach((key) => {
     const oldIndex = parseInt(key, 10);
+    if (oldIndex < 1) return;
     const newIndex = oldIndex + 1;
     seriesChunkLoadingState.loadedChunks[newIndex] = oldChunks[key];
   });
 
-  // Update all existing category indices (shift them by 1)
+  // Update all existing category indices (shift them by 1 starting from index 1)
   const allCategoryLists = pageContainer.querySelectorAll(
     ".series-card-list:not(.fav-list)",
   );
   allCategoryLists.forEach((list) => {
     const currentIndex = parseInt(list.getAttribute("data-category"), 10);
+    if (currentIndex < 1) return;
     const newIndex = currentIndex + 1;
     list.setAttribute("data-category", newIndex);
 
@@ -1185,23 +1196,27 @@ function createMyFavSeriesCategory() {
     }
   });
 
-  // Adjust current navigation state
-  seriesNavigationState.currentCategoryIndex += 1;
-  seriesNavigationState.lastFocusedCategory += 1;
+  // Adjust current navigation state if we were below index 0
+  if (seriesNavigationState.currentCategoryIndex >= 1) {
+    seriesNavigationState.currentCategoryIndex += 1;
+  }
+  if (seriesNavigationState.lastFocusedCategory >= 1) {
+    seriesNavigationState.lastFocusedCategory += 1;
+  }
 
-  // Update window.allSeriesCategories to include My Fav at index 0
+  // Update window.allSeriesCategories to include My Fav at index 1
   if (window.allSeriesCategories && window.allSeriesCategories.length > 0) {
     // Check if My Fav already exists in the array
     const favIndex = window.allSeriesCategories.findIndex(
       (cat) => cat.id === "fav",
     );
     if (favIndex === -1) {
-      // My Fav doesn't exist, add it at the beginning
-      window.allSeriesCategories.unshift(favCategory);
-    } else if (favIndex !== 0) {
-      // My Fav exists but not at index 0, move it
+      // My Fav doesn't exist, insert at index 1
+      window.allSeriesCategories.splice(1, 0, favCategory);
+    } else if (favIndex !== 1) {
+      // My Fav exists but not at index 1, move it
       const favCat = window.allSeriesCategories.splice(favIndex, 1)[0];
-      window.allSeriesCategories.unshift(favCat);
+      window.allSeriesCategories.splice(1, 0, favCat);
     }
   }
 
@@ -1221,23 +1236,25 @@ function removeMyFavSeriesCategory() {
   // Remove My Fav container
   favContainer.remove();
 
-  // Shift all chunk loading states back by 1 index
+  // Shift all chunk loading states back by 1 index (starting after index 1)
   const oldChunks = {
     ...seriesChunkLoadingState.loadedChunks,
   };
   seriesChunkLoadingState.loadedChunks = {};
+  seriesChunkLoadingState.loadedChunks[0] = oldChunks[0] || 0; // Keep Continue Watching
 
   Object.keys(oldChunks).forEach((key) => {
     const oldIndex = parseInt(key, 10);
-    if (oldIndex === 0) return; // Skip My Fav (index 0)
+    if (oldIndex <= 1) return; // Skip Continue Watching (0) and My Fav (1)
     const newIndex = oldIndex - 1;
     seriesChunkLoadingState.loadedChunks[newIndex] = oldChunks[key];
   });
 
-  // Update all category indices (shift them back by 1)
+  // Update all category indices (shift them back by 1 for indices > 1)
   const allCategoryLists = pageContainer.querySelectorAll(".series-card-list");
   allCategoryLists.forEach((list) => {
     const currentIndex = parseInt(list.getAttribute("data-category"), 10);
+    if (currentIndex <= 1) return;
     const newIndex = currentIndex - 1;
     list.setAttribute("data-category", newIndex);
 
@@ -1254,11 +1271,11 @@ function removeMyFavSeriesCategory() {
     }
   });
 
-  // Adjust navigation state (shift back by 1)
-  if (seriesNavigationState.currentCategoryIndex > 0) {
+  // Adjust navigation state (shift back by 1 if we were below My Fav)
+  if (seriesNavigationState.currentCategoryIndex > 1) {
     seriesNavigationState.currentCategoryIndex -= 1;
   }
-  if (seriesNavigationState.lastFocusedCategory > 0) {
+  if (seriesNavigationState.lastFocusedCategory > 1) {
     seriesNavigationState.lastFocusedCategory -= 1;
   }
 
@@ -1377,8 +1394,14 @@ function refreshSeriesFavoritesList() {
         id: "fav",
         containerClass: "series-fav-container",
       };
-      const favHTML = createSeriesCategorySection(favCategory, 0);
-      pageContainer.insertAdjacentHTML("afterbegin", favHTML);
+      const favHTML = createSeriesCategorySection(favCategory, 1);
+
+      const firstCategory = pageContainer.querySelector(".series-card-list");
+      if (firstCategory && firstCategory.parentElement) {
+        firstCategory.parentElement.insertAdjacentHTML("afterend", favHTML);
+      } else {
+        pageContainer.insertAdjacentHTML("afterbegin", favHTML);
+      }
       favContainer = document.querySelector(".series-fav-container");
       favList = document.querySelector(".series-card-list.fav-list");
     }
@@ -1387,7 +1410,7 @@ function refreshSeriesFavoritesList() {
   if (!favList) return;
 
   const categoryIndexAttr = favList.getAttribute("data-category");
-  const categoryIndex = categoryIndexAttr ? parseInt(categoryIndexAttr, 10) : 0;
+  const categoryIndex = categoryIndexAttr ? parseInt(categoryIndexAttr, 10) : 1;
 
   let html = "";
   for (let i = 0; i < favouriteSeries.length; i++) {
@@ -2484,22 +2507,22 @@ function SeriesPage() {
     // ALWAYS show these two categories at the top, in this specific order
     let fixedTopCategories = [
       {
-        title: "My Fav",
-        series: favouriteSeries,
-        id: "fav",
-        containerClass: "series-fav-container",
-      },
-      {
         title: "Continue Watching",
         series: recentSeriesArray,
         id: "recent",
         containerClass: "recently-watched-container",
       },
+      {
+        title: "My Fav",
+        series: favouriteSeries,
+        id: "fav",
+        containerClass: "series-fav-container",
+      },
     ];
 
-    // Remove any fixed categories that have no series (except My Fav which can be empty)
+    // ALWAYS show these two categories at the top, in this specific order
     let initialCategories = fixedTopCategories.filter((category) => {
-      if (category.id === "fav") return true; // Always show My Fav even if empty
+      if (category.id === "fav" || category.id === "recent") return true; // Keep indices stable
       return category.series && category.series.length > 0;
     });
 

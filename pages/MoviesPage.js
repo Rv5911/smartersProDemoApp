@@ -657,13 +657,16 @@ function createMoviesCategorySection(category, categoryIndex) {
   let size = category.id === "popular" ? "large" : "normal";
   const isEmptyFav =
     category.id === "fav" && (!category.movies || category.movies.length === 0);
+  const isEmptyRecent =
+    category.id === "recent" &&
+    (!category.movies || category.movies.length === 0);
 
   let html =
     '<div class="' +
     category.containerClass +
-    (isEmptyFav ? " empty-fav" : "") +
+    (isEmptyFav || isEmptyRecent ? " empty-fav" : "") +
     '" style="' +
-    (isEmptyFav ? "display: none;" : "") +
+    (isEmptyFav || isEmptyRecent ? "display: none;" : "") +
     '">';
   html += "<h1>" + category.title + "</h1>";
   html +=
@@ -1133,7 +1136,7 @@ function updateMyFavCategoryRealtime(
     }
   }
 
-  const favCategoryIndex = 0; // Fixed index
+  const favCategoryIndex = 1; // Fixed index
   const isCurrentlyInFavCategory = currentCategoryIndex === favCategoryIndex;
 
   if (isFav) {
@@ -1160,13 +1163,13 @@ function updateMyFavCategoryRealtime(
 
         setMoviesLoadedChunkCount(favCategoryIndex, currentCards.length + 1);
 
-        if (window.allMoviesCategories && window.allMoviesCategories[0]) {
-          if (!window.allMoviesCategories[0].movies)
-            window.allMoviesCategories[0].movies = [];
-          const exists = window.allMoviesCategories[0].movies.some(
+        if (window.allMoviesCategories && window.allMoviesCategories[1]) {
+          if (!window.allMoviesCategories[1].movies)
+            window.allMoviesCategories[1].movies = [];
+          const exists = window.allMoviesCategories[1].movies.some(
             (m) => String(m.stream_id) === String(streamId),
           );
-          if (!exists) window.allMoviesCategories[0].movies.push(newMovie);
+          if (!exists) window.allMoviesCategories[1].movies.push(newMovie);
         }
       }
     }
@@ -1186,8 +1189,8 @@ function updateMyFavCategoryRealtime(
 
       setMoviesLoadedChunkCount(favCategoryIndex, remainingCards.length);
 
-      if (window.allMoviesCategories && window.allMoviesCategories[0]) {
-        window.allMoviesCategories[0].movies = favouriteMovies;
+      if (window.allMoviesCategories && window.allMoviesCategories[1]) {
+        window.allMoviesCategories[1].movies = favouriteMovies;
       }
 
       if (remainingCards.length === 0) {
@@ -1219,7 +1222,7 @@ function createMyFavCategory() {
 
   // FIX: Removed scroll capture from here, handled in caller
 
-  // Create My Fav category at the top (index 0)
+  // Create My Fav category at index 1
   const favCategory = {
     title: "My Fav",
     movies: [], // Will be populated by adding cards
@@ -1230,32 +1233,40 @@ function createMyFavCategory() {
   // Create the HTML structure for My Fav category
   let html = '<div class="' + favCategory.containerClass + '">';
   html += "<h1>" + favCategory.title + "</h1>";
-  html += '<div class="movies-card-list fav-list" data-category="0">';
+  html += '<div class="movies-card-list fav-list" data-category="1">';
   html += "</div>";
   html += "</div>";
 
-  // Insert at the beginning of the page
-  pageContainer.insertAdjacentHTML("afterbegin", html);
+  // Insert after the first category (index 0, which is Continue Watching)
+  const firstCategory = pageContainer.querySelector(".movies-card-list");
+  if (firstCategory && firstCategory.parentElement) {
+    firstCategory.parentElement.insertAdjacentHTML("afterend", html);
+  } else {
+    pageContainer.insertAdjacentHTML("afterbegin", html);
+  }
 
-  // Shift all chunk loading states by 1 index
+  // Shift all chunk loading states from index 1 onwards
   const oldChunks = {
     ...moviesChunkLoadingState.loadedChunks,
   };
   moviesChunkLoadingState.loadedChunks = {};
-  moviesChunkLoadingState.loadedChunks[0] = 0; // My Fav starts with 0 loaded
+  moviesChunkLoadingState.loadedChunks[0] = oldChunks[0] || 0; // Keep Continue Watching
+  moviesChunkLoadingState.loadedChunks[1] = 0; // My Fav starts with 0 loaded
 
   Object.keys(oldChunks).forEach((key) => {
     const oldIndex = parseInt(key, 10);
+    if (oldIndex < 1) return;
     const newIndex = oldIndex + 1;
     moviesChunkLoadingState.loadedChunks[newIndex] = oldChunks[key];
   });
 
-  // Update all existing category indices (shift them by 1)
+  // Update all existing category indices (shift them by 1 starting from index 1)
   const allCategoryLists = pageContainer.querySelectorAll(
     ".movies-card-list:not(.fav-list)",
   );
   allCategoryLists.forEach((list) => {
     const currentIndex = parseInt(list.getAttribute("data-category"), 10);
+    if (currentIndex < 1) return;
     const newIndex = currentIndex + 1;
     list.setAttribute("data-category", newIndex);
 
@@ -1272,23 +1283,27 @@ function createMyFavCategory() {
     }
   });
 
-  // Adjust current navigation state
-  moviesNavigationState.currentCategoryIndex += 1;
-  moviesNavigationState.lastFocusedCategory += 1;
+  // Adjust current navigation state if we were below index 0
+  if (moviesNavigationState.currentCategoryIndex >= 1) {
+    moviesNavigationState.currentCategoryIndex += 1;
+  }
+  if (moviesNavigationState.lastFocusedCategory >= 1) {
+    moviesNavigationState.lastFocusedCategory += 1;
+  }
 
-  // Update window.allMoviesCategories to include My Fav at index 0
+  // Update window.allMoviesCategories to include My Fav at index 1
   if (window.allMoviesCategories && window.allMoviesCategories.length > 0) {
     // Check if My Fav already exists in the array
     const favIndex = window.allMoviesCategories.findIndex(
       (cat) => cat.id === "fav",
     );
     if (favIndex === -1) {
-      // My Fav doesn't exist, add it at the beginning
-      window.allMoviesCategories.unshift(favCategory);
-    } else if (favIndex !== 0) {
-      // My Fav exists but not at index 0, move it
+      // My Fav doesn't exist, insert at index 1
+      window.allMoviesCategories.splice(1, 0, favCategory);
+    } else if (favIndex !== 1) {
+      // My Fav exists but not at index 1, move it
       const favCat = window.allMoviesCategories.splice(favIndex, 1)[0];
-      window.allMoviesCategories.unshift(favCat);
+      window.allMoviesCategories.splice(1, 0, favCat);
     }
   }
 
@@ -1308,23 +1323,25 @@ function removeMyFavCategory() {
   // Remove My Fav container
   favContainer.remove();
 
-  // Shift all chunk loading states back by 1 index
+  // Shift all chunk loading states back by 1 index (starting after index 1)
   const oldChunks = {
     ...moviesChunkLoadingState.loadedChunks,
   };
   moviesChunkLoadingState.loadedChunks = {};
+  moviesChunkLoadingState.loadedChunks[0] = oldChunks[0] || 0; // Keep Continue Watching
 
   Object.keys(oldChunks).forEach((key) => {
     const oldIndex = parseInt(key, 10);
-    if (oldIndex === 0) return; // Skip My Fav (index 0)
+    if (oldIndex <= 1) return; // Skip Continue Watching (0) and My Fav (1)
     const newIndex = oldIndex - 1;
     moviesChunkLoadingState.loadedChunks[newIndex] = oldChunks[key];
   });
 
-  // Update all category indices (shift them back by 1)
+  // Update all category indices (shift them back by 1 for indices > 1)
   const allCategoryLists = pageContainer.querySelectorAll(".movies-card-list");
   allCategoryLists.forEach((list) => {
     const currentIndex = parseInt(list.getAttribute("data-category"), 10);
+    if (currentIndex <= 1) return;
     const newIndex = currentIndex - 1;
     list.setAttribute("data-category", newIndex);
 
@@ -1341,11 +1358,11 @@ function removeMyFavCategory() {
     }
   });
 
-  // Adjust navigation state (shift back by 1)
-  if (moviesNavigationState.currentCategoryIndex > 0) {
+  // Adjust navigation state (shift back by 1 if we were below My Fav)
+  if (moviesNavigationState.currentCategoryIndex > 1) {
     moviesNavigationState.currentCategoryIndex -= 1;
   }
-  if (moviesNavigationState.lastFocusedCategory > 0) {
+  if (moviesNavigationState.lastFocusedCategory > 1) {
     moviesNavigationState.lastFocusedCategory -= 1;
   }
 
@@ -2006,12 +2023,6 @@ function updateMoviesFocus() {
             ".movie-title-marquee",
           );
           if (oldTitle) oldTitle.classList.remove("marquee-active");
-
-          // Reset heart button state on previous card
-          const oldHeart = currentFocusedMovieElement.querySelector(
-            ".movie-card-heart-button",
-          );
-          if (oldHeart) oldHeart.classList.remove("heart-focused");
         }
 
         currentCard.classList.add("focused");
@@ -2453,22 +2464,22 @@ function MoviesPage() {
     // ALWAYS show these two categories at the top, in this specific order
     let fixedTopCategories = [
       {
-        title: "My Fav",
-        movies: favouriteMovies,
-        id: "fav",
-        containerClass: "movies-fav-container",
-      },
-      {
         title: "Continue Watching",
         movies: recentMoviesArray,
         id: "recent",
         containerClass: "recently-watched-container",
       },
+      {
+        title: "My Fav",
+        movies: favouriteMovies,
+        id: "fav",
+        containerClass: "movies-fav-container",
+      },
     ];
 
-    // Remove any fixed categories that have no movies (except My Fav which can be empty)
+    // ALWAYS show these two categories at the top, in this specific order
     let initialCategories = fixedTopCategories.filter((category) => {
-      if (category.id === "fav") return true; // Always show My Fav even if empty to keep indices stable
+      if (category.id === "fav" || category.id === "recent") return true; // Keep indices stable
       return category.movies && category.movies.length > 0;
     });
 

@@ -95,6 +95,7 @@
 
 .recently-watched-container {
   padding-left: 40px;
+  padding-top: 40px;
 }
 
 /* Category Headers */
@@ -118,7 +119,6 @@
 .movies-card-list {
   display: flex;
   overflow-y: hidden;
-  margin-bottom: 40px;
   padding: 30px 30px;
   /* Increased padding */
 }
@@ -186,10 +186,6 @@
   z-index: 2;
   /* Soft glow instead of border */
   /* filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.6)); */
-}
-
-.movie-card.focused .movie-card-heart-button {
-  bottom: 64px;
 }
 
 .movie-card.focused .movie-card-inner::after {
@@ -508,6 +504,13 @@
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
 }
 
+.movie-card-heart-container {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  z-index: 15;
+}
+
 .movie-card-heart {
   font-size: 40px !important;
   filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.5));
@@ -519,8 +522,6 @@
   opacity: 1 !important;
   color: #ff4d4d !important;
 }
-
-/* Removed opacity: 0 on focus to keep heart visible */
 
 .movie-card-play-div {
   display: flex;
@@ -558,7 +559,7 @@
   bottom: 0px;
   left: 0;
   width: 100%;
-  height: 6px;
+  height: 12px;
   background: rgba(255, 255, 255, 0.2);
   z-index: 10;
   overflow: hidden;

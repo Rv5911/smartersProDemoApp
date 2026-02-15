@@ -218,7 +218,7 @@ async function HomePage() {
             const newContainerHTML = `
                             <div class="home-fav-container">
                                 <h1>My Fav</h1>
-                                <div class="home-card-list" data-category="0"></div>
+                                <div class="home-card-list" data-category="1"></div>
                             </div>
                         `;
 
@@ -296,14 +296,14 @@ async function HomePage() {
           if (remainingCards.length === 0) {
             favContainer.remove();
             // If we were in this category, move focus
-            if (navState.currentCategory === 0) {
-              // Try moving to Recent (1) or Added (2) or WatchNow
-              navState.currentCategory = 1;
+            if (navState.currentCategory === 1) {
+              // Try moving to Recent (0) or Added (2) or WatchNow
+              navState.currentCategory = 0;
               navState.currentCard = 0;
 
-              // Check if cat 1 exists
+              // Check if cat 0 exists
               if (
-                !document.querySelector('.home-card-list[data-category="1"]')
+                !document.querySelector('.home-card-list[data-category="0"]')
               ) {
                 navState.currentCategory = 2; // Try added
                 if (
@@ -316,7 +316,7 @@ async function HomePage() {
             }
           } else {
             // If we removed the currently focused card in Fav row, adjust navState
-            if (wasFocused && navState.currentCategory === 0) {
+            if (wasFocused && navState.currentCategory === 1) {
               if (navState.currentCard >= remainingCards.length) {
                 navState.currentCard = Math.max(0, remainingCards.length - 1);
               }
@@ -442,7 +442,7 @@ async function HomePage() {
                 return l && l.querySelectorAll(".home-card").length > 0;
               })
               .sort((a, b) => {
-                const order = [1, 0, 2, 3];
+                const order = [0, 1, 2, 3];
                 return order.indexOf(a) - order.indexOf(b);
               });
 
@@ -533,7 +533,7 @@ async function HomePage() {
                 return l && l.querySelectorAll(".home-card").length > 0;
               })
               .sort((a, b) => {
-                const order = [1, 0, 2, 3];
+                const order = [0, 1, 2, 3];
                 return order.indexOf(a) - order.indexOf(b);
               });
 
@@ -743,8 +743,8 @@ async function HomePage() {
                     JSON.stringify(movie),
                   );
 
-                // Skip detail page for "Continue Watching" category (category 1)
-                if (navState.currentCategory === 1 && movie) {
+                // Skip detail page for "Continue Watching" category (category 0)
+                if (navState.currentCategory === 0 && movie) {
                   const playlist = JSON.parse(
                     localStorage.getItem("currentPlaylistData") || "{}",
                   );
@@ -962,7 +962,7 @@ async function HomePage() {
         : favSeriesIds.includes(String(id));
 
     let progressHtml = "";
-    if (type === "movie" && catIdx === 1) {
+    if (type === "movie" && catIdx === 0) {
       try {
         const currentPlaylist = getCurrentPlaylist();
         const recentData = currentPlaylist.continueWatchingMovies || [];
@@ -1032,8 +1032,8 @@ async function HomePage() {
                 ? `
                 <div class="home-recent-container">
                     <h1>Continue Watching</h1>
-                    <div class="home-card-list" data-category="1">${allRecent
-                      .map((it, idx) => createHomeCard(it, 1, idx))
+                    <div class="home-card-list" data-category="0">${allRecent
+                      .map((it, idx) => createHomeCard(it, 0, idx))
                       .join("")}</div>
                 </div>
             `
@@ -1044,8 +1044,8 @@ async function HomePage() {
                 ? `
                 <div class="home-fav-container">
                     <h1>My Fav</h1>
-                    <div class="home-card-list" data-category="0">${allFavorites
-                      .map((it, idx) => createHomeCard(it, 0, idx))
+                    <div class="home-card-list" data-category="1">${allFavorites
+                      .map((it, idx) => createHomeCard(it, 1, idx))
                       .join("")}</div>
                 </div>
             `
