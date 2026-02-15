@@ -439,12 +439,10 @@ const playMSItem = () => {
     if (isSeries) {
       localStorage.setItem("selectedSeriesId", item.series_id);
       localStorage.setItem("selectedSeriesItem", JSON.stringify(item));
-      localStorage.setItem("returnM", "true");
       Router.showPage("seriesDetailPage");
     } else {
       localStorage.setItem("selectedMovieId", item.stream_id);
       localStorage.setItem("selectedMovieData", JSON.stringify(item));
-      localStorage.setItem("returnM", "true");
       Router.showPage("movieDetailPage");
     }
   }

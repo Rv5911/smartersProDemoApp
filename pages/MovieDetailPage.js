@@ -54,7 +54,7 @@ async function MovieDetailPage() {
         localStorage.getItem("returnToMasterSearch") == "true" ? true : false;
       const prev = localStorage.getItem("previousPage");
 
-      if (localStorage.getItem("returnM") == "true") {
+      if (returnToSearch || prev === "masterSearchPage") {
         localStorage.removeItem("returnToMasterSearch");
         localStorage.setItem("currentPage", "masterSearchPage");
         Router.showPage("masterSearchPage");
@@ -589,7 +589,7 @@ async function MovieDetailPage() {
         console.log("Back Navigation Debug:", { returnToSearchVal, prev });
 
         // Check if returnToSearchVal is "true" string or existing
-        if (localStorage.getItem("returnM") == "true") {
+        if (returnToSearchVal === "true" || prev === "masterSearchPage") {
           console.log("Returning to MasterSearchPage");
           localStorage.removeItem("returnToMasterSearch");
           localStorage.setItem("currentPage", "masterSearchPage");
