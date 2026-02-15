@@ -28,6 +28,17 @@ const Router = (function () {
           window.HomePage.cleanup();
       },
     },
+    masterSearchPage: {
+      el: document.getElementById("master-search-page"),
+      render: MasterSearch,
+      init: () => {
+        if (window.initMasterSearch) window.initMasterSearch();
+      },
+      cleanup: () => {
+        if (window.cleanupMasterSearch) window.cleanupMasterSearch();
+      },
+    },
+
     settingsPage: {
       el: document.getElementById("settings-page"),
       render: SettingsPage,

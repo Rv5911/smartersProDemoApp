@@ -24,7 +24,9 @@ function Navbar() {
         </div>
       </div>
       <div class="navbar-right">
-        <div class="nav-item" data-page="homePage" tabindex="0">Home</div>
+        <!-- <div class="nav-item" data-page="homePage" tabindex="0">Home</div> -->
+        <div class="nav-item" data-page="masterSearchPage" tabindex="0">Search</div>
+
         <div class="nav-item" data-page="moviesPage" tabindex="0">Movies</div>
         <div class="nav-item" data-page="seriesPage" tabindex="0">Series</div>
         <div class="nav-item" data-page="liveTvPage" tabindex="0">Live</div>
@@ -621,7 +623,7 @@ function initNavbar() {
   const totalItems = navItems.length + 2;
 
   const pageIndexMap = {
-    homePage: 0,
+    masterSearchPage: 0,
     moviesPage: 1,
     seriesPage: 2,
     liveTvPage: 3,
@@ -986,6 +988,7 @@ function initNavbar() {
             currentPage == "movieDetailPage" ||
             currentPage == "seriesDetailPage" ||
             currentPage === "seriesPage" ||
+            currentPage === "masterSearchPage" ||
             currentPage === "settingsPage") &&
           navigationFocus === "navbar"
         ) {
@@ -1025,6 +1028,21 @@ function initNavbar() {
 
             // Dispatch event to let LivePage know focus has changed
             window.dispatchEvent(new CustomEvent("navigation-focus-change"));
+
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            return;
+          }
+
+          // For masterSearchPage, focus on search input
+          if (currentPage === "masterSearchPage") {
+            localStorage.setItem("navigationFocus", "masterSearchPage");
+            window.dispatchEvent(new CustomEvent("search-page-focus"));
+
+            navItems.forEach((item) => item.classList.remove("active"));
+            searchInput.classList.remove("active");
+            profileIcon.classList.remove("active");
+            if (document.activeElement) document.activeElement.blur();
 
             e.preventDefault();
             e.stopImmediatePropagation();

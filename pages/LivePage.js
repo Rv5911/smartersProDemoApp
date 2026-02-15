@@ -255,11 +255,49 @@ function LivePage() {
     document.addEventListener("msfullscreenchange", handleFullscreenChange);
 
     window.cleanupLivePage = cleanup;
+
     // Listen for focus changes from Navbar
     window.addEventListener(
       "navigation-focus-change",
       handleNavigationFocusChange,
     );
+
+    // ✅ Handle forced play from Search
+    const forceChannelId = localStorage.getItem("forcePlayChannelId");
+    if (forceChannelId) {
+      localStorage.removeItem("forcePlayChannelId");
+      const streams = window.allLiveStreams || [];
+      const stream = streams.find(
+        (s) => String(s.stream_id) === String(forceChannelId),
+      );
+      if (stream) {
+        setTimeout(() => {
+          // Select category of this stream
+          selectedCategoryId = stream.category_id || "All";
+          renderCategories();
+
+          // Find stream in filtered list
+          const filtered = getFilteredChannels();
+          const idx = filtered.findIndex(
+            (s) => String(s.stream_id) === String(forceChannelId),
+          );
+          if (idx !== -1) {
+            channelIndex = idx;
+            focusedSection = "channels";
+            // Trigger play
+            playChannel(stream);
+
+            // Enter fullscreen if requested
+            if (localStorage.getItem("forceFullscreen") === "true") {
+              localStorage.removeItem("forceFullscreen");
+              setTimeout(() => {
+                if (!checkIsFullscreen()) toggleFullscreen();
+              }, 1000);
+            }
+          }
+        }, 500);
+      }
+    }
 
     // Add styles for parental control features
     if (!document.getElementById("lp-parental-styles")) {
