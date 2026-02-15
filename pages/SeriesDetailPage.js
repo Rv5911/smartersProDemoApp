@@ -543,15 +543,21 @@ async function SeriesDetailPage() {
       localStorage.removeItem("selectedSeriesId");
       localStorage.removeItem("lastPlayedEpisodeId");
 
-      const shouldReturnToSearch =
-        localStorage.getItem("returnToMasterSearch") === "true";
+      const returnToSearchVal = localStorage.getItem("returnToMasterSearch");
       const prev = localStorage.getItem("previousPage");
 
-      if (shouldReturnToSearch || prev === "masterSearchPage") {
+      console.log("Back Navigation Debug (Series):", {
+        returnToSearchVal,
+        prev,
+      });
+
+      if (returnToSearchVal === "true" || prev === "masterSearchPage") {
+        console.log("Returning to MasterSearchPage");
         localStorage.removeItem("returnToMasterSearch");
         localStorage.setItem("currentPage", "masterSearchPage");
         Router.showPage("masterSearchPage");
       } else {
+        console.log("Returning to SeriesPage");
         localStorage.setItem("currentPage", "seriesPage");
         Router.showPage("seriesPage");
       }

@@ -50,11 +50,11 @@ async function MovieDetailPage() {
 
       localStorage.removeItem("selectedMovieId");
 
-      const shouldReturnToSearch =
-        localStorage.getItem("returnToMasterSearch") === "true";
+      const returnToSearch =
+        localStorage.getItem("returnToMasterSearch") == "true" ? true : false;
       const prev = localStorage.getItem("previousPage");
 
-      if (shouldReturnToSearch || prev === "masterSearchPage") {
+      if (localStorage.getItem("returnM") == "true") {
         localStorage.removeItem("returnToMasterSearch");
         localStorage.setItem("currentPage", "masterSearchPage");
         Router.showPage("masterSearchPage");
@@ -583,15 +583,19 @@ async function MovieDetailPage() {
       ) {
         localStorage.removeItem("selectedMovieId");
 
-        const shouldReturnToSearch =
-          localStorage.getItem("returnToMasterSearch") === "true";
+        const returnToSearchVal = localStorage.getItem("returnToMasterSearch");
         const prev = localStorage.getItem("previousPage");
 
-        if (shouldReturnToSearch || prev === "masterSearchPage") {
+        console.log("Back Navigation Debug:", { returnToSearchVal, prev });
+
+        // Check if returnToSearchVal is "true" string or existing
+        if (localStorage.getItem("returnM") == "true") {
+          console.log("Returning to MasterSearchPage");
           localStorage.removeItem("returnToMasterSearch");
           localStorage.setItem("currentPage", "masterSearchPage");
           Router.showPage("masterSearchPage");
         } else {
+          console.log("Returning to MoviesPage");
           localStorage.setItem("currentPage", "moviesPage");
           Router.showPage("moviesPage");
         }

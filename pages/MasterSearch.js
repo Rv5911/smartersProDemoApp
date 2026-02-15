@@ -54,15 +54,15 @@ const getResults = () => {
     return;
   }
 
-  const filteredMovies = (window.allMoviesStreams || []).filter((m) =>
-    (m.name || "").toLowerCase().includes(q),
-  );
-  const filteredSeries = (window.allSeriesStreams || []).filter((s) =>
-    (s.name || "").toLowerCase().includes(q),
-  );
-  const filteredLive = (window.allLiveStreams || []).filter((ch) =>
-    (ch.name || "").toLowerCase().includes(q),
-  );
+  const filteredMovies = (
+    Array.isArray(window.allMoviesStreams) ? window.allMoviesStreams : []
+  ).filter((m) => (m.name || "").toLowerCase().includes(q));
+  const filteredSeries = (
+    Array.isArray(window.allSeriesStreams) ? window.allSeriesStreams : []
+  ).filter((s) => (s.name || "").toLowerCase().includes(q));
+  const filteredLive = (
+    Array.isArray(window.allLiveStreams) ? window.allLiveStreams : []
+  ).filter((ch) => (ch.name || "").toLowerCase().includes(q));
 
   msState.results = {
     movies: filteredMovies,
@@ -439,10 +439,12 @@ const playMSItem = () => {
     if (isSeries) {
       localStorage.setItem("selectedSeriesId", item.series_id);
       localStorage.setItem("selectedSeriesItem", JSON.stringify(item));
+      localStorage.setItem("returnM", "true");
       Router.showPage("seriesDetailPage");
     } else {
       localStorage.setItem("selectedMovieId", item.stream_id);
       localStorage.setItem("selectedMovieData", JSON.stringify(item));
+      localStorage.setItem("returnM", "true");
       Router.showPage("movieDetailPage");
     }
   }
