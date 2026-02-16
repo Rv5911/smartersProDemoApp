@@ -5,7 +5,7 @@ function AccountInformation() {
 
     return `
     <div class="account-info-container" tabindex="0">
-      <div class="account-header">Account information</div>
+      <div class="account-header">Playlist information</div>
       
       <div class="account-details-list">
         <div class="account-detail-item">

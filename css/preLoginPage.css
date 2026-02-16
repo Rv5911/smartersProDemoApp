@@ -1,23 +1,34 @@
-.prelogin-page-container{
+.prelogin-page-container {
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-width: 100%;
-      animation: fadeInOut 1s ease-in-out;
-        background-size: cover;
+    width: 100%;
+    animation: fadeInOut 1s ease-in-out;
+    background-size: cover;
     background-position: center;
     position: fixed;
-background: var(--blue-bg);
+    background: var(--blue-bg);
 }
 
-.prelogin-page-container img{
-  margin-bottom: 100px;
-  zoom: 1.5;
-  width: 370px;
+.prelogin-page-container img {
+    margin-bottom: 100px;
+    zoom: 1.5;
+    width: 370px;
 }
 
-.prelogin-logo{
-  margin-bottom: 40px;
-  zoom: 3.5;
+.prelogin-logo {
+    margin-bottom: 40px;
+    zoom: 3.5;
+}
+
+/* Override spinner color on PreLoginPage to not use theme colors */
+.prelogin-page-container~#loading-overlay .spinner,
+body[data-page="preLoginPage"] .spinner {
+    background: conic-gradient(from 0deg, #615dfc, transparent 70%) !important;
+}
+
+.prelogin-page-container~#loading-overlay .loading-text,
+body[data-page="preLoginPage"] .loading-text {
+    color: #615dfc !important;
 }

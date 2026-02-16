@@ -12,7 +12,7 @@
     box-sizing: border-box;
     overflow-y: auto;
     background: var(--app-bg);
-    color: #fff;
+    color: var(--app-text-white);
 }
 
 /* Hide Navbar on this page if it overlaps, but Router usually handles display logic */
@@ -52,7 +52,7 @@
     border: 4px solid transparent;
     padding: 0 40px 0 70px;
     font-size: 24px;
-    color: #fff;
+    color: var(--app-text-white);
     outline: none;
     transition: all 0.3s ease;
     backdrop-filter: blur(10px);
@@ -125,7 +125,7 @@
 }
 
 .ms-tab.focused {
-    border-color: #fff;
+    border-color: var(--app-text-white);
     transform: scale(1.1);
 }
 

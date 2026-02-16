@@ -881,7 +881,7 @@ function initNavbar() {
         return;
       }
 
-      if (currentPage !== "homePage") {
+      if (currentPage !== "moviesPage" && currentPage !== "seriesPage") {
         if (currentPage === "movieDetailPage") {
           e.preventDefault();
           localStorage.removeItem("selectedMovieId");

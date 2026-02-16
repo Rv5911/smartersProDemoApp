@@ -2428,17 +2428,29 @@ function MoviesPage() {
 
   setTimeout(async function () {
     const currentPlaylist = getCurrentPlaylist();
-    const currentPlaylistFavIds = currentPlaylist
+    const currentPlaylistFavObjects = currentPlaylist
       ? currentPlaylist.favouriteMovies
+      : [];
+
+    // Extract IDs from favorite objects (they store full objects, not just IDs)
+    const currentPlaylistFavIds = Array.isArray(currentPlaylistFavObjects)
+      ? currentPlaylistFavObjects
+          .map((item) => item && (item.stream_id || item.id))
+          .filter(Boolean)
       : [];
 
     favoriteMoviesIds = currentPlaylistFavIds || [];
 
+    // Convert favorite IDs to strings for consistent comparison
+    const favIdsAsStrings = currentPlaylistFavIds
+      ? currentPlaylistFavIds.map((id) => String(id))
+      : [];
+
     let favouriteMovies =
-      window.allMoviesStreams && currentPlaylistFavIds
+      window.allMoviesStreams && favIdsAsStrings.length > 0
         ? filterStreamsByQuery(
             window.allMoviesStreams.filter(
-              (m) => m && currentPlaylistFavIds.includes(m.stream_id),
+              (m) => m && favIdsAsStrings.includes(String(m.stream_id)),
             ),
           )
         : [];

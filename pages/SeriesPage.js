@@ -2472,17 +2472,29 @@ function SeriesPage() {
 
   setTimeout(async function () {
     const currentPlaylist = getCurrentPlaylist();
-    const currentPlaylistFavIds = currentPlaylist
+    const currentPlaylistFavObjects = currentPlaylist
       ? currentPlaylist.favouriteSeries
+      : [];
+
+    // Extract IDs from favorite objects (they store full objects, not just IDs)
+    const currentPlaylistFavIds = Array.isArray(currentPlaylistFavObjects)
+      ? currentPlaylistFavObjects
+          .map((item) => item && (item.series_id || item.id))
+          .filter(Boolean)
       : [];
 
     favoriteSeriesIds = currentPlaylistFavIds || [];
 
+    // Convert favorite IDs to strings for consistent comparison
+    const favIdsAsStrings = currentPlaylistFavIds
+      ? currentPlaylistFavIds.map((id) => String(id))
+      : [];
+
     let favouriteSeries =
-      window.allSeriesStreams && currentPlaylistFavIds
+      window.allSeriesStreams && favIdsAsStrings.length > 0
         ? filterSeriesByQuery(
             window.allSeriesStreams.filter((s) =>
-              currentPlaylistFavIds.includes(s.series_id),
+              favIdsAsStrings.includes(String(s.series_id)),
             ),
           )
         : [];

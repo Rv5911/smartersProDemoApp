@@ -44,7 +44,7 @@
 }
 
 .slider-text {
-    color: white;
+    color: var(--app-text-white);
     bottom: 110px;
     /* margin-top: 25px; */
     position: absolute;
@@ -162,7 +162,7 @@
     padding: 18px 14px 18px 50px;
     height: 66px;
     background: transparent;
-    color: white;
+    color: var(--app-text-white);
     font-size: 20px;
     opacity: 0.6;
     outline: none;
@@ -212,7 +212,8 @@
 }
 
 .add-user-button,
-.switch-user-button {
+.switch-user-button,
+.manage-playlists-button {
     flex: 1;
     padding: 20px 20px;
     border-radius: 3px;
@@ -221,7 +222,7 @@
     opacity: 0.7;
     cursor: pointer;
     background: var(--blue-text);
-    color: white;
+    color: var(--app-text-white);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -230,23 +231,25 @@
 }
 
 .add-user-button:hover,
-.switch-user-button:hover {
+.switch-user-button:hover,
+.manage-playlists-button:hover {
     background: var(--blue-text);
-    color: white;
+    color: var(--app-text-white);
     opacity: 1;
 
-    border: 2px solid white;
+    border: 2px solid var(--app-text-white);
     transform: translateY(-2px);
 }
 
 /* Gradient background for buttons when focused */
 .add-user-button.login-input-focused,
-.switch-user-button.login-input-focused {
+.switch-user-button.login-input-focused,
+.manage-playlists-button.login-input-focused {
     background: var(--blue-text);
-    color: white;
+    color: var(--app-text-white);
     opacity: 1;
     transform: scale(1.02);
-    border: 2px solid white;
+    border: 2px solid var(--app-text-white);
 }
 
 .device-info-button-div {

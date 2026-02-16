@@ -72,6 +72,7 @@
     top: 0;
     left: 0;
     width: 100%;
+    object-position: center bottom;
     transition: opacity 0.8s ease-in-out;
     height: 100%;
     object-fit: cover;
@@ -209,6 +210,27 @@
 
     color: white;
     border: 2px solid var(--app-text-color)
+}
+
+body[data-mode="light"] .carousel-watch-now-btn {
+    color: black !important;
+    border: 2px solid white;
+}
+
+body[data-mode="light"] .carousel-fav-btn {
+    color: black ;
+    border: 2px solid white;
+}
+
+body[data-mode="light"] .carousel-watch-now-btn:focus,
+.carousel-more-info-btn:focus,
+.carousel-fav-btn:focus,
+.carousel-watch-now-btn.focused,
+.carousel-more-info-btn.focused,
+.carousel-fav-btn.focused,
+.gradient-btn:focus  {
+    color: white !important;
+    border: 2px solid white;
 }
 
 .carousel-watch-now-btn:focus,

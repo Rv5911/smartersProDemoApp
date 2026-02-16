@@ -470,7 +470,7 @@ const updateMSFocus = () => {
         const row = Math.floor(msState.cardIndex / columns);
 
         if (navRoot) {
-          navRoot.style.display = row >= 3 ? "none" : "block";
+          navRoot.style.display = row >= 1 ? "none" : "block";
         }
       }
     }

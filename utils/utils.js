@@ -687,6 +687,9 @@ function applyTheme() {
   try {
     const currentPL = getCurrentPlaylist();
     const theme = (currentPL && currentPL.themeColor) || "default";
+    const isDarkMode = currentPL && currentPL.DarkMode === true;
+
+    document.body.setAttribute("data-mode", isDarkMode ? "dark" : "light");
 
     // Remove old theme classes
     document.body.classList.remove(
@@ -706,7 +709,6 @@ function applyTheme() {
       document.body.classList.add(themeClass);
     }
 
-    console.log("🎨 Theme applied:", theme);
   } catch (e) {
     console.error("applyTheme error", e);
   }

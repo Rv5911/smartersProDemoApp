@@ -78,20 +78,20 @@ body.theme-purple {
 /* Theme Light (White/Black Combination) */
 body.theme-light {
     --app-bg: #ffffff;
-    --app-text-color: #131a2f;
-    --app-light-text-color: #1a2442;
+    --app-text-color: #000000;
+    --app-light-text-color: #000000;
     --app-dark-text-bg: #f5f5f5;
     --app-dark-bg: #eeeeee;
     --app-light-bg: #ffffff;
-    --app-text-gray: #333333;
+    --app-text-gray: #000000;
     --gold: #fdbd0f;
-    --app-blue: #007bff;
-    --app-text-white: #131a2f;
+    --app-blue: #000000;
+    --app-text-white: #000000;
     --app-overlay-gradient: linear-gradient(to top,
             #ffffff 0%,
             rgba(255, 255, 255, 0.1) 100%);
     --app-gradient: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
-    --light-gradient: linear-gradient(101.11deg, #333333 35.92%, #000000 99.39%);
+    --light-gradient: linear-gradient(101.11deg, #000000 35.92%, #333333 99.39%);
 }
 
 /* Theme Dark (Original) */

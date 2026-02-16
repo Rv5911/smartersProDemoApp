@@ -45,11 +45,11 @@
     padding-left: 70px;
     background: rgba(33, 33, 33, 0.624);
     padding-right: 87px;
-    border: 1px solid white;
+    border: 1px solid var(--app-text-white);
     width: 390px;
     outline: none;
     font-size: 20px;
-    color: white;
+    color: var(--app-text-white);
 }
 
 .search-bar::placeholder {
@@ -58,7 +58,7 @@
 
 .search-bar.active {
     border: 3px solid var(--app-text-color);
-    color: white;
+    color: var(--app-text-white);
 }
 
 .navbar-right {
@@ -256,7 +256,7 @@
 
 .sidebar-card:focus,
 .sidebar-card.active {
-    border-color: white;
+    border-color: var(--app-text-white);
     background: var(--app-text-color);
 }
 
@@ -315,7 +315,7 @@
 }
 
 .back-btn:focus {
-    border-color: white;
+    border-color: var(--app-text-white);
 }
 
 .info-list {
@@ -358,7 +358,7 @@
 }
 
 .footer-link-primary {
-    color: white;
+    color: var(--app-text-white);
     font-size: 22px;
     font-weight: 600;
     text-decoration: underline;
@@ -386,7 +386,7 @@
 }
 
 .contact-email {
-    color: white;
+    color: var(--app-text-white);
     font-weight: 600;
     text-decoration: underline;
 }
@@ -431,7 +431,7 @@
 .sort-dialog-header {
     font-size: 24px;
     font-weight: 700;
-    color: white;
+    color: var(--app-text-white);
     margin-bottom: 24px;
     text-align: center;
 }
@@ -450,7 +450,7 @@
     padding: 18px 24px;
     cursor: pointer;
     transition: all 0.2s ease;
-    color: white;
+    color: var(--app-text-white);
     outline: none;
     border: 1px solid transparent;
 }
@@ -471,7 +471,7 @@
 .checkmark {
     width: 22px;
     height: 22px;
-    border: 2px solid white;
+    border: 2px solid var(--app-text-white);
     position: relative;
     transition: all 0.2s ease;
 }
@@ -490,7 +490,7 @@
     left: 50%;
     transform: translate(-50%, -50%);
     font-size: 14px;
-    color: white;
+    color: var(--app-text-white);
 }
 
 .sort-checkbox {
@@ -547,7 +547,7 @@
 .theme-dot:focus,
 .theme-dot.active {
     transform: scale(1.15);
-    border-color: white;
+    border-color: var(--app-text-white);
     box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
 }
 
@@ -603,7 +603,7 @@
 
 #dark-mode-icon {
     transition: all 0.2s ease;
-    fill: white;
+    fill: var(--app-text-white);
     width: 40px;
     height: 40px;
 }
