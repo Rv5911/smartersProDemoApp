@@ -1881,6 +1881,84 @@ function LivePage() {
     updateFocus();
   };
 
+  const proceedWithSelection = (newCategoryId, shouldFocusChannels) => {
+    // Check if we are switching categories
+    if (String(selectedCategoryId) !== String(newCategoryId)) {
+      selectedCategoryId = newCategoryId;
+      channelSearchQuery = "";
+      const chanInput = document.getElementById("lp-chan-search-input");
+      if (chanInput) chanInput.value = "";
+      channelChunk = 1;
+      channelIndex = 0;
+      buttonFocusIndex = -1;
+      playChannel(""); // Clear player
+    }
+
+    renderCategories();
+    renderChannels();
+
+    if (shouldFocusChannels) {
+      if (focusedSection !== "channels") {
+        focusedSection = "channels";
+      }
+
+      // Ensure we highlight the first channel if switching via ArrowRight
+      // But if we just stayed on the same category, keep the index unless it's out of bounds
+      const items = document.querySelectorAll(
+        ".lp-channel-card, .lp-channel-card-history",
+      );
+      if (items.length > 0) {
+        if (channelIndex >= items.length) {
+          channelIndex = 0;
+        }
+      }
+    }
+    updateFocus();
+  };
+
+  const handleCategorySelect = (index, shouldFocusChannels = false) => {
+    const cats = getFilteredCategories();
+    // Ensure index is valid
+    if (index < 0 || index >= cats.length) return;
+
+    const cat = cats[index];
+    const newCategoryId = cat.category_id;
+
+    // Parental Control Check
+    let isAdult = isCategoryAdult(newCategoryId, cat.category_name);
+    const currentPlaylistForParental = getCurrentPlaylist();
+    const parentalEnabled =
+      currentPlaylistForParental &&
+      !!currentPlaylistForParental.parentalPassword;
+
+    const isLocked =
+      isAdult &&
+      parentalEnabled &&
+      !unlockedLiveAdultCatIds.has(String(newCategoryId));
+
+    if (isLocked) {
+      ParentalPinDialog(
+        () => {
+          unlockedLiveAdultCatIds.add(String(newCategoryId));
+          // Explicitly add "All" special case
+          if (String(newCategoryId) === "All") {
+            unlockedLiveAdultCatIds.add("All");
+          }
+
+          proceedWithSelection(newCategoryId, shouldFocusChannels);
+        },
+        () => {
+          console.log("Parental PIN incorrect for category");
+          // Stay on sidebar, do NOT focus channels
+        },
+        currentPlaylistForParental,
+        "liveTvPage",
+      );
+    } else {
+      proceedWithSelection(newCategoryId, shouldFocusChannels);
+    }
+  };
+
   const navigateUp = () => {
     if (focusedSection === "sidebar") {
       if (sidebarIndex > 0) {
@@ -2010,7 +2088,8 @@ function LivePage() {
     if (focusedSection === "sidebarSearch") {
       focusedSection = "channelSearch";
     } else if (focusedSection === "sidebar") {
-      focusedSection = "channels";
+      // Auto-select on Arrow Right to handle locks correctly
+      handleCategorySelect(sidebarIndex, true);
     } else if (focusedSection === "channelSearch") {
       if (!currentPlayingStream) return;
       focusedSection = "player";
@@ -2043,19 +2122,8 @@ function LivePage() {
           : document.getElementById("lp-chan-search-input");
       if (input) input.focus();
     } else if (focusedSection === "sidebar") {
-      const cats = getFilteredCategories();
-      if (sidebarIndex >= 0 && sidebarIndex < cats.length) {
-        const cat = cats[sidebarIndex];
-        if (String(selectedCategoryId) !== String(cat.category_id)) {
-          selectedCategoryId = cat.category_id;
-          channelSearchQuery = "";
-          channelIndex = 0;
-          channelChunk = 1;
-          renderCategories();
-          renderChannels();
-          playChannel("");
-        }
-      }
+      // Use shared function with lock check
+      handleCategorySelect(sidebarIndex, false);
     } else if (focusedSection === "channels") {
       const stream = filteredStreams[channelIndex];
       if (!stream) return;
@@ -2117,73 +2185,8 @@ function LivePage() {
             localStorage.setItem("navigationFocus", "liveTvPage");
             focusedSection = "sidebar";
 
-            const cats = getFilteredCategories();
-            const cat = cats[index];
-            if (cat) {
-              const newCategoryId = cat.category_id;
-
-              // Parental Control Check
-              let isAdult = isCategoryAdult(newCategoryId, cat.category_name);
-              const currentPlaylistForParental = getCurrentPlaylist();
-              const parentalEnabled =
-                currentPlaylistForParental &&
-                !!currentPlaylistForParental.parentalPassword;
-
-              const isLocked =
-                isAdult &&
-                parentalEnabled &&
-                !unlockedLiveAdultCatIds.has(String(newCategoryId));
-
-              if (isLocked) {
-                ParentalPinDialog(
-                  () => {
-                    unlockedLiveAdultCatIds.add(String(newCategoryId));
-                    // Explicitly add "All" if applicable
-                    if (String(newCategoryId) === "All") {
-                      unlockedLiveAdultCatIds.add("All");
-                    }
-
-                    // Update category if we are switching to a new one (locked -> unlocked)
-                    if (String(selectedCategoryId) !== String(newCategoryId)) {
-                      selectedCategoryId = newCategoryId;
-                      channelSearchQuery = "";
-                      const chanInput = document.getElementById(
-                        "lp-chan-search-input",
-                      );
-                      if (chanInput) chanInput.value = "";
-                      channelChunk = 1;
-                      channelIndex = 0;
-                      buttonFocusIndex = -1;
-
-                      // Clear current playing channel description if switching categories
-                      playChannel("");
-                    }
-
-                    // Re-render everything with the new state
-                    renderCategories();
-                    renderChannels();
-                    updateFocus();
-                  },
-                  () => {
-                    console.log("Parental PIN incorrect for category");
-                  },
-                  currentPlaylistForParental,
-                  "liveTvPage",
-                );
-                return;
-              }
-
-              if (String(selectedCategoryId) !== String(newCategoryId)) {
-                selectedCategoryId = newCategoryId;
-                channelChunk = 1;
-                channelIndex = 0;
-                buttonFocusIndex = -1;
-                renderCategories();
-                renderChannels();
-                playChannel("");
-                updateFocus();
-              }
-            }
+            // Use shared handler
+            handleCategorySelect(index, false);
           }
         }
       });
