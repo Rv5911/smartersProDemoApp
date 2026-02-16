@@ -219,6 +219,26 @@ const saveMSState = () => {
   }
 };
 
+const getGridColumns = () => {
+  const grid = document.getElementById("ms-grid");
+  if (!grid) return 1;
+  try {
+    const style = window.getComputedStyle(grid);
+    const colStr = style.gridTemplateColumns;
+    if (!colStr || colStr === "none") {
+      // Fallback to calculation if grid-template-columns is not available
+      const cardWidth = 280;
+      const gap = 40; // gap from CSS
+      const gridWidth = grid.offsetWidth;
+      // Use logic accounting for gaps: n * w + (n-1) * gap <= W
+      return Math.floor((gridWidth + gap) / (cardWidth + gap)) || 1;
+    }
+    return colStr.split(" ").length;
+  } catch (e) {
+    return 1;
+  }
+};
+
 const handleMSKeydown = (e) => {
   if (localStorage.getItem("currentPage") !== "masterSearchPage") return;
 
@@ -316,9 +336,7 @@ const handleMSKeydown = (e) => {
   } else if (msState.focusedSection === "cards") {
     const grid = document.getElementById("ms-grid");
     if (!grid) return;
-    const cardWidth = 280;
-    const gridWidth = grid.offsetWidth;
-    const columns = Math.floor(gridWidth / cardWidth) || 1;
+    const columns = getGridColumns();
 
     if (key === "ArrowRight") {
       if (msState.cardIndex < msState.results[msState.activeTab].length - 1) {
@@ -444,16 +462,11 @@ const updateMSFocus = () => {
       const focusedCard = document.querySelector(".ms-card.focused");
       if (focusedCard) {
         focusedCard.scrollIntoView({
-          behavior: "smooth",
           block: "center",
         });
         activateMSMarquee(focusedCard);
 
-        const cardWidth = 280;
-        const gridWidth = document.getElementById("ms-grid")
-          ? document.getElementById("ms-grid").offsetWidth
-          : 1;
-        const columns = Math.floor(gridWidth / cardWidth) || 1;
+        const columns = getGridColumns();
         const row = Math.floor(msState.cardIndex / columns);
 
         if (navRoot) {

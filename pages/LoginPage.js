@@ -1,316 +1,358 @@
 function LoginPage() {
-    let playlistsData = JSON.parse(localStorage.getItem("playlistsData")) ?
-        JSON.parse(localStorage.getItem("playlistsData")) :
-        [];
+  let playlistsData = JSON.parse(localStorage.getItem("playlistsData"))
+    ? JSON.parse(localStorage.getItem("playlistsData"))
+    : [];
 
-    setTimeout(function() {
-        localStorage.removeItem("navigationFocus");
-        if (localStorage.getItem("currentPage") !== "login") return;
-        if (LoginPage.cleanup) LoginPage.cleanup();
+  setTimeout(function () {
+    localStorage.removeItem("navigationFocus");
+    if (localStorage.getItem("currentPage") !== "login") return;
+    if (LoginPage.cleanup) LoginPage.cleanup();
 
-        const playlistInput = document.querySelector(".playlistname-input");
-        const usernameInput = document.querySelector(".username-input");
-        const passwordInput = document.querySelector(".password-input");
-        const serverInput = document.querySelector(".server-input");
-        const addUserButton = document.querySelector(".add-user-button");
-        const switchUserButton = document.querySelector(".switch-user-button");
-        const deviceInfoButton = document.querySelector(".device-info-button");
+    const playlistInput = document.querySelector(".playlistname-input");
+    const usernameInput = document.querySelector(".username-input");
+    const passwordInput = document.querySelector(".password-input");
+    const serverInput = document.querySelector(".server-input");
+    const addUserButton = document.querySelector(".add-user-button");
+    const managePlaylistsButton = document.querySelector(
+      ".manage-playlists-button",
+    );
+    const switchUserButton = document.querySelector(".switch-user-button");
+    const deviceInfoButton = document.querySelector(".device-info-button");
 
-        let currentSlide = 0;
-        const totalSlides = 3;
-        let sliderInterval;
+    let currentSlide = 0;
+    const totalSlides = 3;
+    let sliderInterval;
 
-        function updateSlider() {
-            const slides = document.querySelectorAll(".slider-slide");
-            const dots = document.querySelectorAll(".slider-dot");
+    function updateSlider() {
+      const slides = document.querySelectorAll(".slider-slide");
+      const dots = document.querySelectorAll(".slider-dot");
 
-            slides.forEach((slide, index) => {
-                slide.classList.remove("active");
-                if (index === currentSlide) {
-                    slide.classList.add("active");
-                }
-            });
-
-            dots.forEach((dot, index) => {
-                dot.classList.remove("active");
-                if (index === currentSlide) {
-                    dot.classList.add("active");
-                }
-            });
+      slides.forEach((slide, index) => {
+        slide.classList.remove("active");
+        if (index === currentSlide) {
+          slide.classList.add("active");
         }
+      });
 
-        function nextSlide() {
-            currentSlide = (currentSlide + 1) % totalSlides;
-            updateSlider();
+      dots.forEach((dot, index) => {
+        dot.classList.remove("active");
+        if (index === currentSlide) {
+          dot.classList.add("active");
         }
+      });
+    }
 
+    function nextSlide() {
+      currentSlide = (currentSlide + 1) % totalSlides;
+      updateSlider();
+    }
+
+    sliderInterval = setInterval(nextSlide, 5000);
+
+    const dots = document.querySelectorAll(".slider-dot");
+    dots.forEach((dot, index) => {
+      dot.addEventListener("click", () => {
+        currentSlide = index;
+        updateSlider();
+        clearInterval(sliderInterval);
         sliderInterval = setInterval(nextSlide, 5000);
+      });
+    });
 
-        const dots = document.querySelectorAll(".slider-dot");
-        dots.forEach((dot, index) => {
-            dot.addEventListener("click", () => {
-                currentSlide = index;
-                updateSlider();
-                clearInterval(sliderInterval);
-                sliderInterval = setInterval(nextSlide, 5000);
-            });
+    passwordInput.addEventListener("focus", () => {
+      document.querySelector(".login-form-div").classList.add("shift-up");
+    });
+
+    passwordInput.addEventListener("blur", () => {
+      document.querySelector(".login-form-div").classList.remove("shift-up");
+    });
+
+    usernameInput.addEventListener("focus", () => {
+      document.querySelector(".login-form-div").classList.add("shift-up");
+    });
+
+    usernameInput.addEventListener("blur", () => {
+      document.querySelector(".login-form-div").classList.remove("shift-up");
+    });
+
+    serverInput.addEventListener("focus", () => {
+      document.querySelector(".login-form-div").classList.add("shift-up");
+    });
+
+    serverInput.addEventListener("blur", () => {
+      document.querySelector(".login-form-div").classList.remove("shift-up");
+    });
+
+    if (!passwordInput) return;
+
+    const inputs = [
+      playlistInput,
+
+      usernameInput,
+      passwordInput,
+
+      serverInput,
+      addUserButton,
+      managePlaylistsButton,
+      // switchUserButton,
+      // deviceInfoButton,
+    ].filter(Boolean);
+
+    let currentIndex = 0;
+    let lastFocusedInput = null;
+
+    const eyeIcon = document.querySelector(".eye-icon-login");
+
+    // Add error handling for image loading
+    if (eyeIcon) {
+      eyeIcon.onerror = function () {
+        console.error("Eye icon image failed to load");
+        eyeIcon.alt = passwordVisible ? "Hide" : "Show";
+      };
+    }
+
+    let passwordVisible = false;
+
+    function togglePassword() {
+      passwordVisible = !passwordVisible;
+      passwordInput.type = passwordVisible ? "text" : "password";
+      eyeIcon.src = passwordVisible
+        ? "../assets/eye-open.png"
+        : "../assets/eye-closed.png";
+      eyeIcon.alt = passwordVisible ? "Hide password" : "Show password";
+    }
+
+    eyeIcon.addEventListener("click", togglePassword);
+
+    if (inputs.length > 0) {
+      inputs[currentIndex].classList.add("login-input-focused");
+    }
+
+    function clearFocusStyles() {
+      document
+        .querySelectorAll(
+          ".login-input-focused, .login-button-focused, .list-button-focused, .eye-icon-focused",
+        )
+        .forEach(function (el) {
+          el.classList.remove(
+            "login-input-focused",
+            "login-button-focused",
+            "list-button-focused",
+            "eye-icon-focused",
+          );
         });
+    }
 
-        passwordInput.addEventListener("focus", () => {
-            document.querySelector(".login-form-div").classList.add("shift-up");
-        });
+    function updateFocus(newIndex) {
+      if (newIndex < 0 || newIndex >= inputs.length) return;
 
-        passwordInput.addEventListener("blur", () => {
-            document.querySelector(".login-form-div").classList.remove("shift-up");
-        });
+      if (lastFocusedInput) {
+        lastFocusedInput.blur();
+        lastFocusedInput = null;
+      }
 
-        usernameInput.addEventListener("focus", () => {
-            document.querySelector(".login-form-div").classList.add("shift-up");
-        });
+      clearFocusStyles();
+      currentIndex = newIndex;
+      const focused = inputs[currentIndex];
 
-        usernameInput.addEventListener("blur", () => {
-            document.querySelector(".login-form-div").classList.remove("shift-up");
-        });
+      if (focused.classList.contains("login-input")) {
+        focused.classList.add("login-input-focused");
+      } else if (
+        focused.classList.contains("add-user-button") ||
+        focused.classList.contains("manage-playlists-button") ||
+        focused.classList.contains("switch-user-button") ||
+        focused.classList.contains("device-info-button")
+      ) {
+        focused.classList.add("login-input-focused");
+      }
+    }
 
-        serverInput.addEventListener("focus", () => {
-            document.querySelector(".login-form-div").classList.add("shift-up");
-        });
+    function handleLogin() {
+      const playlistName = playlistInput.value.trim();
+      const username = usernameInput.value.trim();
+      const password = passwordInput.value.trim();
+      const serverAddress = serverInput.value.trim();
 
-        serverInput.addEventListener("blur", () => {
-            document.querySelector(".login-form-div").classList.remove("shift-up");
-        });
+      if (
+        playlistName === "" ||
+        username === "" ||
+        password === "" ||
+        serverAddress === ""
+      ) {
+        Toaster.showToast("error", "Please complete all fields!");
+        return;
+      }
 
-        if (!passwordInput) return;
+      loginApi(username, password, playlistName, false, "", serverAddress).then(
+        (response) => {
+          if (response) {
+            LoginPage.cleanup();
+          }
+        },
+      );
+    }
 
-        const inputs = [
-            playlistInput,
+    function loginPageKeydownEvents(e) {
+      if (localStorage.getItem("currentPage") !== "login") {
+        return;
+      }
+      const key = e.key;
+      const focused = inputs[currentIndex];
+      const eyeFocused = eyeIcon.classList.contains("eye-icon-focused");
 
-            usernameInput,
-            passwordInput,
+      const isInputFocused =
+        document.activeElement &&
+        (document.activeElement === playlistInput ||
+          document.activeElement === usernameInput ||
+          document.activeElement === passwordInput);
 
-            serverInput,
-            addUserButton,
-            // switchUserButton,
-            // deviceInfoButton,
-        ].filter(Boolean);
+      if (
+        isInputFocused &&
+        key !== "ArrowDown" &&
+        key !== "ArrowUp" &&
+        key !== "ArrowLeft" &&
+        key !== "ArrowRight" &&
+        key !== "Enter"
+      ) {
+        return;
+      }
 
-        let currentIndex = 0;
-        let lastFocusedInput = null;
-
-        const eyeIcon = document.querySelector(".eye-icon-login");
-
-        // Add error handling for image loading
-        if (eyeIcon) {
-            eyeIcon.onerror = function() {
-                console.error("Eye icon image failed to load");
-                eyeIcon.alt = passwordVisible ? "Hide" : "Show";
-            };
-        }
-
-        let passwordVisible = false;
-
-        function togglePassword() {
-            passwordVisible = !passwordVisible;
-            passwordInput.type = passwordVisible ? "text" : "password";
-            eyeIcon.src = passwordVisible ?
-                "../assets/eye-open.png" :
-                "../assets/eye-closed.png";
-            eyeIcon.alt = passwordVisible ? "Hide password" : "Show password";
-        }
-
-        eyeIcon.addEventListener("click", togglePassword);
-
-        if (inputs.length > 0) {
-            inputs[currentIndex].classList.add("login-input-focused");
-        }
-
-        function clearFocusStyles() {
-            document
-                .querySelectorAll(
-                    ".login-input-focused, .login-button-focused, .list-button-focused, .eye-icon-focused",
-                )
-                .forEach(function(el) {
-                    el.classList.remove(
-                        "login-input-focused",
-                        "login-button-focused",
-                        "list-button-focused",
-                        "eye-icon-focused",
-                    );
-                });
-        }
-
-        function updateFocus(newIndex) {
-            if (newIndex < 0 || newIndex >= inputs.length) return;
-
-            if (lastFocusedInput) {
-                lastFocusedInput.blur();
-                lastFocusedInput = null;
+      switch (key) {
+        case "ArrowDown":
+          if (eyeFocused) {
+            eyeIcon.classList.remove("eye-icon-focused");
+            passwordInput.classList.add("login-input-focused");
+          } else if (inputs[currentIndex] === serverInput) {
+            updateFocus(inputs.indexOf(addUserButton));
+          } else if (
+            inputs[currentIndex] === addUserButton ||
+            inputs[currentIndex] === managePlaylistsButton
+          ) {
+            // If device button is enabled, go there. Otherwise stay.
+            if (
+              deviceInfoButton &&
+              !deviceInfoButton.classList.contains("hidden")
+            ) {
+              updateFocus(inputs.indexOf(deviceInfoButton));
             }
+          } else {
+            updateFocus(currentIndex + 1);
+          }
+          e.preventDefault();
+          break;
 
+        case "ArrowUp":
+          if (eyeFocused) {
+            eyeIcon.classList.remove("eye-icon-focused");
+            passwordInput.classList.add("login-input-focused");
+          } else if (
+            inputs[currentIndex] === switchUserButton ||
+            inputs[currentIndex] === managePlaylistsButton
+          ) {
+            updateFocus(inputs.indexOf(serverInput));
+          } else {
+            updateFocus(currentIndex - 1);
+          }
+          e.preventDefault();
+          break;
+
+        case "ArrowRight":
+          if (inputs[currentIndex] === passwordInput) {
             clearFocusStyles();
-            currentIndex = newIndex;
-            const focused = inputs[currentIndex];
-
-            if (focused.classList.contains("login-input")) {
-                focused.classList.add("login-input-focused");
-            } else if (
-                focused.classList.contains("add-user-button") ||
-                focused.classList.contains("switch-user-button") ||
-                focused.classList.contains("device-info-button")
-            ) {
-                focused.classList.add("login-input-focused");
-            }
-        }
-
-        function handleLogin() {
-            const playlistName = playlistInput.value.trim();
-            const username = usernameInput.value.trim();
-            const password = passwordInput.value.trim();
-            const serverAddress = serverInput.value.trim();
-
+            if (lastFocusedInput) lastFocusedInput.blur();
+            eyeIcon.classList.add("eye-icon-focused");
+          } else if (inputs[currentIndex] === addUserButton) {
+            updateFocus(inputs.indexOf(managePlaylistsButton));
+          } else if (inputs[currentIndex] === managePlaylistsButton) {
+            // Stay or go to switchUser if enabled
             if (
-                playlistName === "" ||
-                username === "" ||
-                password === "" ||
-                serverAddress === ""
+              switchUserButton &&
+              getComputedStyle(switchUserButton).display !== "none"
             ) {
-                Toaster.showToast("error", "Please complete all fields!");
-                return;
+              updateFocus(inputs.indexOf(switchUserButton));
             }
+          }
+          e.preventDefault();
+          break;
 
-            loginApi(username, password, playlistName, false, "", serverAddress).then(
-                (response) => {
-                    if (response) {
-                        LoginPage.cleanup();
-                    }
-                },
-            );
-        }
+        case "ArrowLeft":
+          if (eyeFocused) {
+            clearFocusStyles();
+            passwordInput.classList.add("login-input-focused");
+          } else if (inputs[currentIndex] === managePlaylistsButton) {
+            updateFocus(inputs.indexOf(addUserButton));
+          } else if (inputs[currentIndex] === switchUserButton) {
+            updateFocus(inputs.indexOf(managePlaylistsButton));
+          }
+          e.preventDefault();
+          break;
 
-        function loginPageKeydownEvents(e) {
-            if (localStorage.getItem("currentPage") !== "login") {
-                return;
+        case "Enter":
+          if (eyeFocused) {
+            togglePassword();
+            e.preventDefault();
+            break;
+          }
+
+          if (lastFocusedInput && lastFocusedInput !== focused) {
+            lastFocusedInput.blur();
+          }
+
+          if (focused.classList.contains("login-input")) {
+            focused.focus();
+            lastFocusedInput = focused;
+          } else if (focused.classList.contains("add-user-button")) {
+            handleLogin();
+          } else if (focused.classList.contains("manage-playlists-button")) {
+            if(playlistsData.length === 0){
+              Toaster.showToast("error", "No playlists available. Please add a playlist!");
+              e.preventDefault();
+              return;
+            } else {
+            localStorage.setItem("currentPage", "listUsersPage");
+            LoginPage.cleanup();
+            Router.showPage("listPage");
             }
-            const key = e.key;
-            const focused = inputs[currentIndex];
-            const eyeFocused = eyeIcon.classList.contains("eye-icon-focused");
-
-            const isInputFocused =
-                document.activeElement &&
-                (document.activeElement === playlistInput ||
-                    document.activeElement === usernameInput ||
-                    document.activeElement === passwordInput);
-
-            if (
-                isInputFocused &&
-                key !== "ArrowDown" &&
-                key !== "ArrowUp" &&
-                key !== "ArrowLeft" &&
-                key !== "ArrowRight" &&
-                key !== "Enter"
-            ) {
-                return;
+          } else if (focused.classList.contains("switch-user-button")) {
+            const playlistsData = localStorage.getItem("playlistsData")
+              ? JSON.parse(localStorage.getItem("playlistsData"))
+              : [];
+            if (playlistsData.length === 0) {
+              Toaster.showToast(
+                "error",
+                "No playlists available. Please add a playlist!",
+              );
+              e.preventDefault();
+              return;
+            } else {
+              localStorage.setItem("currentPage", "listUsersPage");
+              LoginPage.cleanup();
+              Router.showPage("listPage");
             }
+          } else if (focused.classList.contains("device-info-button")) {
+            Toaster.showToast("info", "Coming Soon");
+          }
+          e.preventDefault();
+          break;
+      }
+    }
 
-            switch (key) {
-                case "ArrowDown":
-                    if (eyeFocused) {
-                        eyeIcon.classList.remove("eye-icon-focused");
-                        passwordInput.classList.add("login-input-focused");
-                    } else if (inputs[currentIndex] === serverInput) {
-                        updateFocus(inputs.indexOf(addUserButton));
-                    } else if (inputs[currentIndex] === addUserButton) {
-                        updateFocus(inputs.indexOf(deviceInfoButton));
-                    } else {
-                        updateFocus(currentIndex + 1);
-                    }
-                    e.preventDefault();
-                    break;
+    document.addEventListener("keydown", loginPageKeydownEvents);
+    addUserButton.addEventListener("click", handleLogin);
+    managePlaylistsButton.addEventListener("click", () => {
+      localStorage.setItem("currentPage", "listUsersPage");
+      LoginPage.cleanup();
+      Router.showPage("listPage");
+    });
 
-                case "ArrowUp":
-                    if (eyeFocused) {
-                        eyeIcon.classList.remove("eye-icon-focused");
-                        passwordInput.classList.add("login-input-focused");
-                    } else if (inputs[currentIndex] === switchUserButton) {
-                        updateFocus(inputs.indexOf(serverInput));
-                    } else {
-                        updateFocus(currentIndex - 1);
-                    }
-                    e.preventDefault();
-                    break;
+    LoginPage.cleanup = function () {
+      document.removeEventListener("keydown", loginPageKeydownEvents);
+      eyeIcon.removeEventListener("click", togglePassword);
+      if (sliderInterval) clearInterval(sliderInterval);
+    };
+  }, 0);
 
-                case "ArrowRight":
-                    if (inputs[currentIndex] === passwordInput) {
-                        clearFocusStyles();
-                        if (lastFocusedInput) lastFocusedInput.blur();
-                        eyeIcon.classList.add("eye-icon-focused");
-                    } else if (inputs[currentIndex] === addUserButton) {
-                        updateFocus(inputs.indexOf(switchUserButton));
-                    }
-                    e.preventDefault();
-                    break;
-
-                case "ArrowLeft":
-                    if (eyeFocused) {
-                        clearFocusStyles();
-                        passwordInput.classList.add("login-input-focused");
-                    } else if (inputs[currentIndex] === switchUserButton) {
-                        updateFocus(inputs.indexOf(addUserButton));
-                    }
-                    e.preventDefault();
-                    break;
-
-                case "Enter":
-                    if (eyeFocused) {
-                        togglePassword();
-                        e.preventDefault();
-                        break;
-                    }
-
-                    if (lastFocusedInput && lastFocusedInput !== focused) {
-                        lastFocusedInput.blur();
-                    }
-
-                    if (focused.classList.contains("login-input")) {
-                        focused.focus();
-                        lastFocusedInput = focused;
-                    } else if (focused.classList.contains("add-user-button")) {
-                        handleLogin();
-                    } else if (focused.classList.contains("switch-user-button")) {
-                        const playlistsData = localStorage.getItem("playlistsData") ?
-                            JSON.parse(localStorage.getItem("playlistsData")) :
-                            [];
-                        if (playlistsData.length === 0) {
-                            Toaster.showToast(
-                                "error",
-                                "No playlists available. Please add a playlist!",
-                            );
-                            e.preventDefault();
-                            return;
-                        } else {
-                            localStorage.setItem("currentPage", "listUsersPage");
-                            LoginPage.cleanup();
-                            Router.showPage("listPage");
-                        }
-                    } else if (focused.classList.contains("device-info-button")) {
-                        Toaster.showToast("info", "Coming Soon");
-                    }
-                    e.preventDefault();
-                    break;
-            }
-        }
-
-        document.addEventListener("keydown", loginPageKeydownEvents);
-        addUserButton.addEventListener("click", handleLogin);
-
-        LoginPage.cleanup = function() {
-            document.removeEventListener("keydown", loginPageKeydownEvents);
-            eyeIcon.removeEventListener("click", togglePassword);
-            if (sliderInterval) clearInterval(sliderInterval);
-        };
-    }, 0);
-
-    return `
+  return `
     <div class="login-page-container">
       <div class="login-content-div">
         
@@ -369,8 +411,9 @@ function LoginPage() {
             </div>
 
             <div class="login-buttons-row">
-              <button class="add-user-button">Add Playlist<img class="login-button-img" src="../assets/add-user-icon.png" alt="Add User"></button>
-              <button class="switch-user-button">Switch User <img class="login-button-img" src="../assets/switch-user-icon.png" alt="Switch User"></button>
+              <button class="add-user-button">Add Playlist</button>
+              <button class="manage-playlists-button">List Playlists</button>
+              <button class="switch-user-button">Switch User</button>
             </div>
 
             <div class="device-info-button-div">

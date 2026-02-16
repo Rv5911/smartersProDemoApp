@@ -44,7 +44,6 @@
     padding-bottom: 15px;
     padding-left: 70px;
     background: rgba(33, 33, 33, 0.624);
-    border-radius: 12px;
     padding-right: 87px;
     border: 1px solid white;
     width: 390px;
@@ -58,7 +57,7 @@
 }
 
 .search-bar.active {
-    border: 3px solid white;
+    border: 3px solid var(--app-text-color);
     color: white;
 }
 
@@ -598,11 +597,11 @@
 
 
 .search-icon {
-        width: 60px;
+    width: 60px;
     height: 30px;
 }
 
-#dark-mode-icon{
+#dark-mode-icon {
     transition: all 0.2s ease;
     fill: white;
     width: 40px;

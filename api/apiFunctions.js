@@ -132,6 +132,99 @@ async function loginApi(
     }
   });
 
+  // await new Promise((resolve) => setTimeout(resolve, 5000));
+
+  // if (loginCancelled) return null;
+
+  // window.dnsNotValid = true;
+  // const isLoginPage = document.querySelector(".login-page-container");
+  // const isListUsersPage = document.querySelector(".list-users-container");
+
+  // if (isLoginPage || isListUsersPage) {
+  //   const previousActiveElement = document.activeElement;
+
+  //   // Create Dialog
+  //   const dialog = document.createElement("div");
+  //   dialog.id = "dns-dialog";
+
+  //   const content = document.createElement("div");
+  //   content.className = "dns-dialog-content";
+
+  //   content.innerHTML = `
+  //     <h2 class="dns-dialog-title">DNS is not Whitelisted</h2>
+  //     <p class="dns-dialog-message">Please register your DNS below to continue.</p>
+      
+  //     <div class="dns-qr-container">
+  //       <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://example.com/register-dns" alt="QR Code" class="dns-qr-image">
+  //     </div>
+      
+  //     <div class="dns-website-container">
+  //       <p class="dns-website-label">Visit Website:</p>
+  //       <a href="#" class="dns-website-link">www.example.com/dns</a>
+  //     </div>
+      
+  //     <div class="dns-close-hint">
+  //       Press Back to Close
+  //     </div>
+  //   `;
+
+  //   dialog.appendChild(content);
+  //   document.body.appendChild(dialog);
+
+  //   // Hide loader and disable global key block (so we can handle back button for dialog)
+  //   loadingOverlay.classList.add("hidden");
+  //   disableKeyBlock();
+
+  //   // Define closeDialog first
+  //   const closeDialog = () => {
+  //     console.log("Closing DNS dialog");
+  //     window.dnsNotValid = false;
+
+  //     // Remove event listener
+  //     document.removeEventListener("keydown", handleKeydown, true);
+
+  //     // Remove dialog from DOM
+  //     if (document.body.contains(dialog)) {
+  //       document.body.removeChild(dialog);
+  //     }
+
+  //     // Restore focus
+  //     if (previousActiveElement) {
+  //       previousActiveElement.focus();
+  //     }
+  //   };
+
+  //   // Block background interactions and handle Back
+  //   const handleKeydown = (e) => {
+  //     console.log("DNS Dialog key pressed:", e.key);
+  //     e.stopPropagation();
+  //     e.stopImmediatePropagation();
+  //     e.preventDefault();
+  //     const backKeys = [
+  //       10009,
+  //       100079,
+  //       8,
+  //       461,
+  //       27,
+  //       "Escape",
+  //       "Back",
+  //       "BrowserBack",
+  //       "XF86Back",
+  //       "Backspace",
+  //     ];
+
+  //     if (backKeys.includes(e.key) || backKeys.includes(e.keyCode)) {
+  //       closeDialog();
+  //     }
+  //   };
+
+  //   // Add event listener with capture phase
+  //   document.addEventListener("keydown", handleKeydown, true);
+
+  //   // ABORT LOGIN FLOW
+  //   return null;
+  // }
+
   try {
     if (fromPlaylist && playlistUrl) {
       try {
