@@ -8,7 +8,7 @@ width: 100%;
         background-size: cover;
     background-position: center;
     position: fixed;
-background: var(--app-bg);
+background: var(--blue-bg);
 }
 
 .prelogin-page-container img{

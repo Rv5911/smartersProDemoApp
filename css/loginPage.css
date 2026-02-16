@@ -7,7 +7,7 @@
     overflow: hidden;
     box-sizing: border-box;
     position: fixed;
-    background: var(--app-bg);
+    background: var(--blue-bg);
 
 
 
@@ -108,7 +108,7 @@
 }
 
 .slider-dot.active {
-    background: var(--app-text-color);
+    background: var(--blue-text);
     border-radius: 5px;
     scale: 1.5;
 }
@@ -121,7 +121,7 @@
 
 .login-form-div {
     width: 55%;
-    background: var(--app-light-bg);
+    background: var(--blue-light-color);
     padding: 40px 50px;
     display: flex;
     flex-direction: column;
@@ -180,7 +180,7 @@
     transform: scale(1.02);
     opacity: 1;
     transition: all 0.2s ease-in-out;
-    border: 2px solid var(--app-text-color);
+    border: 2px solid var(--blue-text);
 }
 
 .login-input-container {
@@ -220,7 +220,7 @@
     font-weight: 600;
     opacity: 0.7;
     cursor: pointer;
-    background: var(--app-text-color);
+    background: var(--blue-text);
     color: white;
     display: flex;
     align-items: center;
@@ -231,7 +231,7 @@
 
 .add-user-button:hover,
 .switch-user-button:hover {
-    background: var(--app-text-color);
+    background: var(--blue-text);
     color: white;
     opacity: 1;
 
@@ -242,7 +242,7 @@
 /* Gradient background for buttons when focused */
 .add-user-button.login-input-focused,
 .switch-user-button.login-input-focused {
-    background: var(--app-text-color);
+    background: var(--blue-text);
     color: white;
     opacity: 1;
     transform: scale(1.02);

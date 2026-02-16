@@ -125,8 +125,8 @@ async function MovieDetailPage() {
 
   try {
     if (tmdbId) {
-      // getMovieCastData = await getMovieCast(tmdbId);
-      getMovieCastData = [];
+      getMovieCastData = await getMovieCast(tmdbId);
+      // getMovieCastData = [];
     }
   } catch (err) {
     console.error("Error fetching movie cast:", err);
@@ -236,7 +236,10 @@ async function MovieDetailPage() {
             ".movie-detail-page-container",
           );
           if (container) {
-            container.scrollTo({ top: 0, behavior: "smooth" });
+            container.scrollTo({
+              top: 0,
+              behavior: "smooth",
+            });
           }
         } else {
           if (el.scrollIntoViewIfNeeded) el.scrollIntoViewIfNeeded(true);
@@ -586,7 +589,10 @@ async function MovieDetailPage() {
         const returnToSearchVal = localStorage.getItem("returnToMasterSearch");
         const prev = localStorage.getItem("previousPage");
 
-        console.log("Back Navigation Debug:", { returnToSearchVal, prev });
+        console.log("Back Navigation Debug:", {
+          returnToSearchVal,
+          prev,
+        });
 
         // Check if returnToSearchVal is "true" string or existing
         if (returnToSearchVal === "true" || prev === "masterSearchPage") {

@@ -260,7 +260,7 @@
 /* Responsive */
 @media (max-width: 1200px) {
     .carousel-container {
-        height: 70vh;
+        height: 80vh;
     }
 
     .carousel-content {

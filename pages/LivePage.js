@@ -804,8 +804,8 @@ function LivePage() {
         <div class="lp-channel-number">${idx + 1}.</div>
         <div class="lp-channel-logo-container">
           <img src="${
-            stream.stream_icon || "assets/app-logo.png"
-          }" onerror="this.src = 'assets/app-logo.png'">
+            stream.stream_icon || "assets/app-logo.svg"
+          }" onerror="this.src = 'assets/app-logo.svg'">
         <div class="lp-fav-indicator" style="display: ${
           isFav ? "flex" : "none"
         };">
