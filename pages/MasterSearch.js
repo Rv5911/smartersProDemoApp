@@ -37,6 +37,20 @@ function MasterSearch() {
   `;
 }
 
+const getMSCurrentPlaylist = () => {
+  try {
+    const currentPlaylistName = JSON.parse(
+      localStorage.getItem("selectedPlaylist") || "{}",
+    ).playlistName;
+    const playlistsData = JSON.parse(
+      localStorage.getItem("playlistsData") || "[]",
+    );
+    return playlistsData.find((pl) => pl.playlistName === currentPlaylistName);
+  } catch (e) {
+    return null;
+  }
+};
+
 const isStreamAdult = (name) => {
   const normalized = (name || "").trim().toLowerCase();
   const configured = window.adultsCategories || [];
@@ -491,9 +505,37 @@ const playMSItem = () => {
   localStorage.setItem("previousPage", "masterSearchPage");
 
   if (msState.activeTab === "live") {
-    localStorage.setItem("forcePlayChannelId", item.stream_id);
-    localStorage.setItem("forceFullscreen", "true");
-    Router.showPage("liveTvPage");
+    // Determine if the channel is locked
+    const isLocked = isStreamAdult(item.name);
+
+    if (isLocked) {
+      const currentPlaylist = getMSCurrentPlaylist();
+      const parentalEnabled =
+        currentPlaylist && !!currentPlaylist.parentalPassword;
+
+      if (parentalEnabled && typeof ParentalPinDialog === "function") {
+        ParentalPinDialog(
+          () => {
+            // Success callback
+            const player = window.MasterSearchLivePlayer();
+            player.play(item);
+          },
+          () => {
+            console.log("PIN Cancelled");
+          },
+          currentPlaylist,
+          "masterSearchPage",
+        );
+      } else {
+        // Fallback if no pin dialog
+        const player = window.MasterSearchLivePlayer();
+        player.play(item);
+      }
+    } else {
+      // Not locked, play immediately
+      const player = window.MasterSearchLivePlayer();
+      player.play(item);
+    }
   } else {
     const isSeries = msState.activeTab === "series";
     if (isSeries) {
@@ -602,6 +644,8 @@ window.initMasterSearch = function () {
         updateMSFocus();
       }
     }, 400);
+
+    // Initialize player container if needed, though play() handles it.
   } else {
     if (input) {
       input.value = msState.query;
@@ -686,6 +730,11 @@ const handleSearchPageFocus = () => {
 };
 
 window.cleanupMasterSearch = function () {
+  // Clean up player if it's active
+  if (window.MasterSearchLivePlayer) {
+    window.MasterSearchLivePlayer().cleanup();
+  }
+
   document.removeEventListener("keydown", handleMSKeydown);
   window.removeEventListener("search-page-focus", handleSearchPageFocus);
 

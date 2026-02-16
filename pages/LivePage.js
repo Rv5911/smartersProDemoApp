@@ -266,12 +266,31 @@ function LivePage() {
     const forceChannelId = localStorage.getItem("forcePlayChannelId");
     if (forceChannelId) {
       localStorage.removeItem("forcePlayChannelId");
+
+      // Visual Hack: Immediate "Fake" Fullscreen to hide UI
+      const style = document.createElement("style");
+      style.id = "lp-temp-forced-style";
+      style.innerHTML = `
+        .lp-player-container { 
+            position: fixed !important; 
+            top: 0; 
+            left: 0; 
+            width: 100vw !important; 
+            height: 100vh !important; 
+            z-index: 99999; 
+            background: black; 
+        }
+        #navbar-root { display: none !important; }
+      `;
+      document.head.appendChild(style);
+
       const streams = window.allLiveStreams || [];
       const stream = streams.find(
         (s) => String(s.stream_id) === String(forceChannelId),
       );
       if (stream) {
-        setTimeout(() => {
+        // Execute immediately, no delay
+        requestAnimationFrame(() => {
           // Select category of this stream
           selectedCategoryId = stream.category_id || "All";
           renderCategories();
@@ -281,21 +300,38 @@ function LivePage() {
           const idx = filtered.findIndex(
             (s) => String(s.stream_id) === String(forceChannelId),
           );
+
           if (idx !== -1) {
             channelIndex = idx;
             focusedSection = "channels";
-            // Trigger play
-            playChannel(stream);
-
-            // Enter fullscreen if requested
-            if (localStorage.getItem("forceFullscreen") === "true") {
-              localStorage.removeItem("forceFullscreen");
-              setTimeout(() => {
-                if (!checkIsFullscreen()) toggleFullscreen();
-              }, 1000);
-            }
           }
-        }, 500);
+
+          // Trigger play immediately
+          playChannel(stream);
+
+          // Enter fullscreen if requested
+          if (localStorage.getItem("forceFullscreen") === "true") {
+            localStorage.removeItem("forceFullscreen");
+            // Small delay to ensure player is in DOM and ready for fullscreen
+            setTimeout(() => {
+              if (!checkIsFullscreen()) toggleFullscreen();
+
+              // Cleanup the fake fullscreen style
+              const s = document.getElementById("lp-temp-forced-style");
+              if (s) s.remove();
+            }, 300);
+          } else {
+            // Fallback cleanup
+            setTimeout(() => {
+              const s = document.getElementById("lp-temp-forced-style");
+              if (s) s.remove();
+            }, 1000);
+          }
+        });
+      } else {
+        // Stream not found, cleanup style
+        const s = document.getElementById("lp-temp-forced-style");
+        if (s) s.remove();
       }
     }
 
