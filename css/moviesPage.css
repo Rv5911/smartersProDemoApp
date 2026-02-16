@@ -115,6 +115,9 @@
   padding-right: 30px;
 }
 
+.movies-category-container h1:first-child {
+  padding-top: 30px !important;
+}
 /* Card Lists */
 .movies-card-list {
   display: flex;

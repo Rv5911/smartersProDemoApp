@@ -25,7 +25,7 @@ function Navbar() {
       </div>
       <div class="navbar-right">
         <!-- <div class="nav-item" data-page="homePage" tabindex="0">Home</div> -->
-        <div class="nav-item" data-page="masterSearchPage" tabindex="0">Search</div>
+        <div class="nav-item  masterSearchPageItem" data-page="masterSearchPage" tabindex="0"><svg class="search-icon" width="20" height="17" viewBox="0 0 20 17" fill="none" xmlns="http://www.w3.org/2000/svg"> <circle cx="5.5" cy="5.5" r="5.5" fill="white"></circle> <circle cx="18.5" cy="1.5" r="1.5" fill="white"></circle> <circle cx="17.5" cy="14.5" r="2.5" fill="white"></circle> <circle cx="15" cy="8" r="2" fill="white"></circle> </svg>Search</div>
 
         <div class="nav-item" data-page="moviesPage" tabindex="0">Movies</div>
         <div class="nav-item" data-page="seriesPage" tabindex="0">Series</div>
@@ -72,7 +72,7 @@ function Navbar() {
             </div>
             <div class="sidebar-card" data-action="dark-mode" tabindex="0">
               <div class="sidebar-card-row">
-                <i class="fa-solid fa-moon" id="dark-mode-icon"></i>
+                <svg  id="dark-mode-icon" class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1zvbia" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="DarkModeIcon"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"></path></svg>
                 <div class="theme-toggle"></div>
               </div>
               <span class="dark-mode-text">Dark Mode</span>
@@ -1200,6 +1200,8 @@ function initNavbar() {
         }
         break;
       case "Enter":
+        e.preventDefault();
+        e.stopPropagation();
         if (currentIndex === 0) {
           searchInput.focus();
         } else if (currentIndex === totalItems - 1) {
@@ -1361,7 +1363,9 @@ function initNavbar() {
         text.textContent = isDark ? "Dark Mode" : "Light Mode";
       }
       if (icon) {
-        icon.className = isDark ? "fa-solid fa-moon" : "fa-solid fa-sun";
+        icon.className = isDark
+          ? `<svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1zvbia" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="DarkModeIcon"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"></path></svg>`
+          : `<svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1zvbia" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="LightModeIcon"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"></path></svg>`;
       }
     }
     if (typeof applyTheme === "function") applyTheme();
@@ -1582,8 +1586,8 @@ function initNavbar() {
               }
               if (icon) {
                 icon.className = newIsDark
-                  ? "fa-solid fa-moon"
-                  : "fa-solid fa-sun";
+                  ? `<svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1zvbia" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="DarkModeIcon"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"></path></svg>`
+                  : `<svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1zvbia" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="LightModeIcon"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"></path></svg>`;
               }
 
               if (typeof applyTheme === "function") applyTheme();

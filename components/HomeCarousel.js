@@ -1,5 +1,6 @@
 async function HomeCarousel(contentType = "movie") {
   // Determine current playlist name for cache sensitivity
+  let isOnDetailPage=localStorage.getItem("currentPage")=="movieDetailPage" || localStorage.getItem("currentPage")=="seriesDetailPage" ? true : false;
   let currentPlaylistName = "default";
   try {
     const sel = JSON.parse(localStorage.getItem("selectedPlaylist") || "null");
@@ -373,19 +374,19 @@ async function HomeCarousel(contentType = "movie") {
           <img class="carousel-image" src="${backdrop}" alt="${name}"/>
           <div class="carousel-content">
               <h1 class="carousel-title">${name}</h1>
-              <div class="carousel-meta">
+              <div class="carousel-meta" style="display: ${isOnDetailPage ? "flex" : "none"};">
                   <span class="carousel-rating-stars">
                     ${starsHtml}
                   </span>
-                  <span class="carousel-rating-value">${rating}</span>
+                  <span class="carousel-rating-value"  style="display: ${isOnDetailPage ? "flex" : "none"};">${rating}</span>
                   ${
                     duration
-                      ? `<span class="carousel-duration"><i class="far fa-clock" style="margin-right: 8px;"></i>${duration}</span>`
+                      ? `<span class="carousel-duration"  style="display: ${isOnDetailPage ? "flex" : "none"};"><i class="far fa-clock" style="margin-right: 8px;"></i>${duration}</span>`
                       : ""
                   }
-                  <span class="carousel-resolution-badge">HD</span>
+                  <span class="carousel-resolution-badge"  style="display: ${isOnDetailPage ? "flex" : "none"};">HD</span>
               </div>
-              <div class="carousel-credits">
+              <div class="carousel-credits"  style="display: ${isOnDetailPage ? "flex" : "none"};">
                 <p><strong>Directed By :</strong> ${director}</p>
                 <p><strong>Genre :</strong> ${genre}</p>
               </div>
@@ -396,7 +397,7 @@ async function HomeCarousel(contentType = "movie") {
                     ${buttonText}
                 </button>
                 <button class="carousel-fav-btn gradient-btn" tabindex="0" data-stream-id="${streamId}" data-content-type="${contentType}">
-                    <i class="${isFavorite ? "fas" : "far"} fa-heart" style="color: ${isFavorite ? "#ff4d4d" : "white"}; opacity: ${isFavorite ? "1" : "0.6"};"></i>
+                    <i class="${isFavorite ? "fas" : "far"} fa-heart" style="color: ${isFavorite ? "white" : "white"}; opacity: ${isFavorite ? "1" : "0.6"};"></i>
                     My Fav
                 </button>
               </div>

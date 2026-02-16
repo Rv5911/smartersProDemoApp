@@ -58,7 +58,7 @@
   zoom: 1.3;
   margin: 0 auto;
   padding-top: 270px;
-  padding-bottom: 100px;
+  /* padding-bottom: 100px; */
 }
 
 .series-info-container {

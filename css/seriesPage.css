@@ -89,6 +89,9 @@
   padding-right: 40px;
 }
 
+.series-category-container h1:first-child{
+  padding-top: 40px;
+}
 /* Category Headers */
 .series-fav-container h1,
 .series-popular-container h1,

@@ -1,7 +1,7 @@
 let msState = {
   query: "",
   activeTab: "movies", // movies, series, live
-  focusedSection: "input", // input, tabs, cards
+  focusedSection: "", // input, tabs, cards
   tabIndex: 0,
   cardIndex: 0,
   chunks: {
@@ -27,10 +27,10 @@ function MasterSearch() {
       </div>
       <div class="ms-search-header">
         <div class="ms-search-input-wrapper" id="ms-input-container">
-          <i class="fas fa-search"></i>
+        <i class="fas fa-search"></i>
           <input type="text" id="ms-input" class="ms-search-input" placeholder="Search movies, series or live channels..." tabindex="-1" autocomplete="off">
         </div>
-        <div class="ms-tabs-container" id="ms-tabs"></div>
+        <div class="ms-tabs-container" id="ms-tabs" style="display: none;"></div>
       </div>
       <div class="ms-results-grid" id="ms-grid"></div>
     </div>
@@ -48,7 +48,11 @@ const getResults = () => {
   const q = msState.query.trim().toLowerCase();
 
   if (!q) {
-    msState.results = { movies: [], series: [], live: [] };
+    msState.results = {
+      movies: [],
+      series: [],
+      live: [],
+    };
     renderTabs();
     renderCards();
     return;
@@ -78,13 +82,32 @@ const renderTabs = () => {
   const tabsContainer = document.getElementById("ms-tabs");
   if (!tabsContainer) return;
 
+  if (!msState.query.trim()) {
+    tabsContainer.style.display = "none";
+    return;
+  } else {
+    tabsContainer.style.display = "flex";
+  }
+
   const isMSPageFocused =
     localStorage.getItem("navigationFocus") === "masterSearchPage";
 
   const tabs = [
-    { id: "movies", label: "Movies", count: msState.results.movies.length },
-    { id: "series", label: "Series", count: msState.results.series.length },
-    { id: "live", label: "Live TV", count: msState.results.live.length },
+    {
+      id: "movies",
+      label: "Movies",
+      count: msState.results.movies.length,
+    },
+    {
+      id: "series",
+      label: "Series",
+      count: msState.results.series.length,
+    },
+    {
+      id: "live",
+      label: "Live TV",
+      count: msState.results.live.length,
+    },
   ];
 
   tabsContainer.innerHTML = tabs
@@ -200,7 +223,7 @@ const handleMSKeydown = (e) => {
   if (localStorage.getItem("currentPage") !== "masterSearchPage") return;
 
   const navFocus = localStorage.getItem("navigationFocus");
-  if (navFocus === "navbar") return;
+  if (navFocus !== "masterSearchPage") return;
 
   const key = e.key;
   const input = document.getElementById("ms-input");
@@ -208,27 +231,40 @@ const handleMSKeydown = (e) => {
 
   // Input Field Handling
   if (msState.focusedSection === "input") {
+    if (key === "Enter") {
+      if (!isInputActive) {
+        input.focus();
+        updateMSFocus();
+        e.preventDefault();
+        return;
+      }
+    }
+
     if (key === "ArrowDown") {
+      if (!msState.query.trim()) return;
+      if (input) input.blur();
       msState.focusedSection = "tabs";
       msState.tabIndex = ["movies", "series", "live"].indexOf(
         msState.activeTab,
       );
       updateMSFocus();
-      if (input) input.blur();
       e.preventDefault();
       return;
     }
 
     if (key === "ArrowUp") {
       if (input) input.blur();
-      localStorage.setItem("navigationFocus", "navbar");
-
-      const navItem = document.querySelector(
-        '.nav-item[data-page="masterSearchPage"]',
-      );
-      if (navItem) {
-        navItem.focus();
-        navItem.classList.add("active");
+      if (typeof window.setNavbarFocus === "function") {
+        window.setNavbarFocus("masterSearchPage");
+      } else {
+        localStorage.setItem("navigationFocus", "navbar");
+        const navItem = document.querySelector(
+          '.nav-item[data-page="masterSearchPage"]',
+        );
+        if (navItem) {
+          navItem.focus();
+          navItem.classList.add("active");
+        }
       }
 
       updateMSFocus();
@@ -237,27 +273,8 @@ const handleMSKeydown = (e) => {
       return;
     }
 
-    if (key === "Enter") {
-      if (!isInputActive) {
-        if (input) input.focus();
-        updateMSFocus();
-        e.preventDefault();
-      }
-      return;
-    }
-
     if (isInputActive) {
       if (key === "ArrowLeft" || key === "ArrowRight") return;
-      if (key === "ArrowDown") {
-        input.blur();
-        msState.focusedSection = "tabs";
-        msState.tabIndex = ["movies", "series", "live"].indexOf(
-          msState.activeTab,
-        );
-        updateMSFocus();
-        e.preventDefault();
-        return;
-      }
     }
   }
 
@@ -287,6 +304,7 @@ const handleMSKeydown = (e) => {
       if (msState.results[msState.activeTab].length > 0) {
         msState.focusedSection = "cards";
       }
+      renderCards();
       updateMSFocus();
     } else if (key === "ArrowDown") {
       if (msState.results[msState.activeTab].length > 0) {
@@ -370,8 +388,34 @@ const updateMSFocus = () => {
   const navigationFocus = localStorage.getItem("navigationFocus");
   const isPageFocused = navigationFocus === "masterSearchPage";
 
-  renderTabs();
-  renderCards();
+  // updateMSFocus should only update the focus classes on existing elements to avoid flickering
+  // We only re-render the whole grid when data changes or tab switches
+
+  // Update focus classes for tabs
+  const tabElements = document.querySelectorAll(".ms-tab");
+  tabElements.forEach((el, idx) => {
+    const isTabFocused =
+      isPageFocused &&
+      msState.focusedSection === "tabs" &&
+      msState.tabIndex === idx;
+    if (isTabFocused) el.classList.add("focused");
+    else el.classList.remove("focused");
+
+    // Also ensure active class matches state
+    if (msState.activeTab === el.dataset.tab) el.classList.add("active");
+    else el.classList.remove("active");
+  });
+
+  // Update focus classes for cards
+  const cardElements = document.querySelectorAll(".ms-card");
+  cardElements.forEach((el, idx) => {
+    const isFocused =
+      isPageFocused &&
+      msState.focusedSection === "cards" &&
+      msState.cardIndex === idx;
+    if (isFocused) el.classList.add("focused");
+    else el.classList.remove("focused");
+  });
 
   const input = document.getElementById("ms-input");
   const inputContainer = document.getElementById("ms-input-container");
@@ -399,7 +443,10 @@ const updateMSFocus = () => {
     } else if (msState.focusedSection === "cards") {
       const focusedCard = document.querySelector(".ms-card.focused");
       if (focusedCard) {
-        focusedCard.scrollIntoView({ behavior: "smooth", block: "center" });
+        focusedCard.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
         activateMSMarquee(focusedCard);
 
         const cardWidth = 280;
@@ -471,8 +518,16 @@ window.initMasterSearch = function () {
     // Reset state immediately
     msState.query = "";
     msState.activeTab = "movies"; // Ensure we are on movies tab
-    msState.results = { movies: [], series: [], live: [] };
-    msState.chunks = { movies: 1, series: 1, live: 1 };
+    msState.results = {
+      movies: [],
+      series: [],
+      live: [],
+    };
+    msState.chunks = {
+      movies: 1,
+      series: 1,
+      live: 1,
+    };
     msState.focusedSection = "input";
     msState.tabIndex = 0;
     msState.cardIndex = 0;
@@ -491,7 +546,11 @@ window.initMasterSearch = function () {
     localStorage.removeItem("msSavedState");
     msState.query = "";
     msState.activeTab = "movies";
-    msState.results = { movies: [], series: [], live: [] };
+    msState.results = {
+      movies: [],
+      series: [],
+      live: [],
+    };
     if (input) input.value = "";
   }
 
@@ -505,10 +564,14 @@ window.initMasterSearch = function () {
         // Restore metadata
         msState.query = parsed.query || "";
         msState.activeTab = parsed.activeTab || "movies";
-        msState.focusedSection = parsed.focusedSection || "cards";
+        msState.focusedSection = parsed.focusedSection || "";
         msState.tabIndex = parsed.tabIndex || 0;
         msState.cardIndex = parsed.cardIndex || 0;
-        msState.chunks = parsed.chunks || { movies: 1, series: 1, live: 1 };
+        msState.chunks = parsed.chunks || {
+          movies: 1,
+          series: 1,
+          live: 1,
+        };
 
         if (input) input.value = msState.query;
 
@@ -531,7 +594,11 @@ window.initMasterSearch = function () {
       input.value = msState.query;
       input.addEventListener("input", (e) => {
         msState.query = e.target.value;
-        msState.chunks = { movies: 1, series: 1, live: 1 };
+        msState.chunks = {
+          movies: 1,
+          series: 1,
+          live: 1,
+        };
         getResults();
       });
       input.addEventListener("focus", () => {
@@ -595,17 +662,19 @@ window.initMasterSearch = function () {
   }
 
   document.addEventListener("keydown", handleMSKeydown);
+  window.addEventListener("search-page-focus", handleSearchPageFocus);
+};
 
-  window.addEventListener("search-page-focus", () => {
-    msState.focusedSection = "input";
-    if (localStorage.getItem("currentPage") === "masterSearchPage") {
-      updateMSFocus();
-    }
-  });
+const handleSearchPageFocus = () => {
+  msState.focusedSection = "input";
+  if (localStorage.getItem("currentPage") === "masterSearchPage") {
+    updateMSFocus();
+  }
 };
 
 window.cleanupMasterSearch = function () {
   document.removeEventListener("keydown", handleMSKeydown);
+  window.removeEventListener("search-page-focus", handleSearchPageFocus);
 
   const navRoot = document.getElementById("navbar-root");
   if (navRoot) navRoot.style.display = "block";
@@ -628,8 +697,16 @@ window.cleanupMasterSearch = function () {
     if (input) {
       input.value = "";
     }
-    msState.results = { movies: [], series: [], live: [] };
-    msState.chunks = { movies: 1, series: 1, live: 1 };
+    msState.results = {
+      movies: [],
+      series: [],
+      live: [],
+    };
+    msState.chunks = {
+      movies: 1,
+      series: 1,
+      live: 1,
+    };
     msState.focusedSection = "input";
     msState.tabIndex = 0;
     msState.cardIndex = 0;
@@ -638,7 +715,15 @@ window.cleanupMasterSearch = function () {
     localStorage.removeItem("msSavedState");
     msState.query = "";
     msState.activeTab = "movies";
-    msState.results = { movies: [], series: [], live: [] };
-    msState.chunks = { movies: 1, series: 1, live: 1 };
+    msState.results = {
+      movies: [],
+      series: [],
+      live: [],
+    };
+    msState.chunks = {
+      movies: 1,
+      series: 1,
+      live: 1,
+    };
   }
 };
