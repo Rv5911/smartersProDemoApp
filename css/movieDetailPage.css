@@ -29,9 +29,9 @@
     right: 0;
     bottom: 0;
     background:
-        var(--app-overlay-gradient),
+        linear-gradient(181.38deg, rgba(15, 15, 15, 0.09) 76.76%, #000 95.16%),
         linear-gradient(1.38deg,
-            rgba(15, 15, 15, 0.09) 76.76%,
+            rgba(15, 15, 15, 0.09) 36.76%,
             rgba(0, 0, 0, 0.85) 95.16%),
         linear-gradient(270deg,
             rgba(15, 15, 15, 0.09) 34.66%,
@@ -150,7 +150,7 @@
 .movie-detail-cast-section,
 .movie-detail-cast-section-relative {
     position: relative;
-    margin-top: 40px;
+    margin-top: 140px;
     padding-left: 80px;
     padding-right: 40px;
     z-index: 10;
@@ -228,14 +228,16 @@
     flex-direction: column;
     align-items: center;
     min-width: 100px;
+    
     /* margin-right: 30px; handled by gap */
     outline: none;
     border: 3px solid transparent;
-    border-radius: 0;
+    border-radius: 50%;
     transition: transform 0.2s;
 }
 
 .movie-cast-item:focus .movie-cast-item-image {
+    border-radius: 50%;
     border: 3px solid var(--app-text-color);
     /* Using a color from the gradient/theme */
 }
@@ -244,7 +246,7 @@
     width: 80px;
     height: 80px;
     object-fit: cover;
-    border-radius: 0;
+    border-radius: 50%;
     border: 2px solid transparent;
 }
 

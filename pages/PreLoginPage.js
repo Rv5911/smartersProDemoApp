@@ -1,12 +1,12 @@
 function PreLoginPage() {
   setTimeout(() => {
-    const loadingEl = document.querySelector("#loading-overlay");
+        const loadingEl = document.querySelector("#loading-overlay");
     if (loadingEl) {
       loadingEl.style.background = "transparent";
       loadingEl.style.marginTop = "40%";
     }
     const selectedPlaylist = JSON.parse(
-      localStorage.getItem("selectedPlaylist")
+      localStorage.getItem("selectedPlaylist"),
     );
     if (selectedPlaylist) {
       loginApi(
@@ -14,7 +14,7 @@ function PreLoginPage() {
         "",
         selectedPlaylist.playlistName,
         true,
-        selectedPlaylist.playlistUrl
+        selectedPlaylist.playlistUrl,
       ).then((response) => {
         const res = response;
       });

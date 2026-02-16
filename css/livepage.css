@@ -89,6 +89,10 @@
     position: relative;
 }
 
+.lp-category-item:first-child {
+    margin-top: 20px;
+}
+
 .lp-category-item.lp-selected {
     background: var(--app-text-color);
     color: white;
@@ -179,7 +183,7 @@
 
 .lp-channel-search-bar {
     background: var(--app-bg) !important;
-    margin: 10px;
+    /* margin: 10px; */
     border: 2px solid var(--app-text-color) !important;
     /* border-radius: 8px; */
     display: flex;
@@ -417,7 +421,7 @@
     transparent 100%
   ); */
     flex-direction: column;
-    border: 2px solid var(--app-text-color);
+    /* border: 2px solid var(--app-text-color); */
     overflow: hidden;
 }
 
@@ -472,6 +476,9 @@
 .lp-channel-card-wrapper {
     position: relative;
     margin-bottom: 12px;
+}
+.lp-channel-card:first-child{
+    margin-top: 20px;
 }
 
 /* Channel Card (Middle Column) */
@@ -626,7 +633,7 @@
 }
 
 .lp-channel-name-container {
-    width: 70%;
+    width: 60%;
     position: relative;
     overflow: hidden;
 }
@@ -689,7 +696,7 @@
     position: absolute;
     top: 19px;
     zoom: 1.4;
-    right: 26px;
+    right: 15px;
     display: flex;
     flex-direction: row;
     gap: 5px;
@@ -703,7 +710,6 @@
     right: 0px;
     display: flex;
     flex-direction: row;
-    gap: 5px;
     z-index: 10;
 }
 

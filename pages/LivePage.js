@@ -616,7 +616,7 @@ function LivePage() {
 
     if (cats.length === 0) {
       list.innerHTML =
-        '<div style="padding:20px; color:#aaa; text-align:center;">No category found</div>';
+        '<div style="padding:20px; zoom:1.4; color:#aaa; text-align:center;">No category found</div>';
       return;
     }
 

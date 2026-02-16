@@ -238,7 +238,6 @@ async function MovieDetailPage() {
           if (container) {
             container.scrollTo({
               top: 0,
-              behavior: "smooth",
             });
           }
         } else {
@@ -246,7 +245,7 @@ async function MovieDetailPage() {
           else if (el.scrollIntoView) {
             el.scrollIntoView({
               block: "center",
-              inline: "nearest",
+              inline: "center",
             });
           }
         }

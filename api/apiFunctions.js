@@ -25,6 +25,12 @@ function resetLoadingPercentage() {
     messageElement.textContent = "";
     messageElement.style.display = "block"; // Ensure it's visible
   }
+
+  const loadingOverlay = document.getElementById("loading-overlay");
+  if (loadingOverlay) {
+    loadingOverlay.style.background = "rgba(0, 0, 0, 0.85)";
+    loadingOverlay.style.marginTop = "0px";
+  }
 }
 
 function updateLoadingPercentage(targetPercentage, message = "") {
@@ -153,16 +159,16 @@ async function loginApi(
   //   content.innerHTML = `
   //     <h2 class="dns-dialog-title">DNS is not Whitelisted</h2>
   //     <p class="dns-dialog-message">Please register your DNS below to continue.</p>
-      
+
   //     <div class="dns-qr-container">
   //       <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://example.com/register-dns" alt="QR Code" class="dns-qr-image">
   //     </div>
-      
+
   //     <div class="dns-website-container">
   //       <p class="dns-website-label">Visit Website:</p>
   //       <a href="#" class="dns-website-link">www.example.com/dns</a>
   //     </div>
-      
+
   //     <div class="dns-close-hint">
   //       Press Back to Close
   //     </div>

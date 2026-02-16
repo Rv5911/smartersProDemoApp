@@ -1,297 +1,313 @@
 function StreamFormat() {
-    setTimeout(function() {
-        var container = document.querySelector(".stream-format-container");
-        if (!container) return;
+  setTimeout(function () {
+    var container = document.querySelector(".stream-format-container");
+    if (!container) return;
 
-        var radios = container.querySelectorAll("input[type='radio']");
-        var saveButton = container.querySelector("#saveBtn");
-        var radioOptions = container.querySelectorAll(".radio-option");
-        var currentFocus = 0;
+    var radios = container.querySelectorAll("input[type='radio']");
+    var saveButton = container.querySelector("#saveBtn");
+    var radioOptions = container.querySelectorAll(".radio-option");
+    var currentFocus = 0;
 
-        // Load saved value from currentPlaylist
-        var currentPlaylist = getCurrentPlaylist();
-        var savedFormat =
-            currentPlaylist && currentPlaylist.streamFormat ?
-            currentPlaylist.streamFormat :
-            null;
+    // Load saved value from currentPlaylist
+    var currentPlaylist = getCurrentPlaylist();
+    var savedFormat =
+      currentPlaylist && currentPlaylist.streamFormat
+        ? currentPlaylist.streamFormat
+        : null;
 
-        if (savedFormat) {
-            for (var i = 0; i < radios.length; i++) {
-                if (radios[i].value === savedFormat) {
-                    radios[i].checked = true;
-                    currentFocus = i;
-                    break;
-                }
-            }
-        } else {
-            // Pre-check the default option (m3u8) if no saved value
-            if (radios.length > 0) {
-                radios[0].checked = true;
-                currentFocus = 0;
-            }
+    if (savedFormat) {
+      for (var i = 0; i < radios.length; i++) {
+        if (radios[i].value === savedFormat) {
+          radios[i].checked = true;
+          currentFocus = i;
+          break;
         }
+      }
+    } else {
+      // Pre-check the default option (m3u8) if no saved value
+      if (radios.length > 0) {
+        radios[0].checked = true;
+        currentFocus = 0;
+      }
+    }
 
-        // Focus the first radio button
-        if (radios.length > 0) {
+    // Focus the first radio button
+    if (radios.length > 0) {
+      radios[currentFocus].focus();
+      updateFocusStyles();
+    }
+
+    function updateFocusStyles() {
+      // Remove focus from all options
+      radioOptions.forEach(function (option) {
+        option.classList.remove("radio-focused");
+      });
+
+      // Remove focus from save button
+      saveButton.classList.remove("save-btn-focused");
+
+      // Add focus to current element
+      if (currentFocus < radios.length) {
+        radioOptions[currentFocus].classList.add("radio-focused");
+      } else {
+        saveButton.classList.add("save-btn-focused");
+      }
+    }
+
+    function removeAllFocusStyles() {
+      radioOptions.forEach(function (option) {
+        option.classList.remove("radio-focused");
+      });
+      if (saveButton) saveButton.classList.remove("save-btn-focused");
+    }
+
+    function streamFormatKeydownEvents(e) {
+      if (localStorage.getItem("navigationFocus") === "navbar") return;
+      switch (e.key) {
+        case "ArrowDown":
+          currentFocus = (currentFocus + 1) % (radios.length + 1);
+          if (currentFocus < radios.length) {
+            radios[currentFocus].focus();
+          } else {
+            saveButton.focus();
+          }
+          updateFocusStyles();
+          e.preventDefault();
+          break;
+
+        case "ArrowUp":
+          if (currentFocus === 0) {
+            removeAllFocusStyles();
+            localStorage.setItem("navigationFocus", "navbar");
+            if (window.setNavbarFocus) {
+              window.setNavbarFocus("settingsPage");
+            } else {
+              const profileIcon = document.getElementById("profileIcon");
+              if (profileIcon) {
+                profileIcon.focus();
+                profileIcon.classList.add("active");
+              }
+            }
+            return;
+          }
+
+          currentFocus =
+            (currentFocus - 1 + radios.length + 1) % (radios.length + 1);
+          if (currentFocus < radios.length) {
+            saveButton.blur();
+            radios[currentFocus].focus();
+          } else {
+            saveButton.focus();
+          }
+          updateFocusStyles();
+          e.preventDefault();
+          break;
+
+        case "ArrowLeft":
+          // Exit subpage back to Settings list
+          removeAllFocusStyles();
+          if (
+            document.activeElement &&
+            typeof document.activeElement.blur === "function"
+          ) {
+            document.activeElement.blur();
+          }
+          if (saveButton && typeof saveButton.blur === "function") {
+            saveButton.blur();
+          }
+          document.removeEventListener("keydown", streamFormatKeydownEvents);
+          // document.querySelector(".settings-second-container").innerHTML = ""; // Don't clear content
+
+          // Dispatch exit event
+          document.dispatchEvent(new Event("settings-subpage-exit"));
+
+          localStorage.setItem("currentPage", "settingsPage");
+          localStorage.setItem("settingPage", "settingsPage");
+          e.preventDefault();
+          break;
+
+        case "ArrowRight":
+          // Move to next radio in group
+          if (currentFocus < radios.length) {
+            currentFocus = (currentFocus + 1) % radios.length;
             radios[currentFocus].focus();
             updateFocusStyles();
-        }
+          }
+          e.preventDefault();
+          break;
 
-        function updateFocusStyles() {
-            // Remove focus from all options
-            radioOptions.forEach(function(option) {
-                option.classList.remove("radio-focused");
-            });
+        case "Enter":
+          if (currentFocus < radios.length) {
+            radios[currentFocus].checked = true;
+            // Trigger change event for custom styling
+            radios[currentFocus].dispatchEvent(
+              new Event("change", {
+                bubbles: true,
+              }),
+            );
 
-            // Remove focus from save button
-            saveButton.classList.remove("save-btn-focused");
-
-            // Add focus to current element
-            if (currentFocus < radios.length) {
-                radioOptions[currentFocus].classList.add("radio-focused");
-            } else {
-                saveButton.classList.add("save-btn-focused");
+            // Show toast message for selected option
+            var selectedOption = radios[currentFocus].value;
+            var optionLabel = "";
+            if (selectedOption === "m3u8") {
+              optionLabel = "Default";
+            } else if (selectedOption === "ts") {
+              optionLabel = "MPEGTS(.TS)";
+            } else if (selectedOption === "hls") {
+              optionLabel = "HLS(.m3u8)";
             }
-        }
 
-        function removeAllFocusStyles() {
-            radioOptions.forEach(function(option) {
-                option.classList.remove("radio-focused");
-            });
-            if (saveButton) saveButton.classList.remove("save-btn-focused");
-        }
-
-        function streamFormatKeydownEvents(e) {
-            if (localStorage.getItem("navigationFocus") === "navbar") return;
-            switch (e.key) {
-                case "ArrowDown":
-                    currentFocus = (currentFocus + 1) % (radios.length + 1);
-                    if (currentFocus < radios.length) {
-                        radios[currentFocus].focus();
-                    } else {
-                        saveButton.focus();
-                    }
-                    updateFocusStyles();
-                    e.preventDefault();
-                    break;
-
-                case "ArrowUp":
-                    if (currentFocus === 0) {
-                        removeAllFocusStyles();
-                        localStorage.setItem("navigationFocus", "navbar");
-                        // Focus on the Home nav item in Navbar
-                        if (window.setNavbarFocus) {
-                            window.setNavbarFocus("homePage");
-                        } else {
-                            const homeNavItem = document.querySelector('.nav-item[data-page="homePage"]');
-                            if (homeNavItem) {
-                                homeNavItem.focus();
-                                homeNavItem.classList.add("active");
-                            }
-                        }
-                        return;
-                    }
-
-                    currentFocus =
-                        (currentFocus - 1 + radios.length + 1) % (radios.length + 1);
-                    if (currentFocus < radios.length) {
-                        saveButton.blur();
-                        radios[currentFocus].focus();
-                    } else {
-                        saveButton.focus();
-                    }
-                    updateFocusStyles();
-                    e.preventDefault();
-                    break;
-
-                case "ArrowLeft":
-                    // Exit subpage back to Settings list
-                    removeAllFocusStyles();
-                    if (
-                        document.activeElement &&
-                        typeof document.activeElement.blur === "function"
-                    ) {
-                        document.activeElement.blur();
-                    }
-                    if (saveButton && typeof saveButton.blur === "function") {
-                        saveButton.blur();
-                    }
-                    document.removeEventListener("keydown", streamFormatKeydownEvents);
-                    // document.querySelector(".settings-second-container").innerHTML = ""; // Don't clear content
-
-                    // Dispatch exit event
-                    document.dispatchEvent(new Event("settings-subpage-exit"));
-
-                    localStorage.setItem("currentPage", "settingsPage");
-                    localStorage.setItem("settingPage", "settingsPage");
-                    e.preventDefault();
-                    break;
-
-                case "ArrowRight":
-                    // Move to next radio in group
-                    if (currentFocus < radios.length) {
-                        currentFocus = (currentFocus + 1) % radios.length;
-                        radios[currentFocus].focus();
-                        updateFocusStyles();
-                    }
-                    e.preventDefault();
-                    break;
-
-                case "Enter":
-                    if (currentFocus < radios.length) {
-                        radios[currentFocus].checked = true;
-                        // Trigger change event for custom styling
-                        radios[currentFocus].dispatchEvent(
-                            new Event("change", {
-                                bubbles: true,
-                            })
-                        );
-
-                        // Show toast message for selected option
-                        var selectedOption = radios[currentFocus].value;
-                        var optionLabel = "";
-                        if (selectedOption === "m3u8") {
-                            optionLabel = "Default";
-                        } else if (selectedOption === "ts") {
-                            optionLabel = "MPEGTS(.TS)";
-                        } else if (selectedOption === "hls") {
-                            optionLabel = "HLS(.m3u8)";
-                        }
-
-                        // Focus stays on the currently selected radio button
-                        updateFocusStyles();
-                    } else {
-                        saveButton.click();
-                    }
-                    e.preventDefault();
-                    break;
-
-                case "Backspace":
-                case "Escape":
-                case "Back":
-                case "BrowserBack":
-                case "XF86Back":
-                case "10009":
-                    // Only back keys remove the subpage
-                    removeAllFocusStyles();
-                    if (
-                        document.activeElement &&
-                        typeof document.activeElement.blur === "function"
-                    ) {
-                        document.activeElement.blur();
-                    }
-                    if (saveButton && typeof saveButton.blur === "function") {
-                        saveButton.blur();
-                    }
-                    document.removeEventListener("keydown", streamFormatKeydownEvents);
-                    localStorage.setItem("currentPage", "homePage");
-                    Router.showPage("homePage");
-
-                    // Focus on the Home nav item in Navbar
-                    localStorage.setItem("navigationFocus", "navbar");
-                    setTimeout(() => {
-                        // Use setNavbarFocus if available, otherwise focus directly
-                        if (window.setNavbarFocus) {
-                            window.setNavbarFocus("homePage");
-                        } else {
-                            const homeNavItem = document.querySelector('.nav-item[data-page="homePage"]');
-                            if (homeNavItem) {
-                                homeNavItem.focus();
-                                homeNavItem.classList.add("active");
-                            }
-                        }
-                    }, 50);
-                    break;
-
-                default:
-                    break;
-            }
-        }
-
-        document.addEventListener("keydown", streamFormatKeydownEvents);
-
-        // Add click handlers for custom radio buttons
-        radioOptions.forEach(function(option, index) {
-            option.addEventListener("click", function() {
-                var radio = this.querySelector("input[type='radio']");
-                radio.checked = true;
-                currentFocus = index;
-                radio.focus();
-                updateFocusStyles();
-            });
-        });
-
-        // Add focus event listeners to update styles
-        radios.forEach(function(radio, index) {
-            radio.addEventListener("focus", function() {
-                currentFocus = index;
-                updateFocusStyles();
-            });
-
-            // Remove focus styles when radio loses focus (except when moving to save button)
-            radio.addEventListener("blur", function() {
-                // Only remove if not moving to save button
-                if (currentFocus !== radios.length) {
-                    radioOptions[index].classList.remove("radio-focused");
-                }
-            });
-        });
-
-        saveButton.addEventListener("focus", function() {
-            currentFocus = radios.length;
+            // Focus stays on the currently selected radio button
             updateFocusStyles();
-        });
+          } else {
+            saveButton.click();
+          }
+          e.preventDefault();
+          break;
 
-        saveButton.addEventListener("blur", function() {
-            // Only remove if not moving to a radio button
-            if (currentFocus === radios.length) {
-                saveButton.classList.remove("save-btn-focused");
+        case "Backspace":
+        case "Escape":
+        case "Back":
+        case "BrowserBack":
+        case "XF86Back":
+        case "10009":
+          // Only back keys remove the subpage
+          removeAllFocusStyles();
+          if (
+            document.activeElement &&
+            typeof document.activeElement.blur === "function"
+          ) {
+            document.activeElement.blur();
+          }
+          if (saveButton && typeof saveButton.blur === "function") {
+            saveButton.blur();
+          }
+          document.removeEventListener("keydown", streamFormatKeydownEvents);
+          localStorage.setItem("currentPage", "homePage");
+          Router.showPage("homePage");
+
+          // Focus on the Home nav item in Navbar
+          localStorage.setItem("navigationFocus", "navbar");
+          setTimeout(() => {
+            // Use setNavbarFocus if available, otherwise focus directly
+            if (window.setNavbarFocus) {
+              window.setNavbarFocus("homePage");
+            } else {
+              const homeNavItem = document.querySelector(
+                '.nav-item[data-page="homePage"]',
+              );
+              if (homeNavItem) {
+                homeNavItem.focus();
+                homeNavItem.classList.add("active");
+              }
             }
-        });
+          }, 50);
+          break;
 
-        saveButton.addEventListener("click", function() {
-            var selectedValue = "";
-            for (var i = 0; i < radios.length; i++) {
-                if (radios[i].checked) {
-                    selectedValue = radios[i].value;
-                    break;
-                }
-            }
-            const currentPlaylist = getCurrentPlaylist();
-            console.log(
-                currentPlaylist,
-                "currentPlaylistcurrentPlaylistcurrentPlaylist"
-            );
+        default:
+          break;
+      }
+    }
 
-            updatePlaylistData(
-                currentPlaylist.playlistName,
-                "streamFormat",
-                selectedValue
-            );
+    document.addEventListener("keydown", streamFormatKeydownEvents);
 
-            // Remove focus styles after saving
-            removeAllFocusStyles();
+    // Add click handlers for custom radio buttons
+    radioOptions.forEach(function (option, index) {
+      option.addEventListener("click", function () {
+        var radio = this.querySelector("input[type='radio']");
+        radio.checked = true;
+        currentFocus = index;
+        radio.focus();
+        updateFocusStyles();
+      });
+    });
 
-            Toaster.showToast("success", selectedValue + " format selected");
+    // Add focus event listeners to update styles
+    radios.forEach(function (radio, index) {
+      radio.addEventListener("focus", function () {
+        currentFocus = index;
+        updateFocusStyles();
+      });
 
-            // Reset focus to first radio
-            if (radios.length > 0) {
-                currentFocus = 0;
-                radios[currentFocus].focus();
-                updateFocusStyles();
-            }
+      // Remove focus styles when radio loses focus (except when moving to save button)
+      radio.addEventListener("blur", function () {
+        // Only remove if not moving to save button
+        if (currentFocus !== radios.length) {
+          radioOptions[index].classList.remove("radio-focused");
+        }
+      });
+    });
 
-            console.log("Stream format saved:", selectedValue);
-        });
+    saveButton.addEventListener("focus", function () {
+      currentFocus = radios.length;
+      updateFocusStyles();
+    });
 
-        // Clean up when component is destroyed
-        return function cleanup() {
-            document.removeEventListener("keydown", streamFormatKeydownEvents);
-            removeAllFocusStyles();
-        };
-    }, 0);
+    saveButton.addEventListener("blur", function () {
+      // Only remove if not moving to a radio button
+      if (currentFocus === radios.length) {
+        saveButton.classList.remove("save-btn-focused");
+      }
+    });
 
-    return `
+    saveButton.addEventListener("click", function () {
+      var selectedValue = "";
+      for (var i = 0; i < radios.length; i++) {
+        if (radios[i].checked) {
+          selectedValue = radios[i].value;
+          break;
+        }
+      }
+      const currentPlaylist = getCurrentPlaylist();
+      console.log(
+        currentPlaylist,
+        "currentPlaylistcurrentPlaylistcurrentPlaylist",
+      );
+
+      updatePlaylistData(
+        currentPlaylist.playlistName,
+        "streamFormat",
+        selectedValue,
+      );
+
+      // Remove focus styles after saving
+      removeAllFocusStyles();
+
+      Toaster.showToast("success", selectedValue + " format selected");
+
+      // Reset focus to first radio
+      if (radios.length > 0) {
+        currentFocus = 0;
+        radios[currentFocus].focus();
+        updateFocusStyles();
+      }
+
+      console.log("Stream format saved:", selectedValue);
+    });
+
+    function handleSubPageFocusStart() {
+      localStorage.setItem("navigationFocus", "settingsPage");
+      currentFocus = 0;
+      if (radios.length > 0) {
+        radios[currentFocus].focus();
+      }
+      updateFocusStyles();
+    }
+
+    document.addEventListener("subpage-focus-start", handleSubPageFocusStart);
+
+    // Clean up when component is destroyed
+    return function cleanup() {
+      document.removeEventListener("keydown", streamFormatKeydownEvents);
+      document.removeEventListener(
+        "subpage-focus-start",
+        handleSubPageFocusStart,
+      );
+      removeAllFocusStyles();
+    };
+  }, 0);
+
+  return `
   <div>
       <div class="account-header">Stream Format</div>
     <div class="stream-format-container" tabindex="0">

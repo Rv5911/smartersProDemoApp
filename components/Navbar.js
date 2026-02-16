@@ -70,13 +70,14 @@ function Navbar() {
               <i class="fa-solid fa-user-plus"></i>
               <span>Add Playlist</span>
             </div>
-            <div class="sidebar-card" data-action="dark-mode" tabindex="0">
+            <!-- COMMENTED OUT: Dark Mode / Light Mode Toggle -->
+            <!-- <div class="sidebar-card" style="display: none;" data-action="dark-mode" tabindex="0">
               <div class="sidebar-card-row">
                 <svg  id="dark-mode-icon" class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1zvbia" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="DarkModeIcon"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"></path></svg>
                 <div class="theme-toggle"></div>
               </div>
               <span class="dark-mode-text">Dark Mode</span>
-            </div>
+            </div> -->
             <div class="sidebar-card" data-action="sort" tabindex="0">
               <i class="fa-solid fa-filter"></i>
               <span>Sort</span>
@@ -627,6 +628,7 @@ function initNavbar() {
     moviesPage: 1,
     seriesPage: 2,
     liveTvPage: 3,
+    settingsPage: 4,
   };
 
   // Add this function to dispose Live TV player
@@ -1348,26 +1350,26 @@ function initNavbar() {
     const firstCard = document.querySelector(".sidebar-card");
     if (firstCard) firstCard.focus();
 
-    // Dark Mode initialization
-    const currentPL = getCurrentPlaylist();
-    if (currentPL) {
-      const isDark = currentPL.DarkMode === true;
-      const toggle = document.querySelector(".theme-toggle");
-      const text = document.querySelector(".dark-mode-text");
-      const icon = document.getElementById("dark-mode-icon");
-      if (toggle) {
-        if (isDark) toggle.classList.add("active");
-        else toggle.classList.remove("active");
-      }
-      if (text) {
-        text.textContent = isDark ? "Dark Mode" : "Light Mode";
-      }
-      if (icon) {
-        icon.className = isDark
-          ? `<svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1zvbia" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="DarkModeIcon"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"></path></svg>`
-          : `<svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1zvbia" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="LightModeIcon"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"></path></svg>`;
-      }
-    }
+    // COMMENTED OUT: Dark Mode initialization
+    // const currentPL = getCurrentPlaylist();
+    // if (currentPL) {
+    //   const isDark = currentPL.DarkMode === true;
+    //   const toggle = document.querySelector(".theme-toggle");
+    //   const text = document.querySelector(".dark-mode-text");
+    //   const icon = document.getElementById("dark-mode-icon");
+    //   if (toggle) {
+    //     if (isDark) toggle.classList.add("active");
+    //     else toggle.classList.remove("active");
+    //   }
+    //   if (text) {
+    //     text.textContent = isDark ? "Dark Mode" : "Light Mode";
+    //   }
+    //   if (icon) {
+    //     icon.className = isDark
+    //       ? `<svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1zvbia" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="DarkModeIcon"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"></path></svg>`
+    //       : `<svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1zvbia" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="LightModeIcon"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"></path></svg>`;
+    //   }
+    // }
     if (typeof applyTheme === "function") applyTheme();
   }
 
@@ -1561,44 +1563,45 @@ function initNavbar() {
             removeRecentlyWatchedSeriesById(sid);
             closeSidebar();
             Router.showPage("seriesDetailPage");
-          } else if (action === "dark-mode") {
-            const currentPL = getCurrentPlaylist();
-            const newIsDark = !(currentPL && currentPL.DarkMode === true);
-            const playlistName = getSelectedPlaylistName();
-            if (playlistName) {
-              updatePlaylistData(playlistName, "DarkMode", newIsDark);
-              updatePlaylistData(
-                playlistName,
-                "themeColor",
-                newIsDark ? "dark" : "light",
-              );
-
-              // Update UI
-              const toggle = document.querySelector(".theme-toggle");
-              const text = document.querySelector(".dark-mode-text");
-              const icon = document.getElementById("dark-mode-icon");
-              if (toggle) {
-                if (newIsDark) toggle.classList.add("active");
-                else toggle.classList.remove("active");
-              }
-              if (text) {
-                text.textContent = newIsDark ? "Dark Mode" : "Light Mode";
-              }
-              if (icon) {
-                icon.className = newIsDark
-                  ? `<svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1zvbia" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="DarkModeIcon"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"></path></svg>`
-                  : `<svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1zvbia" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="LightModeIcon"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"></path></svg>`;
-              }
-
-              if (typeof applyTheme === "function") applyTheme();
-
-              if (typeof Toaster !== "undefined" && Toaster.showToast) {
-                Toaster.showToast(
-                  "success",
-                  `${newIsDark ? "Dark" : "Light"} mode enabled`,
-                );
-              }
-            }
+            // COMMENTED OUT: Dark Mode / Light Mode toggle handler
+            // } else if (action === "dark-mode") {
+            //   const currentPL = getCurrentPlaylist();
+            //   const newIsDark = !(currentPL && currentPL.DarkMode === true);
+            //   const playlistName = getSelectedPlaylistName();
+            //   if (playlistName) {
+            //     updatePlaylistData(playlistName, "DarkMode", newIsDark);
+            //     updatePlaylistData(
+            //       playlistName,
+            //       "themeColor",
+            //       newIsDark ? "dark" : "light",
+            //     );
+            //
+            //     // Update UI
+            //     const toggle = document.querySelector(".theme-toggle");
+            //     const text = document.querySelector(".dark-mode-text");
+            //     const icon = document.getElementById("dark-mode-icon");
+            //     if (toggle) {
+            //       if (newIsDark) toggle.classList.add("active");
+            //       else toggle.classList.remove("active");
+            //     }
+            //     if (text) {
+            //       text.textContent = newIsDark ? "Dark Mode" : "Light Mode";
+            //     }
+            //     if (icon) {
+            //       icon.className = newIsDark
+            //         ? `<svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1zvbia" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="DarkModeIcon"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"></path></svg>`
+            //         : `<svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1zvbia" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="LightModeIcon"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"></path></svg>`;
+            //     }
+            //
+            //     if (typeof applyTheme === "function") applyTheme();
+            //
+            //     if (typeof Toaster !== "undefined" && Toaster.showToast) {
+            //       Toaster.showToast(
+            //         "success",
+            //         `${newIsDark ? "Dark" : "Light"} mode enabled`,
+            //       );
+            //     }
+            //   }
           } else if (action === "change-theme") {
             const defaultView = document.getElementById("theme-default-view");
             const dotsView = document.getElementById("theme-dots-view");
@@ -1666,7 +1669,8 @@ function initNavbar() {
             const selectedTheme = dots[activeIdx].dataset.theme;
             const playlistName = getSelectedPlaylistName();
             if (playlistName) {
-              updatePlaylistData(playlistName, "DarkMode", true);
+              // COMMENTED OUT: DarkMode update when selecting theme
+              // updatePlaylistData(playlistName, "DarkMode", true);
               updatePlaylistData(playlistName, "themeColor", selectedTheme);
               if (typeof applyTheme === "function") applyTheme();
               if (typeof Toaster !== "undefined" && Toaster.showToast) {

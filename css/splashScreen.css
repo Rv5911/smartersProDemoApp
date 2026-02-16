@@ -10,7 +10,7 @@
   background-size: cover;
   background-position: center;
   position: fixed;
-  background: var(--app-bg);
+  background: var(--blue-bg);
   animation: splashFade 5s ease-in-out forwards;
   will-change: opacity;
 }

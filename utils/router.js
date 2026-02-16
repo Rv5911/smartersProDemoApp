@@ -144,6 +144,7 @@ const Router = (function () {
 
     currentPageName = name;
     localStorage.setItem("currentPage", name);
+    document.body.dataset.page = name;
 
     // Apply global theme on every page show
     if (typeof applyTheme === "function") {

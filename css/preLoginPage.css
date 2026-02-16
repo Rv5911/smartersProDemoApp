@@ -11,6 +11,11 @@
     background: var(--blue-bg);
 }
 
+body[data-page="preLoginPage"] #loading-overlay {
+    background: transparent !important;
+    margin-top: 40% !important;
+}
+
 .prelogin-page-container img {
     margin-bottom: 100px;
     zoom: 1.5;
@@ -25,10 +30,12 @@
 /* Override spinner color on PreLoginPage to not use theme colors */
 .prelogin-page-container~#loading-overlay .spinner,
 body[data-page="preLoginPage"] .spinner {
-    background: conic-gradient(from 0deg, #615dfc, transparent 70%) !important;
+    background: conic-gradient(from 0deg, var(--blue-text), transparent 70%) !important;
 }
 
 .prelogin-page-container~#loading-overlay .loading-text,
-body[data-page="preLoginPage"] .loading-text {
-    color: #615dfc !important;
+body[data-page="preLoginPage"] .loading-text,
+body[data-page="preLoginPage"] #loading-message {
+    color:  var(--blue-text) !important;
+    -webkit-text-fill-color:  var(--blue-text) !important;
 }
