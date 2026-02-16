@@ -212,6 +212,7 @@
     border: 2px solid var(--app-text-color)
 }
 
+/* 
 body[data-mode="light"] .carousel-watch-now-btn {
     color: black !important;
     border: 2px solid white;
@@ -231,7 +232,7 @@ body[data-mode="light"] .carousel-watch-now-btn:focus,
 .gradient-btn:focus  {
     color: white !important;
     border: 2px solid white;
-}
+} */
 
 .carousel-watch-now-btn:focus,
 .carousel-more-info-btn:focus,

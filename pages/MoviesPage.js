@@ -769,7 +769,7 @@ function handleMoviesSimpleEnter() {
     localStorage.setItem("selectedVideoItemUrl", url);
     localStorage.setItem("selectedMovieId", data.movie_data.stream_id);
     localStorage.setItem("from", "movie");
-    localStorage.setItem("fromHome", "true");
+    localStorage.setItem("fromMoviesPage", "true");
     localStorage.setItem("currentPage", "videojsPlayer");
 
     Router.showPage("videoJsPlayer");

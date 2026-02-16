@@ -729,11 +729,56 @@ function handleSeriesSimpleEnter() {
 
     localStorage.setItem("selectedSeriesId", data.movie_data.series_id);
     localStorage.setItem("selectedSeriesItem", JSON.stringify(data.movie_data));
-    localStorage.setItem("currentPage", "seriesDetailPage");
-    localStorage.setItem("navigationFocus", "seriesDetailPage");
 
-    Router.showPage("seriesDetailPage");
-    cleanupSeriesNavigation();
+    // Play first episode directly
+    getSeriesDetail(data.movie_data.series_id)
+      .then((detail) => {
+        if (detail && detail.episodes) {
+          const episodes = detail.episodes;
+          const seasonKeys = Object.keys(episodes).sort(
+            (a, b) => parseInt(a) - parseInt(b),
+          );
+          if (seasonKeys.length > 0) {
+            const firstSeason = episodes[seasonKeys[0]];
+            if (firstSeason && firstSeason.length > 0) {
+              const firstEpisode = firstSeason[0];
+              const playlist = JSON.parse(
+                localStorage.getItem("currentPlaylistData") || "{}",
+              );
+              const url = `${playlist.server_info.server_protocol}://${playlist.server_info.url}:${playlist.server_info.port}/series/${playlist.user_info.username}/${playlist.user_info.password}/${firstEpisode.id}.${firstEpisode.container_extension}`;
+
+              localStorage.setItem(
+                "playingItemData",
+                JSON.stringify(firstEpisode),
+              );
+              localStorage.setItem("selectedVideoItemUrl", url);
+              localStorage.setItem("selectedEpisodeId", firstEpisode.id);
+              localStorage.setItem("selectedSeason", seasonKeys[0]);
+              localStorage.setItem("from", "series");
+              localStorage.setItem("fromSeriesPage", "true");
+              localStorage.setItem("currentPage", "videojsPlayer");
+
+              Router.showPage("videoJsPlayer");
+              if (document.querySelector("#navbar-root"))
+                document.querySelector("#navbar-root").style.display = "none";
+              cleanupSeriesNavigation();
+              return;
+            }
+          }
+        }
+        // Fallback to detail page if no episodes found
+        localStorage.setItem("currentPage", "seriesDetailPage");
+        localStorage.setItem("navigationFocus", "seriesDetailPage");
+        Router.showPage("seriesDetailPage");
+        cleanupSeriesNavigation();
+      })
+      .catch((err) => {
+        console.error("Error fetching series detail for Play Now:", err);
+        localStorage.setItem("currentPage", "seriesDetailPage");
+        localStorage.setItem("navigationFocus", "seriesDetailPage");
+        Router.showPage("seriesDetailPage");
+        cleanupSeriesNavigation();
+      });
     return;
   }
 

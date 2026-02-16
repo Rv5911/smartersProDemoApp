@@ -125,8 +125,20 @@ async function SeriesDetailPage() {
 
     Toaster.showToast("error", "No Data Found of Selected Series");
     localStorage.removeItem("selectedSeriesId");
-    localStorage.setItem("currentPage", "seriesPage");
-    Router.showPage("seriesPage");
+
+    const shouldReturnToSearch =
+      localStorage.getItem("returnToMasterSearch") === "true";
+    const prev = localStorage.getItem("previousPage");
+
+    if (shouldReturnToSearch || prev === "masterSearchPage") {
+      localStorage.removeItem("returnToMasterSearch");
+      localStorage.setItem("currentPage", "masterSearchPage");
+      Router.showPage("masterSearchPage");
+    } else {
+      localStorage.setItem("currentPage", "seriesPage");
+      Router.showPage("seriesPage");
+    }
+
     document.body.style.backgroundImage = "none";
     document.body.style.backgroundColor = "black";
     return;
@@ -842,8 +854,11 @@ async function SeriesDetailPage() {
                      ${!seriesInfo.logo_path ? `<h1 class="series-detail-title">${seriesInfo.name || "Unknown Series"}</h1>` : ""}
                     
                     <div class="series-detail-meta">
+                    <span class="series-detail-rating">
+                  <svg class="series-detail-start" width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M0.163086 8.51797C0.276456 8.14688 0.474801 7.84313 0.854064 7.70179C1.18901 7.57702 1.54762 7.59745 1.89613 7.56325C2.86719 7.46795 3.83913 7.38341 4.81084 7.29542C5.45879 7.23669 6.10632 7.17366 6.75492 7.12526C6.94982 7.11063 7.06577 7.05986 7.15074 6.85764C7.86883 5.14762 8.60369 3.44448 9.3306 1.73833C9.64984 0.988843 10.4527 0.745322 11.0518 1.22139C11.2286 1.36187 11.3328 1.55139 11.4201 1.75554C12.156 3.47976 12.8958 5.20226 13.6286 6.92777C13.6793 7.0476 13.7389 7.1031 13.8691 7.11407C14.9671 7.207 16.0648 7.30338 17.1622 7.40298C17.9818 7.47742 18.8014 7.55228 19.62 7.6379C20.0739 7.68523 20.3798 7.94617 20.5222 8.37233C20.6685 8.81011 20.5586 9.20723 20.2178 9.51335C19.4619 10.1925 18.6934 10.8579 17.9295 11.5282C17.2454 12.1284 16.5624 12.7295 15.8742 13.3247C15.7807 13.4056 15.7622 13.4749 15.7897 13.5953C16.2128 15.442 16.6285 17.2905 17.0492 19.1378C17.1583 19.6167 17.0505 20.0228 16.6566 20.327C16.2853 20.6138 15.8291 20.6165 15.3898 20.3539C13.7673 19.3839 12.1444 18.4148 10.5247 17.4402C10.4114 17.372 10.3348 17.3729 10.2214 17.4411C8.59552 18.418 6.96789 19.3925 5.3366 20.3603C4.59421 20.8009 3.7563 20.3937 3.65304 19.5541C3.63734 19.4261 3.65541 19.3006 3.68295 19.1784C4.09663 17.3501 4.50988 15.5213 4.93411 13.6954C4.98079 13.4947 4.94056 13.3804 4.78416 13.2447C3.36886 12.0176 1.9641 10.7785 0.552891 9.54669C0.355192 9.37395 0.25688 9.14871 0.163516 8.91617C0.163086 8.78386 0.163086 8.65092 0.163086 8.51797Z" fill="#FEC007"></path> </svg>    ${ratingStr ? String(ratingStr).split(".")[0] : "0"}
+                    </span>
                          <span class="series-detail-season-count">${sortedSeasons.length} Seasons</span>
-                         <span class="series-detail-date">${seriesInfo.releaseDate ? seriesInfo.releaseDate.split("-")[0] : "N/A"}</span>
+                         <span class="series-detail-date">${seriesInfo.releaseDate ? seriesInfo.releaseDate : "N/A"}</span>
                          <span class="series-detail-resolution-badge">HD</span>
                     </div>
 
