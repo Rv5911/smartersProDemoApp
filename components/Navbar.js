@@ -34,7 +34,7 @@ function Navbar() {
 
        <div class="navbar-profile">
 
-    <svg    id="profileIcon"  class="navbar-profile-icon"  width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg"> <rect width="60" height="60" rx="4" fill="white" /> <g clip-path="url(#clip0_361_2296)"> <path d="M30.0624 44.225C26.8093 44.225 23.556 44.2285 20.303 44.2235C18.8382 44.2211 17.8594 43.224 17.9038 41.7631C17.9213 41.1892 17.9609 40.6082 18.0707 40.0461C18.9228 35.6867 22.2318 32.5121 26.6314 31.8148C26.976 31.7604 27.3276 31.7287 27.6762 31.7263C29.2307 31.7163 30.7854 31.6958 32.3393 31.7245C36.746 31.8059 40.6546 34.8255 41.8669 39.0614C42.1144 39.9257 42.2517 40.8065 42.2659 41.708C42.2899 43.2503 41.3416 44.2235 39.791 44.2244C36.548 44.2261 33.305 44.225 30.0624 44.225Z" fill="#615dfc" /> <path d="M37.6646 23.461C37.6696 27.6413 34.2642 31.0483 30.0809 31.048C25.8994 31.0477 22.4912 27.6372 22.4981 23.4598C22.5049 19.2851 25.8843 15.9075 30.0664 15.8951C34.2538 15.8826 37.6596 19.2739 37.6646 23.461Z" fill="#F0B696" /> </g> <defs> <clipPath id="clip0_361_2296"> <rect width="29.5973" height="29.5973" fill="white" transform="translate(15.2734 15.2727)" /> </clipPath> </defs> </svg>
+    <svg    id="profileIcon"  tabindex="0" class="navbar-profile-icon"  width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg"> <rect width="60" height="60" rx="4" fill="white" /> <g clip-path="url(#clip0_361_2296)"> <path d="M30.0624 44.225C26.8093 44.225 23.556 44.2285 20.303 44.2235C18.8382 44.2211 17.8594 43.224 17.9038 41.7631C17.9213 41.1892 17.9609 40.6082 18.0707 40.0461C18.9228 35.6867 22.2318 32.5121 26.6314 31.8148C26.976 31.7604 27.3276 31.7287 27.6762 31.7263C29.2307 31.7163 30.7854 31.6958 32.3393 31.7245C36.746 31.8059 40.6546 34.8255 41.8669 39.0614C42.1144 39.9257 42.2517 40.8065 42.2659 41.708C42.2899 43.2503 41.3416 44.2235 39.791 44.2244C36.548 44.2261 33.305 44.225 30.0624 44.225Z" fill="#615dfc" /> <path d="M37.6646 23.461C37.6696 27.6413 34.2642 31.0483 30.0809 31.048C25.8994 31.0477 22.4912 27.6372 22.4981 23.4598C22.5049 19.2851 25.8843 15.9075 30.0664 15.8951C34.2538 15.8826 37.6596 19.2739 37.6646 23.461Z" fill="#F0B696" /> </g> <defs> <clipPath id="clip0_361_2296"> <rect width="29.5973" height="29.5973" fill="white" transform="translate(15.2734 15.2727)" /> </clipPath> </defs> </svg>
 </div>
 
       </div>
@@ -827,14 +827,11 @@ function initNavbar() {
     const backKeys = [
       10009,
       100079,
-      8,
-      461,
-      27,
       "Escape",
       "Back",
       "BrowserBack",
       "XF86Back",
-      "Backspace",
+ 
     ];
 
     const isBackKey = backKeys.includes(key) || backKeys.includes(keyCode);
@@ -883,13 +880,33 @@ function initNavbar() {
         return;
       }
 
-      if (currentPage !== "moviesPage" && currentPage !== "seriesPage") {
+      if (
+        currentPage !== "moviesPage" &&
+        currentPage !== "seriesPage" &&
+        currentPage !== "masterSearchPage"
+      ) {
         if (currentPage === "movieDetailPage") {
           e.preventDefault();
-          localStorage.removeItem("selectedMovieId");
-          Router.showPage("moviesPage");
-          return;
+          const returnToSearchVal = localStorage.getItem(
+            "returnToMasterSearch",
+          );
+          const prev = localStorage.getItem("previousPage");
+
+          if (returnToSearchVal === "true" || prev === "masterSearchPage") {
+            console.log("Returning to MasterSearchPage");
+            localStorage.removeItem("returnToMasterSearch");
+            localStorage.setItem("currentPage", "masterSearchPage");
+            localStorage.setItem("navigationFocus", "masterSearchPage");
+            Router.showPage("masterSearchPage");
+            return;
+          } else {
+            localStorage.removeItem("selectedMovieId");
+            localStorage.setItem("navigationFocus", "moviesPage");
+            Router.showPage("moviesPage");
+            return;
+          }
         }
+
         if (currentPage === "seriesDetailPage") {
           const dropdownList = document.getElementById("season-dropdown-list");
           if (dropdownList && !dropdownList.classList.contains("hidden")) {
@@ -897,9 +914,24 @@ function initNavbar() {
             return;
           }
           e.preventDefault();
-          localStorage.removeItem("selectedSeriesId");
-          Router.showPage("seriesPage");
-          return;
+          const returnToSearchVal = localStorage.getItem(
+            "returnToMasterSearch",
+          );
+          const prev = localStorage.getItem("previousPage");
+
+          if (returnToSearchVal === "true" || prev === "masterSearchPage") {
+            console.log("Returning to MasterSearchPage");
+            localStorage.removeItem("returnToMasterSearch");
+            localStorage.setItem("currentPage", "masterSearchPage");
+            localStorage.setItem("navigationFocus", "masterSearchPage");
+            Router.showPage("masterSearchPage");
+            return;
+          } else {
+            localStorage.removeItem("selectedSeriesId");
+            localStorage.setItem("navigationFocus", "seriesPage");
+            Router.showPage("seriesPage");
+            return;
+          }
         }
         return;
       }
@@ -1203,6 +1235,7 @@ function initNavbar() {
         break;
       case "Enter":
         e.preventDefault();
+        e.stopImmediatePropagation();
         e.stopPropagation();
         if (currentIndex === 0) {
           searchInput.focus();
@@ -1662,7 +1695,51 @@ function initNavbar() {
             break;
           case "ArrowDown":
           case "ArrowUp":
-            e.preventDefault(); // Lock vertical movement while on dots
+            e.preventDefault();
+            const gridCards = Array.from(
+              activeSection.querySelectorAll(
+                ".sidebar-grid .sidebar-card:not(.option-remove)",
+              ),
+            );
+            const themeCard = document.getElementById("theme-card-container");
+            const footerButton = activeSection.querySelector(
+              ".sidebar-footer .footer-link-primary",
+            );
+            const themeCardIndex = gridCards.indexOf(themeCard);
+
+            let elementToFocus = null;
+            if (e.key === "ArrowUp") {
+              if (themeCardIndex !== -1 && themeCardIndex - 2 >= 0) {
+                elementToFocus = gridCards[themeCardIndex - 2];
+              } else {
+                elementToFocus = themeCard;
+              }
+            } else if (e.key === "ArrowDown") {
+              if (
+                themeCardIndex !== -1 &&
+                themeCardIndex + 2 < gridCards.length
+              ) {
+                elementToFocus = gridCards[themeCardIndex + 2];
+              } else if (footerButton) {
+                elementToFocus = footerButton;
+              } else {
+                elementToFocus = themeCard;
+              }
+            }
+
+            // Close the theme dots view
+            dotsView.classList.add("option-remove");
+            const defaultThemeView =
+              document.getElementById("theme-default-view");
+            if (defaultThemeView)
+              defaultThemeView.classList.remove("option-remove");
+            if (themeCard) {
+              themeCard.setAttribute("tabindex", "0");
+            }
+
+            if (elementToFocus) {
+              setTimeout(() => elementToFocus.focus(), 10);
+            }
             break;
           case "Enter":
             e.preventDefault();

@@ -88,25 +88,20 @@ const getResults = () => {
     live: filteredLive,
   };
 
+  // Switch to first tab with results if current is empty
+  if (msState.results[msState.activeTab].length === 0) {
+    const visible = getVisibleTabs();
+    if (visible.length > 0) {
+      msState.activeTab = visible[0].id;
+    }
+  }
+
   renderTabs();
   renderCards();
 };
 
-const renderTabs = () => {
-  const tabsContainer = document.getElementById("ms-tabs");
-  if (!tabsContainer) return;
-
-  if (!msState.query.trim()) {
-    tabsContainer.style.display = "none";
-    return;
-  } else {
-    tabsContainer.style.display = "flex";
-  }
-
-  const isMSPageFocused =
-    localStorage.getItem("navigationFocus") === "masterSearchPage";
-
-  const tabs = [
+const getVisibleTabs = () => {
+  return [
     {
       id: "movies",
       label: "Movies",
@@ -122,9 +117,26 @@ const renderTabs = () => {
       label: "Live TV",
       count: msState.results.live.length,
     },
-  ];
+  ].filter((t) => t.count > 0);
+};
 
-  tabsContainer.innerHTML = tabs
+const renderTabs = () => {
+  const tabsContainer = document.getElementById("ms-tabs");
+  if (!tabsContainer) return;
+
+  const visibleTabs = getVisibleTabs();
+
+  if (!msState.query.trim() || visibleTabs.length === 0) {
+    tabsContainer.style.display = "none";
+    return;
+  } else {
+    tabsContainer.style.display = "flex";
+  }
+
+  const isMSPageFocused =
+    localStorage.getItem("navigationFocus") === "masterSearchPage";
+
+  tabsContainer.innerHTML = visibleTabs
     .map((tab, idx) => {
       const isTabFocused =
         isMSPageFocused &&
@@ -160,10 +172,20 @@ const renderCards = () => {
   );
 
   if (displayResults.length === 0) {
+    const totalCount =
+      msState.results.movies.length +
+      msState.results.series.length +
+      msState.results.live.length;
     let emptyMsg = "No results found";
-    if (msState.activeTab === "movies") emptyMsg = "No Movies Found";
-    else if (msState.activeTab === "series") emptyMsg = "No Series Found";
-    else if (msState.activeTab === "live") emptyMsg = "No Live Channels Found";
+    if (totalCount === 0) {
+      emptyMsg = "No Results Found";
+    } else if (msState.activeTab === "movies") {
+      emptyMsg = "No Movies Found";
+    } else if (msState.activeTab === "series") {
+      emptyMsg = "No Series Found";
+    } else if (msState.activeTab === "live") {
+      emptyMsg = "No Live Channels Found";
+    }
 
     grid.innerHTML = `<div class="ms-no-results">${emptyMsg}</div>`;
     return;
@@ -256,10 +278,52 @@ const getGridColumns = () => {
 const handleMSKeydown = (e) => {
   if (localStorage.getItem("currentPage") !== "masterSearchPage") return;
 
-  const navFocus = localStorage.getItem("navigationFocus");
-  if (navFocus !== "masterSearchPage") return;
+  const navigationFocus = localStorage.getItem("navigationFocus");
 
   const key = e.key;
+  const keyCode = e.keyCode;
+  const backKeys = [
+    "Escape",
+    "Back",
+    "BrowserBack",
+    "XF86Back",
+    "Backspace",
+    "SoftLeft",
+    10009,
+  ];
+  const isBackKey = backKeys.includes(key) || backKeys.includes(keyCode);
+
+  if (isBackKey) {
+    const activeTabResults = msState.results[msState.activeTab];
+    const hasResults = activeTabResults && activeTabResults.length > 0;
+    const cols = getGridColumns ? getGridColumns() : 1;
+    const isAtRoot =
+      navigationFocus === "navbar" ||
+      msState.focusedSection === "input" ||
+      msState.focusedSection === "tabs" ||
+      (msState.focusedSection === "cards" && msState.cardIndex < cols);
+
+    if (hasResults && !isAtRoot) {
+      msState.focusedSection = "cards";
+      msState.cardIndex = 0;
+
+      const navbarEl = document.querySelector("#navbar-root");
+      if (navbarEl) navbarEl.style.display = "block";
+
+      localStorage.setItem("navigationFocus", "masterSearchPage");
+      updateMSFocus();
+      saveMSState();
+
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      return;
+    }
+    // If already at root card OR no results, let it bubble to Navbar.js for Exit Modal
+    return;
+  }
+
+  if (navigationFocus !== "masterSearchPage") return;
   const input = document.getElementById("ms-input");
   const isInputActive = document.activeElement === input;
 
@@ -276,11 +340,14 @@ const handleMSKeydown = (e) => {
 
     if (key === "ArrowDown") {
       if (!msState.query.trim()) return;
+      const visibleTabs = getVisibleTabs();
+      if (visibleTabs.length === 0) return;
       if (input) input.blur();
       msState.focusedSection = "tabs";
-      msState.tabIndex = ["movies", "series", "live"].indexOf(
-        msState.activeTab,
+      const currentIdx = visibleTabs.findIndex(
+        (t) => t.id === msState.activeTab,
       );
+      msState.tabIndex = currentIdx !== -1 ? currentIdx : 0;
       updateMSFocus();
       e.preventDefault();
       return;
@@ -323,8 +390,9 @@ const handleMSKeydown = (e) => {
   }
 
   if (msState.focusedSection === "tabs") {
+    const visibleTabs = getVisibleTabs();
     if (key === "ArrowRight") {
-      msState.tabIndex = Math.min(2, msState.tabIndex + 1);
+      msState.tabIndex = Math.min(visibleTabs.length - 1, msState.tabIndex + 1);
       updateMSFocus();
     } else if (key === "ArrowLeft") {
       msState.tabIndex = Math.max(0, msState.tabIndex - 1);
@@ -333,15 +401,20 @@ const handleMSKeydown = (e) => {
       msState.focusedSection = "input";
       updateMSFocus();
     } else if (key === "Enter") {
-      msState.activeTab = ["movies", "series", "live"][msState.tabIndex];
-      msState.cardIndex = 0;
-      if (msState.results[msState.activeTab].length > 0) {
-        msState.focusedSection = "cards";
+      const tab = visibleTabs[msState.tabIndex];
+      if (tab) {
+        msState.activeTab = tab.id;
+        msState.cardIndex = 0;
+        if (msState.results[msState.activeTab].length > 0) {
+          msState.focusedSection = "cards";
+        }
+        renderCards();
+        updateMSFocus();
       }
-      renderCards();
-      updateMSFocus();
     } else if (key === "ArrowDown") {
-      if (msState.results[msState.activeTab].length > 0) {
+      const tab = visibleTabs[msState.tabIndex];
+      if (tab && msState.results[tab.id].length > 0) {
+        msState.activeTab = tab.id;
         msState.focusedSection = "cards";
         msState.cardIndex = 0;
         updateMSFocus();
@@ -364,10 +437,12 @@ const handleMSKeydown = (e) => {
       }
     } else if (key === "ArrowUp") {
       if (msState.cardIndex < columns) {
+        const visibleTabs = getVisibleTabs();
         msState.focusedSection = "tabs";
-        msState.tabIndex = ["movies", "series", "live"].indexOf(
-          msState.activeTab,
+        const currentIdx = visibleTabs.findIndex(
+          (t) => t.id === msState.activeTab,
         );
+        msState.tabIndex = currentIdx !== -1 ? currentIdx : 0;
         updateMSFocus();
       } else {
         msState.cardIndex -= columns;
@@ -633,6 +708,9 @@ window.initMasterSearch = function () {
         // REGENERATE results array in memory from search query
         getResults();
 
+        // Set navigation focus back to this page
+        localStorage.setItem("navigationFocus", "masterSearchPage");
+
         // DO NOT remove msSavedState here immediately if we want to support back/forth multiple levels
         // keeping it is safer, or remove it only on successful restore
         localStorage.removeItem("msSavedState");
@@ -718,7 +796,7 @@ window.initMasterSearch = function () {
     };
   }
 
-  document.addEventListener("keydown", handleMSKeydown);
+  document.addEventListener("keydown", handleMSKeydown, true);
   window.addEventListener("search-page-focus", handleSearchPageFocus);
 };
 
@@ -735,7 +813,7 @@ window.cleanupMasterSearch = function () {
     window.MasterSearchLivePlayer().cleanup();
   }
 
-  document.removeEventListener("keydown", handleMSKeydown);
+  document.removeEventListener("keydown", handleMSKeydown, true);
   window.removeEventListener("search-page-focus", handleSearchPageFocus);
 
   const navRoot = document.getElementById("navbar-root");

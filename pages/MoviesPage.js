@@ -1409,7 +1409,58 @@ function handleMoviesKeyNavigation(e) {
   let currentPage = localStorage.getItem("currentPage");
   let navigationFocus = localStorage.getItem("navigationFocus");
 
-  if (currentPage !== "moviesPage" || navigationFocus !== "moviesPage") {
+  const key = e.key;
+  const keyCode = e.keyCode;
+  const backKeys = [
+    "Escape",
+    "Back",
+    "BrowserBack",
+    "XF86Back",
+    "Backspace",
+    "SoftLeft",
+    10009,
+  ];
+  const isBackKey = backKeys.includes(key) || backKeys.includes(keyCode);
+
+  if (currentPage !== "moviesPage") return;
+
+  if (isBackKey) {
+    const firstRowIdx = findNextMoviesCategoryWithMovies
+      ? findNextMoviesCategoryWithMovies(0, 1)
+      : 0;
+    const isAtRoot =
+      navigationFocus === "navbar" ||
+      moviesNavigationState.focus === "watchNow" ||
+      moviesNavigationState.focus === "moreInfo" ||
+      moviesNavigationState.focus === "carousel" ||
+      (moviesNavigationState.focus === "categories" &&
+        moviesNavigationState.currentCategoryIndex === firstRowIdx);
+
+    if (!isAtRoot) {
+      moviesNavigationState.focus = "categories";
+      moviesNavigationState.currentCategoryIndex = firstRowIdx;
+      moviesNavigationState.currentCardIndex = 0;
+
+      const moviesContainer = document.querySelector(".movies-page-container");
+      if (moviesContainer) moviesContainer.scrollTop = 0;
+
+      const navbarEl = document.querySelector("#navbar-root");
+      if (navbarEl) navbarEl.style.display = "block";
+
+      localStorage.setItem("navigationFocus", "moviesPage");
+      updateMoviesFocus();
+      saveMoviesNavigationState();
+
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      return;
+    }
+    // If already at root, let it bubble to Navbar.js for Exit Modal
+    return;
+  }
+
+  if (navigationFocus !== "moviesPage") {
     return;
   }
   if (
@@ -1451,25 +1502,7 @@ function handleMoviesKeyNavigation(e) {
     case "ArrowUp":
       moveMoviesUp();
       break;
-    case "Escape":
-    case "Back":
-    case "BrowserBack":
-    case "XF86Back":
-    case "SoftLeft":
-    case "Backspace":
-    case 10009:
-      moviesNavigationState.currentCategoryIndex = 0;
-      moviesNavigationState.currentCardIndex = 0;
-
-      const moviesContainer = document.querySelector(".movies-page-container");
-      if (moviesContainer) {
-        moviesContainer.scrollTop = 0;
-      }
-
-      const navbarEl = document.querySelector("#navbar-root");
-      if (navbarEl) {
-        navbarEl.style.display = "block";
-      }
+    default:
       break;
   }
 
@@ -1478,8 +1511,8 @@ function handleMoviesKeyNavigation(e) {
 }
 
 function cleanupMoviesNavigation() {
-  document.removeEventListener("keydown", handleMoviesKeyNavigation);
-  document.removeEventListener("keyup", handleMoviesKeyNavigation);
+  document.removeEventListener("keydown", handleMoviesKeyNavigation, true); // Added capture phase
+  document.removeEventListener("keyup", handleMoviesKeyNavigation, true); // Added capture phase
 
   if (window.moviesCarouselSlideChangeHandler) {
     window.removeEventListener(
@@ -1696,7 +1729,14 @@ function moveMoviesUp() {
     } catch (e) {}
 
     removeAllMoviesFocus();
-    saveMoviesNavigationState();
+    const state = {
+      currentCategoryIndex: moviesNavigationState.currentCategoryIndex,
+      currentCardIndex: moviesNavigationState.currentCardIndex,
+      lastFocusedCategory: moviesNavigationState.lastFocusedCategory,
+      lastFocusedCard: moviesNavigationState.lastFocusedCard,
+      focus: moviesNavigationState.focus,
+    };
+    localStorage.setItem("moviesNavState", JSON.stringify(state));
     localStorage.setItem("navigationFocus", "navbar");
 
     setTimeout(() => {
@@ -1764,7 +1804,14 @@ function moveMoviesUp() {
       } catch (e) {}
 
       removeAllMoviesFocus();
-      saveMoviesNavigationState();
+      const state = {
+        currentCategoryIndex: moviesNavigationState.currentCategoryIndex,
+        currentCardIndex: moviesNavigationState.currentCardIndex,
+        lastFocusedCategory: moviesNavigationState.lastFocusedCategory,
+        lastFocusedCard: moviesNavigationState.lastFocusedCard,
+        focus: moviesNavigationState.focus,
+      };
+      localStorage.setItem("moviesNavState", JSON.stringify(state));
       localStorage.setItem("navigationFocus", "navbar");
 
       setTimeout(() => {
@@ -2142,6 +2189,7 @@ function restoreMoviesNavigationState() {
       moviesNavigationState.lastFocusedCategory =
         state.lastFocusedCategory || 0;
       moviesNavigationState.lastFocusedCard = state.lastFocusedCard || 0;
+      moviesNavigationState.focus = state.focus || "categories";
 
       // Loader is already present from the main page render if we are restoring state.
       // No need to add a new one.
@@ -2313,7 +2361,7 @@ function initMoviesNavigation() {
   // Store the handler so we can remove it later
   window.moviesCarouselSlideChangeHandler = handleCarouselSlideChange;
 
-  document.addEventListener("keydown", handleMoviesKeyNavigation);
+  document.addEventListener("keydown", handleMoviesKeyNavigation, true);
   document.addEventListener("keyup", handleMoviesKeyNavigation);
   window.addEventListener("carousel-slide-changed", handleCarouselSlideChange);
   isMoviesNavigationInitialized = true;
@@ -2410,18 +2458,28 @@ function MoviesPage() {
     "</div>";
 
   const prevPage = localStorage.getItem("previousPage");
+  const previousPageVal = localStorage.getItem("currentPage");
   if (prevPage !== "masterSearchPage") {
-    localStorage.setItem(
-      "previousPage",
-      localStorage.getItem("currentPage") || "",
-    );
+    localStorage.setItem("previousPage", previousPageVal || "");
   }
   localStorage.setItem("currentPage", "moviesPage");
   const activeEl = document.activeElement;
   const isSearchFocused = activeEl && activeEl.id === "search-input";
   const navFocus = localStorage.getItem("navigationFocus");
   if (!isSearchFocused && navFocus !== "sidebar") {
-    localStorage.setItem("navigationFocus", "moviesPage");
+    // Fix: Only focus moviesPage if returning from detail page
+    if (previousPageVal === "movieDetailPage") {
+      localStorage.setItem("navigationFocus", "moviesPage");
+    } else {
+      localStorage.setItem("navigationFocus", "navbar");
+      // Ensure physical focus is on the navbar link
+      setTimeout(() => {
+        const navLink = document.querySelector(
+          '.nav-item[data-page="moviesPage"]',
+        );
+        if (navLink) navLink.focus();
+      }, 50);
+    }
   }
 
   favoriteMoviesIds = [];

@@ -19,7 +19,8 @@ function AccountInformation() {
     window.addEventListener("subpage-focus-start", handleSubPageFocusStart);
 
     accountInfoKeydownEvents = function (e) {
-      if (localStorage.getItem("navigationFocus") === "navbar") return;
+      const navigationFocus = localStorage.getItem("navigationFocus");
+      if (navigationFocus !== "settingsPage") return;
 
       switch (e.key) {
         case "ArrowLeft":
@@ -45,6 +46,9 @@ function AccountInformation() {
             if (window.setNavbarFocus) {
               window.setNavbarFocus("settingsPage");
             }
+            e.preventDefault();
+            e.stopPropagation();
+            return;
           }
           // Browser default handles up/down between focusable items
           break;

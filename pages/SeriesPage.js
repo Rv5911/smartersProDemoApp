@@ -1505,7 +1505,58 @@ function handleSeriesKeyNavigation(e) {
   let currentPage = localStorage.getItem("currentPage");
   let navigationFocus = localStorage.getItem("navigationFocus");
 
-  if (currentPage !== "seriesPage" || navigationFocus !== "seriesPage") {
+  const key = e.key;
+  const keyCode = e.keyCode;
+  const backKeys = [
+    "Escape",
+    "Back",
+    "BrowserBack",
+    "XF86Back",
+    "Backspace",
+    "SoftLeft",
+    10009,
+  ];
+  const isBackKey = backKeys.includes(key) || backKeys.includes(keyCode);
+
+  if (currentPage !== "seriesPage") return;
+
+  if (isBackKey) {
+    const firstRowIdxS = findNextSeriesCategoryWithSeries
+      ? findNextSeriesCategoryWithSeries(0, 1)
+      : 0;
+    const isAtRootS =
+      navigationFocus === "navbar" ||
+      seriesNavigationState.focus === "watchNow" ||
+      seriesNavigationState.focus === "moreInfo" ||
+      seriesNavigationState.focus === "carousel" ||
+      (seriesNavigationState.focus === "categories" &&
+        seriesNavigationState.currentCategoryIndex === firstRowIdxS);
+
+    if (!isAtRootS) {
+      seriesNavigationState.focus = "categories";
+      seriesNavigationState.currentCategoryIndex = firstRowIdxS;
+      seriesNavigationState.currentCardIndex = 0;
+
+      const seriesContainer = document.querySelector(".series-page-container");
+      if (seriesContainer) seriesContainer.scrollTop = 0;
+
+      const navbarElS = document.querySelector("#navbar-root");
+      if (navbarElS) navbarElS.style.display = "block";
+
+      localStorage.setItem("navigationFocus", "seriesPage");
+      updateSeriesFocus();
+      saveSeriesNavigationState();
+
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      return;
+    }
+    // If already at root, let it bubble to Navbar.js for Exit Modal
+    return;
+  }
+
+  if (navigationFocus !== "seriesPage") {
     return;
   }
   if (
@@ -1547,25 +1598,7 @@ function handleSeriesKeyNavigation(e) {
     case "ArrowUp":
       moveSeriesUp();
       break;
-    case "Escape":
-    case "Back":
-    case "BrowserBack":
-    case "XF86Back":
-    case "SoftLeft":
-    case "Backspace":
-    case 10009:
-      seriesNavigationState.currentCategoryIndex = 0;
-      seriesNavigationState.currentCardIndex = 0;
-
-      const seriesContainer = document.querySelector(".series-page-container");
-      if (seriesContainer) {
-        seriesContainer.scrollTop = 0;
-      }
-
-      const navbarElS = document.querySelector("#navbar-root");
-      if (navbarElS) {
-        navbarElS.style.display = "block";
-      }
+    default:
       break;
   }
 
@@ -1574,8 +1607,8 @@ function handleSeriesKeyNavigation(e) {
 }
 
 function cleanupSeriesNavigation() {
-  document.removeEventListener("keydown", handleSeriesKeyNavigation);
-  document.removeEventListener("keyup", handleSeriesKeyNavigation);
+  document.removeEventListener("keydown", handleSeriesKeyNavigation, true);
+  document.removeEventListener("keyup", handleSeriesKeyNavigation, true);
 
   if (window.seriesCarouselSlideChangeHandler) {
     window.removeEventListener(
@@ -2213,6 +2246,7 @@ function saveSeriesNavigationState() {
         currentCardIndex: seriesNavigationState.currentCardIndex,
         lastFocusedCategory: seriesNavigationState.lastFocusedCategory,
         lastFocusedCard: seriesNavigationState.lastFocusedCard,
+        focus: seriesNavigationState.focus,
       }),
     );
   } catch (e) {
@@ -2231,6 +2265,7 @@ function restoreSeriesNavigationState() {
       seriesNavigationState.lastFocusedCategory =
         state.lastFocusedCategory || 0;
       seriesNavigationState.lastFocusedCard = state.lastFocusedCard || 0;
+      seriesNavigationState.focus = state.focus || "categories";
 
       // Loader is already present from the main page render if we are restoring state.
       // No need to add a new one.
@@ -2402,8 +2437,8 @@ function initSeriesNavigation() {
   // Store the handler so we can remove it later
   window.seriesCarouselSlideChangeHandler = handleCarouselSlideChange;
 
-  document.addEventListener("keydown", handleSeriesKeyNavigation);
-  document.addEventListener("keyup", handleSeriesKeyNavigation);
+  document.addEventListener("keydown", handleSeriesKeyNavigation, true);
+  document.addEventListener("keyup", handleSeriesKeyNavigation, true);
   window.addEventListener("carousel-slide-changed", handleCarouselSlideChange);
   isSeriesNavigationInitialized = true;
 }

@@ -94,7 +94,9 @@ function ParentalControl() {
     // No password visibility toggle: eye icons were removed
 
     function parentalControlKeydownEvents(e) {
-      if (localStorage.getItem("navigationFocus") === "navbar") return;
+      const navigationFocus = localStorage.getItem("navigationFocus");
+      if (navigationFocus !== "settingsPage") return;
+
       if (localStorage.getItem("currentPage") === "parentalPinDialog") {
         return;
       }
@@ -115,12 +117,11 @@ function ParentalControl() {
         case "ArrowUp":
           if (currentFocus === 0) {
             removeAllFocusStyles();
-            if (
-              document.activeElement &&
-              typeof document.activeElement.blur === "function"
-            ) {
-              document.activeElement.blur();
-            }
+            inputs.forEach(function (inp) {
+              if (inp && typeof inp.blur === "function") {
+                inp.blur();
+              }
+            });
             localStorage.setItem("navigationFocus", "navbar");
             if (window.setNavbarFocus) {
               window.setNavbarFocus("settingsPage");
@@ -131,6 +132,8 @@ function ParentalControl() {
                 profileIcon.classList.add("active");
               }
             }
+            e.preventDefault();
+            e.stopPropagation();
             return;
           }
 
