@@ -19,6 +19,61 @@ const adultsCategories = [
   "xvideo",
 ].map((w) => w.toLowerCase());
 
+// console.log(window.SecretToken,"TOEK")
+// const SECRET_KEY = "SmartTV!@#SP";
+// console.log(SECRET_KEY,"SECRETKEY")
+function key256() {
+  // console.log("key246",window.SecretToken)
+  // return CryptoJS.SHA256(SECRET_KEY); 
+  return CryptoJS.SHA256(window.SecretToken); 
+
+
+}
+
+
+function encodeWithKey(data) {
+  const iv = CryptoJS.lib.WordArray.random(16); 
+  const plaintext = (typeof data === "string") ? data : JSON.stringify(data);
+
+  const encrypted = CryptoJS.AES.encrypt(
+    plaintext,
+    key256(),
+    { iv: iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 }
+  );
+
+  const combined = iv.concat(encrypted.ciphertext);     
+  return CryptoJS.enc.Hex.stringify(combined);          
+}
+
+function decodeWithKey(hexString) {
+  hexString = (hexString || "").trim();
+
+  if (!/^[0-9a-fA-F]+$/.test(hexString) || hexString.length < 32 || (hexString.length % 2 !== 0)) {
+    throw new Error("Invalid HEX input");
+  }
+
+  const raw = CryptoJS.enc.Hex.parse(hexString);
+
+  const iv = CryptoJS.lib.WordArray.create(raw.words.slice(0, 4), 16);
+
+  const ciphertext = CryptoJS.lib.WordArray.create(
+    raw.words.slice(4),
+    raw.sigBytes - 16
+  );
+
+  const decrypted = CryptoJS.AES.decrypt(
+    { ciphertext: ciphertext },
+    key256(),
+    { iv: iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 }
+  );
+
+  const text = decrypted.toString(CryptoJS.enc.Utf8);
+  if (!text) throw new Error("Decryption failed (wrong key or corrupted data)");
+
+  try { return JSON.parse(text); } catch { return text; }
+}
+
+
 function clearLocalStorageExcept(keepKeys) {
   var temp = {};
 
@@ -738,3 +793,5 @@ window.decodeBase64 = decodeBase64;
 window.adultsCategories = adultsCategories;
 window.getCurrentPlaylist = getCurrentPlaylist;
 window.applyTheme = applyTheme;
+window.encodeWithKey = encodeWithKey;
+window.decodeWithKey = decodeWithKey;

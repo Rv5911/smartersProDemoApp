@@ -182,14 +182,23 @@ function LoginPage() {
         Toaster.showToast("error", "Please complete all fields!");
         return;
       }
+getDnsSalt().then(() => {
+  const encodedServer = encodeWithKey(serverAddress);
+  console.log(encodedServer, "ENCODEDSERVER");
 
-      loginApi(username, password, playlistName, false, "", serverAddress).then(
-        (response) => {
-          if (response) {
-            LoginPage.cleanup();
-          }
-        },
-      );
+  const decodedServer = decodeWithKey(encodedServer);
+  console.log(decodedServer, "DECODEDSERVER");
+});
+
+
+
+      // loginApi(username, password, playlistName, false, "", serverAddress).then(
+      //   (response) => {
+      //     if (response) {
+      //       LoginPage.cleanup();
+      //     }
+      //   },
+      // );
     }
 
     function loginPageKeydownEvents(e) {
@@ -304,14 +313,17 @@ function LoginPage() {
           } else if (focused.classList.contains("add-user-button")) {
             handleLogin();
           } else if (focused.classList.contains("manage-playlists-button")) {
-            if(playlistsData.length === 0){
-              Toaster.showToast("error", "No playlists available. Please add a playlist!");
+            if (playlistsData.length === 0) {
+              Toaster.showToast(
+                "error",
+                "No playlists available. Please add a playlist!",
+              );
               e.preventDefault();
               return;
             } else {
-            localStorage.setItem("currentPage", "listUsersPage");
-            LoginPage.cleanup();
-            Router.showPage("listPage");
+              localStorage.setItem("currentPage", "listUsersPage");
+              LoginPage.cleanup();
+              Router.showPage("listPage");
             }
           } else if (focused.classList.contains("switch-user-button")) {
             const playlistsData = localStorage.getItem("playlistsData")

@@ -6,6 +6,7 @@ window.onload = function () {
   window.allLiveStreams = [];
   window.liveCategories = [];
   // window.dnsNotValid = false;
+window.SecretToken=null
 
   if (typeof tizen !== "undefined" && tizen.tvinputdevice) {
     const keys = tizen.tvinputdevice.getSupportedKeys();
@@ -98,6 +99,7 @@ window.onload = function () {
 
   // if (typeof logAllDnsEntries === "function") logAllDnsEntries();
   if (typeof getTmbdId === "function") getTmbdId();
+
 };
 
 function showSplashScreen() {

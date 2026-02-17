@@ -1,10 +1,11 @@
 var firebaseConfig = {
-    apiKey: "AIzaSyC_pzuTpAnFz3mAbiFlQOb7PBt63l0Bm50",
-    authDomain: "smarttv-megatv.firebaseapp.com",
-    projectId: "smarttv-megatv",
-    storageBucket: "smarttv-megatv.firebasestorage.app",
-    messagingSenderId: "740889747008",
-    appId: "1:740889747008:web:d950dafeece58808d109a5"
+  apiKey: "AIzaSyDK5uF-816i4_R9UlT0v5_BD12qu3rpF8E",
+  authDomain: "smarttvapp-5f8ca.firebaseapp.com",
+  projectId: "smarttvapp-5f8ca",
+  storageBucket: "smarttvapp-5f8ca.firebasestorage.app",
+  messagingSenderId: "430801978001",
+  appId: "1:430801978001:web:74d60528a2d1c37dfdb530",
+  measurementId: "G-3G73FDKF4B"
   };
 
 firebase.initializeApp(firebaseConfig);
@@ -35,6 +36,20 @@ window.getTmbdId = function () {
         localStorage.setItem("tmbdId", tmbdId);
       });
 
+    })
+    .catch(function (error) {
+      alert("Error getting TMDBID entries: " + error.message);
+    });
+};
+
+window.getDnsSalt = function () {
+  return db.collection("dnsSalt").get()
+    .then(function (snapshot) {
+      snapshot.forEach(function (doc) {
+        const salt = doc.data().dnsSalt ? doc.data().dnsSalt : "";
+        console.log(salt, "firebase Salt");
+        window.SecretToken = salt.trim();
+      });
     })
     .catch(function (error) {
       alert("Error getting TMDBID entries: " + error.message);
