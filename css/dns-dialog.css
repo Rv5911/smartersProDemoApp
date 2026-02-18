@@ -44,7 +44,6 @@
     padding: 15px;
     border-radius: 10px;
     display: inline-block;
-    margin-bottom: 25px;
 }
 
 .dns-qr-image {
@@ -57,6 +56,14 @@
     margin-top: 10px;
 }
 
+.dns-website-or {
+    margin-top: 10px;
+    margin-bottom: 10px;
+
+    font-size: 14px;
+    color: white;
+    text-transform: uppercase
+}
 .dns-website-label {
     margin-bottom: 10px;
     font-size: 14px;

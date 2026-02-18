@@ -7,6 +7,8 @@ window.onload = function () {
   window.liveCategories = [];
   // window.dnsNotValid = false;
 window.SecretToken=null
+ window.isQrCode=null
+   window.dnsNotValid = true;
 
   if (typeof tizen !== "undefined" && tizen.tvinputdevice) {
     const keys = tizen.tvinputdevice.getSupportedKeys();

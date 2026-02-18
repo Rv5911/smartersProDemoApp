@@ -5,10 +5,6 @@
     box-sizing: border-box;
 }
 
-
-body{
-    transition: all 3s ease;
-}
 :root {
     --gold: #ffd700;
     --app-bg: #131a2f;

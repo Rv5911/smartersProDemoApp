@@ -182,23 +182,24 @@ function LoginPage() {
         Toaster.showToast("error", "Please complete all fields!");
         return;
       }
-getDnsSalt().then(() => {
-  const encodedServer = encodeWithKey(serverAddress);
-  console.log(encodedServer, "ENCODEDSERVER");
+// getDnsSalt().then(() => {
+//   const encodedServer = encodeWithKey(serverAddress);
+//   console.log(encodedServer, "ENCODEDSERVER");
+//   alert(encodedServer)
 
-  const decodedServer = decodeWithKey(encodedServer);
-  console.log(decodedServer, "DECODEDSERVER");
-});
+//   const decodedServer = decodeWithKey(encodedServer);
+//   console.log(decodedServer, "DECODEDSERVER");
+// });
 
 
 
-      // loginApi(username, password, playlistName, false, "", serverAddress).then(
-      //   (response) => {
-      //     if (response) {
-      //       LoginPage.cleanup();
-      //     }
-      //   },
-      // );
+      loginApi(username, password, playlistName, false, "", serverAddress).then(
+        (response) => {
+          if (response) {
+            LoginPage.cleanup();
+          }
+        },
+      );
     }
 
     function loginPageKeydownEvents(e) {

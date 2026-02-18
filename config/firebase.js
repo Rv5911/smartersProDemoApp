@@ -55,3 +55,18 @@ window.getDnsSalt = function () {
       alert("Error getting TMDBID entries: " + error.message);
     });
 };
+
+window.showQrCode = function () {
+  return db.collection("qr_code").get()
+    .then(function (snapshot) {
+      snapshot.forEach(function (doc) {
+        const qr_code = doc.data().qr_code ? doc.data().qr_code : "";
+        console.log(qr_code, "firebase qr_code");
+        window.isQrCode = qr_code;
+  
+      });
+    })
+    .catch(function (error) {
+      alert("Error getting TMDBID entries: " + error.message);
+    });
+};
