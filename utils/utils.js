@@ -24,31 +24,32 @@ const adultsCategories = [
 // console.log(SECRET_KEY,"SECRETKEY")
 function key256() {
   // console.log("key246",window.SecretToken)
-  // return CryptoJS.SHA256(SECRET_KEY); 
-  return CryptoJS.SHA256(window.SecretToken); 
-
-
+  // return CryptoJS.SHA256(SECRET_KEY);
+  return CryptoJS.SHA256(window.SecretToken);
 }
 
-
 function encodeWithKey(data) {
-  const iv = CryptoJS.lib.WordArray.random(16); 
-  const plaintext = (typeof data === "string") ? data : JSON.stringify(data);
+  const iv = CryptoJS.lib.WordArray.random(16);
+  const plaintext = typeof data === "string" ? data : JSON.stringify(data);
 
-  const encrypted = CryptoJS.AES.encrypt(
-    plaintext,
-    key256(),
-    { iv: iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 }
-  );
+  const encrypted = CryptoJS.AES.encrypt(plaintext, key256(), {
+    iv: iv,
+    mode: CryptoJS.mode.CBC,
+    padding: CryptoJS.pad.Pkcs7,
+  });
 
-  const combined = iv.concat(encrypted.ciphertext);     
-  return CryptoJS.enc.Hex.stringify(combined);          
+  const combined = iv.concat(encrypted.ciphertext);
+  return CryptoJS.enc.Hex.stringify(combined);
 }
 
 function decodeWithKey(hexString) {
   hexString = (hexString || "").trim();
 
-  if (!/^[0-9a-fA-F]+$/.test(hexString) || hexString.length < 32 || (hexString.length % 2 !== 0)) {
+  if (
+    !/^[0-9a-fA-F]+$/.test(hexString) ||
+    hexString.length < 32 ||
+    hexString.length % 2 !== 0
+  ) {
     throw new Error("Invalid HEX input");
   }
 
@@ -58,21 +59,30 @@ function decodeWithKey(hexString) {
 
   const ciphertext = CryptoJS.lib.WordArray.create(
     raw.words.slice(4),
-    raw.sigBytes - 16
+    raw.sigBytes - 16,
   );
 
   const decrypted = CryptoJS.AES.decrypt(
-    { ciphertext: ciphertext },
+    {
+      ciphertext: ciphertext,
+    },
     key256(),
-    { iv: iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 }
+    {
+      iv: iv,
+      mode: CryptoJS.mode.CBC,
+      padding: CryptoJS.pad.Pkcs7,
+    },
   );
 
   const text = decrypted.toString(CryptoJS.enc.Utf8);
   if (!text) throw new Error("Decryption failed (wrong key or corrupted data)");
 
-  try { return JSON.parse(text); } catch { return text; }
+  try {
+    return JSON.parse(text);
+  } catch {
+    return text;
+  }
 }
-
 
 function clearLocalStorageExcept(keepKeys) {
   var temp = {};
@@ -763,9 +773,67 @@ function applyTheme() {
       }
       document.body.classList.add(themeClass);
     }
-
   } catch (e) {
     console.error("applyTheme error", e);
+  }
+}
+
+function generateMD5(string) {
+  return CryptoJS.MD5(string).toString();
+}
+
+async function verifyServerDns(serverAddress) {
+  if (!serverAddress) return false;
+
+  try {
+    await getDnsSalt();
+    let version = localStorage.getItem("appVersion") || "1.0.0";
+    try {
+      const response = await fetch("config.xml");
+      const xmlText = await response.text();
+      const parser = new DOMParser();
+      const xmlDoc = parser.parseFromString(xmlText, "application/xml");
+      const widget = xmlDoc.getElementsByTagName("widget")[0];
+      if (widget) {
+        version = widget.getAttribute("version");
+        localStorage.setItem("appVersion", version);
+      }
+    } catch (xmlError) {
+      console.warn("Failed to fetch version from config.xml", xmlError);
+    }
+
+    const k = encodeWithKey(serverAddress);
+    const m = "gu";
+    const r = Math.floor(Math.random() * 1000000).toString();
+    const av = version;
+    const dt = "unknown";
+    const d = "";
+    const do_value = "Samsung TV";
+    const dos = "TV OS";
+    const app_type = "new";
+
+    const scValue = CryptoJS.MD5(k + "*" + "NB!@#12ZKWd" + "-" + "" + "-" + r + "-" + av + "-" + dt + "-" + d + "-" + dos).toString(CryptoJS.enc.Hex);
+
+    const dataToSend = {
+      m: m,
+      k: k,
+      sc: scValue,
+      r: r,
+      av: av,
+      dt: dt,
+      d: d,
+      do: do_value,
+      dos: dos,
+      app_type: app_type,
+    };
+console.log(dataToSend,"dataToSend")
+    const result = await getDnsIsValid(dataToSend);
+    console.log("DNS Verification Result:", result);
+
+    return result
+  } catch (error) {
+    console.error("verifyServerDns error:", error);
+    return false;
   }
 }
 
@@ -795,3 +863,5 @@ window.getCurrentPlaylist = getCurrentPlaylist;
 window.applyTheme = applyTheme;
 window.encodeWithKey = encodeWithKey;
 window.decodeWithKey = decodeWithKey;
+window.generateMD5 = generateMD5;
+window.verifyServerDns = verifyServerDns;

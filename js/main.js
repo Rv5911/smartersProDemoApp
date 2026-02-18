@@ -9,6 +9,9 @@ window.onload = function () {
 window.SecretToken=null
  window.isQrCode=null
    window.dnsNotValid = true;
+   window.apiBaseUrl = null;
+
+
 
   if (typeof tizen !== "undefined" && tizen.tvinputdevice) {
     const keys = tizen.tvinputdevice.getSupportedKeys();

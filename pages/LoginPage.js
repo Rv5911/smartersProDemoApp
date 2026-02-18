@@ -183,12 +183,21 @@ function LoginPage() {
         return;
       }
 // getDnsSalt().then(() => {
-//   const encodedServer = encodeWithKey(serverAddress);
-//   console.log(encodedServer, "ENCODEDSERVER");
-//   alert(encodedServer)
+//   const encodedServerDns = encodeWithKey(serverAddress);
+//   console.log(encodedServerDns, "ENCODEDSERVERDNS");
 
-//   const decodedServer = decodeWithKey(encodedServer);
-//   console.log(decodedServer, "DECODEDSERVER");
+//             fetch("config.xml")
+//   .then(response => response.text())
+//   .then(xmlText => {
+//     const parser = new DOMParser();
+//     const xmlDoc = parser.parseFromString(xmlText, "application/xml");
+
+//     const widget = xmlDoc.getElementsByTagName("widget")[0];
+//     const version = widget.getAttribute("version");
+//    if(version){
+//       localStorage.setItem("appVersion",version)
+//     }
+//   })
 // });
 
 

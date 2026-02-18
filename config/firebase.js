@@ -70,3 +70,18 @@ window.showQrCode = function () {
       alert("Error getting TMDBID entries: " + error.message);
     });
 };
+
+window.getApiBaseUrl = function () {
+  return db.collection("API_BASE_URL").get()
+    .then(function (snapshot) {
+      snapshot.forEach(function (doc) {
+        const api_base_url = doc.data().api_base_url ? doc.data().api_base_url : "";
+        console.log(api_base_url, "firebase api_base_url");
+        window.apiBaseUrl = api_base_url.trim();
+  
+      });
+    })
+    .catch(function (error) {
+      alert("Error getting TMDBID entries: " + error.message);
+    });
+};
