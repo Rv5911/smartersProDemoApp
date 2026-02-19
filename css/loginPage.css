@@ -142,13 +142,12 @@
     display: flex;
     zoom: 1.3;
     flex-direction: column;
-    gap: 20px;
 }
 
 .input-group {
     display: flex;
+    margin-bottom: 20px;
     flex-direction: column;
-    gap: 8px;
 }
 
 .input-label {
@@ -202,13 +201,19 @@
 
 .login-buttons-row {
     display: flex;
-    gap: 15px;
+
     margin-top: 10px;
 }
 
 
 .switch-user-button {
     display: none !important;
+}
+
+.add-user-button i,
+.switch-user-button i,
+.manage-playlists-button i {
+ margin-right: 8px;
 }
 
 .add-user-button,
@@ -226,7 +231,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+margin-right: 15px;
     border: 2px solid transparent;
 }
 

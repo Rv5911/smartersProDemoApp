@@ -180,7 +180,12 @@
 /* Actions */
 .carousel-actions {
     display: flex;
-    gap: 25px;
+    /* gap: 25px; */
+}
+.carousel-watch-now-btn i,
+.carousel-more-info-btn i,
+.carousel-fav-btn i {
+    margin-right: 15px;
 }
 
 .carousel-watch-now-btn,
@@ -189,7 +194,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 15px;
+    /* gap: 15px; */
+    margin-right: 25px;
     padding: 14px 45px;
     font-size: 22px;
     font-weight: 600;

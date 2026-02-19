@@ -61,7 +61,7 @@
     zoom: 1.1;
     padding-bottom: 50px;
     flex-direction: column;
-    justify-content: end;
+    justify-content: flex-end;
 }
 
 .movie-detail-title {
