@@ -1,6 +1,6 @@
 function PreLoginPage() {
   setTimeout(() => {
-        const loadingEl = document.querySelector("#loading-overlay");
+    const loadingEl = document.querySelector("#loading-overlay");
     if (loadingEl) {
       loadingEl.style.background = "transparent";
       loadingEl.style.marginTop = "40%";
@@ -15,6 +15,7 @@ function PreLoginPage() {
         selectedPlaylist.playlistName,
         true,
         selectedPlaylist.playlistUrl,
+        selectedPlaylist.playlistServerAddress || "", // use saved server address for DNS check
       ).then((response) => {
         const res = response;
       });

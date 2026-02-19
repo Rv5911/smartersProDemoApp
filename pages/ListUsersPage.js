@@ -176,6 +176,7 @@ function ListUsersPage() {
                 playlistsData[targetIndex].playlistName,
                 true,
                 playlistsData[targetIndex].playlistUrl,
+                playlistsData[targetIndex].playlistServerAddress || "", // use saved server address for DNS check
               ).then((response) => {
                 if (response) {
                   localStorage.setItem(

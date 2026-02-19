@@ -4,27 +4,53 @@
     max-height: 100vh;
     overflow: hidden;
     color: white;
+    /* OLD TIZEN FIX: use -webkit- prefixes for flex */
+    display: -webkit-box;
+    display: -webkit-flex;
     display: flex;
     padding-top: 140px !important;
+    -webkit-flex-direction: column;
     flex-direction: column;
     padding: 0;
+    -webkit-box-sizing: border-box;
     box-sizing: border-box;
     /* padding-right: 40px !important; */
     font-family: "Inter", sans-serif;
 }
 
 .lp-layout-wrapper {
-    display: grid;
+    /* OLD TIZEN FIX: CSS grid may not work on old Tizen. Use flex as fallback.
+       The grid-template-columns is kept for modern browsers. */
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: row;
+    flex-direction: row;
     grid-template-columns: 28% 30% 42%;
+    -webkit-flex: 1;
     flex: 1;
+    min-height: 0;
+    height: 0;
     overflow: hidden;
     padding: 20px 40px;
-    gap: 30px;
+    /* OLD TIZEN FIX: gap not supported; use margin-right on children instead */
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 .lp-sidebar {
+    /* OLD TIZEN FIX: explicit width instead of relying on grid column */
+    width: 28%;
+    -webkit-flex: 0 0 28%;
+    flex: 0 0 28%;
+    /* margin-right replaces gap on parent (old Tizen doesn't support flex gap) */
+    margin-right: 30px;
+    display: -webkit-box;
+    display: -webkit-flex;
     display: flex;
+    -webkit-flex-direction: column;
     flex-direction: column;
+    min-height: 0;
     overflow: hidden;
     border-bottom: none;
     position: relative;
@@ -71,7 +97,13 @@
     margin: 0;
     z-index: 99;
     margin-top: -10px;
+    /* OLD TIZEN FIX: flex:1 alone doesn't constrain overflow on old WebKit.
+       Adding min-height:0 and height:0 forces the browser to use parent
+       bounds as the scroll container boundary. */
+    -webkit-flex: 1;
     flex: 1;
+    min-height: 0;
+    height: 0;
     background: var(--app-bg);
     /* border-bottom: 3px solid rgba(77, 77, 77, 1); */
 }
@@ -170,8 +202,17 @@
 
 /* Channels Column */
 .lp-channels-section {
-    height: 100%;
+    /* OLD TIZEN FIX: explicit width replaces grid column */
+    width: 30%;
+    -webkit-flex: 0 0 30%;
+    flex: 0 0 30%;
+    /* margin-right replaces gap on parent (old Tizen doesn't support flex gap) */
+    margin-right: 30px;
+    min-height: 0;
+    display: -webkit-box;
+    display: -webkit-flex;
     display: flex;
+    -webkit-flex-direction: column;
     flex-direction: column;
     overflow: hidden;
     background: var(--app-bg);
@@ -205,27 +246,52 @@
 
 .lp-channels-list {
     overflow-y: auto;
+    /* OLD TIZEN FIX: min-height:0 + height:0 forces flex overflow containment */
+    -webkit-flex: 1;
     flex: 1;
+    min-height: 0;
+    height: 0;
     /* padding-right: 10px; */
 }
 
 
 /* Right Column (Player & EPG) */
 .lp-right-column {
+    /* OLD TIZEN FIX: explicit width replaces grid column */
+    width: 42%;
+    -webkit-flex: 1;
+    flex: 1;
+    min-height: 0;
+    display: -webkit-box;
+    display: -webkit-flex;
     display: flex;
+    -webkit-flex-direction: column;
     flex-direction: column;
-    gap: 20px;
-    height: 100%;
-    padding-right: 40px;
+    /* OLD TIZEN FIX: gap not supported on old Tizen flex, use child margins instead */
+    overflow: hidden;
+    /* padding-right: 40px; */
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
 }
+
 
 .lp-player-container {
     /* border-radius: 12px; */
     position: relative;
     border: 3px solid transparent !important;
-    aspect-ratio: 16 / 9;
+    /* OLD TIZEN FIX: aspect-ratio is NOT supported on Tizen 2/3/4.
+       Use explicit width+height approach instead.
+       The right column is 42% of the grid; player height is computed via padding-bottom trick. */
+    width: 100%;
+    height: 0;
+    padding-bottom: 56.25%;
+    /* 16:9 ratio */
+    /* OLD TIZEN FIX: margin-bottom replaces gap:20px on parent flex container */
+    margin-bottom: 20px;
     overflow: hidden;
     background: #000;
+    -webkit-flex-shrink: 0;
+    flex-shrink: 0;
 }
 
 .lp-fullscreen-icon {
@@ -298,8 +364,15 @@
 
 .lp-video-wrapper {
     width: 100%;
-    position: relative;
+    position: absolute;
+    /* OLD TIZEN FIX: must be absolute to fill padding-bottom container */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     height: 100%;
+    display: -webkit-box;
+    display: -webkit-flex;
     display: flex;
     background: #000;
     /* Black background when no video */
@@ -315,8 +388,14 @@
     opacity: 1 !important;
     width: 100% !important;
     height: 100% !important;
+    /* OLD TIZEN FIX: object-fit may not work on old Tizen WebKit.
+       The video will simply fill 100% width/height of its container.
+       Adding -webkit- prefix for max compatibility. */
+    -webkit-object-fit: contain;
     object-fit: contain;
     background: #000;
+    position: relative;
+    z-index: 1;
 }
 
 .lp-player-container:not(.lp-focused) .lp-video-wrapper video {
@@ -339,13 +418,18 @@
 }
 
 .lp-epg-container {
+    -webkit-flex: 1;
     flex: 1;
+    min-height: 0;
     /* border-radius: 4px; */
     background: var(--app-dark-bg) !important;
-
     /* background: #2a2a2a; */
+    display: -webkit-box;
+    display: -webkit-flex;
     display: flex;
+    -webkit-flex-direction: column;
     flex-direction: column;
+    overflow: hidden;
 }
 
 .lp-epg-header {
@@ -363,7 +447,10 @@
 }
 
 .lp-epg-list {
+    -webkit-flex: 1;
     flex: 1;
+    min-height: 0;
+    height: 0;
     background: var(--app-bg) !important;
     overflow-y: auto;
 }
@@ -409,22 +496,13 @@
     text-align: right;
 }
 
-/* Channels Section */
-.lp-channels-section {
-    /* height: 45%; */
+/* Channels Section - duplicate rule kept for reference, properties merged into first definition above */
+/* .lp-channels-section {
     display: flex;
     background: var(--app-bg);
-    /* mask-image: linear-gradient(to bottom, black 0%, black 80%, transparent 50%);
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    black 0%,
-    black 80%,
-    transparent 100%
-  ); */
     flex-direction: column;
-    /* border: 2px solid var(--app-text-color); */
     overflow: hidden;
-}
+} */
 
 .lp-channels-header {
     padding: 15px 20px;
@@ -460,17 +538,34 @@
 }
 
 .lp-channels-grid {
+    /* OLD TIZEN FIX: flex:1 + min-height:0 + height:0 forces overflow containment
+       in old WebKit flex containers. Without height:0, the grid grows unconstrained.
+       Use flex as base (old Tizen), grid overrides on modern browsers. */
+    -webkit-flex: 1;
     flex: 1;
+    min-height: 0;
+    height: 0;
     overflow-y: auto;
     overflow-x: hidden;
     padding: 10px;
     width: 100%;
     max-width: 100%;
+    -webkit-box-sizing: border-box;
     box-sizing: border-box;
-    display: grid;
+    /* Flex layout for old Tizen (single column, vertical stack) */
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+    /* Override to grid on modern browsers */
+    /* display: grid;  -- commented out: grid not supported on old Tizen */
     grid-template-columns: 1fr;
     grid-row-gap: 15px;
     align-content: start;
+    /* Make flex children stretch full width */
+    -webkit-align-items: stretch;
+    align-items: stretch;
 }
 
 /* Channel Card Wrapper */

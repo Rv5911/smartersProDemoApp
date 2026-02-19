@@ -840,8 +840,8 @@ function LivePage() {
         <div class="lp-channel-number">${idx + 1}.</div>
         <div class="lp-channel-logo-container">
           <img src="${
-            stream.stream_icon || "assets/app-logo.svg"
-          }" onerror="this.src = 'assets/app-logo.svg'">
+            stream.stream_icon || "assets/placeholder-img.png"
+          }" onerror="this.src = 'assets/placeholder-img.png'">
         <div class="lp-fav-indicator" style="display: ${
           isFav ? "flex" : "none"
         };">
@@ -1363,6 +1363,23 @@ function LivePage() {
         // Clear loading state after a short delay to allow player initialization
         setTimeout(() => {
           isVideoLoading = false;
+
+          // OLD TIZEN REPAINT FIX: Old Tizen WebKit doesn't paint video frames
+          // inside overflow:hidden flex containers unless a repaint is forced.
+          // Reading offsetHeight forces a layout reflow, then toggling
+          // the container's display triggers the GPU compositing layer.
+          try {
+            const playerContainer = document.getElementById(
+              "lp-player-container",
+            );
+            if (playerContainer) {
+              // Force reflow
+              void playerContainer.offsetHeight;
+              playerContainer.style.display = "none";
+              void playerContainer.offsetHeight;
+              playerContainer.style.display = "";
+            }
+          } catch (e) {}
         }, 1000);
       } else {
         if (window.livePlayer && typeof window.livePlayer.play === "function") {
@@ -1431,9 +1448,9 @@ function LivePage() {
     epgHeader.innerHTML = `
         <div style="display:flex; width:100%; justify-content:space-between; align-items:center;">
             <div style="display:flex; justify-content:space-between; align-items:center; gap: 10px;">
-                <img src="${stream.stream_icon || "assets/main-logo.png"}" 
+                <img src="${stream.stream_icon || "assets/placeholder-img.png"}" 
                      style="border-radius: 4px; object-fit: contain;" 
-                     onerror="this.src='assets/main-logo.png'">
+                     onerror="this.src='assets/placeholder-img.png'">
             </div>
             <div>
 
@@ -1678,6 +1695,36 @@ function LivePage() {
       focusedSection = "player";
       playerSubFocus = 1;
       updateFocus();
+
+      // OLD TIZEN REPAINT FIX: After exiting fullscreen, force video repaint.
+      // Old Tizen WebKit sometimes loses the video rendering context when
+      // transitioning from fullscreen back to windowed mode.
+      setTimeout(() => {
+        try {
+          const videoWrapper = document.querySelector(".lp-video-wrapper");
+          if (videoWrapper) {
+            const video = videoWrapper.querySelector("video");
+            if (video) {
+              void video.offsetHeight;
+              video.style.display = "none";
+              void video.offsetHeight;
+              video.style.display = "block";
+              video.style.width = "100%";
+              video.style.height = "100%";
+            }
+            // Also force repaint on player container
+            const playerContainer = document.getElementById(
+              "lp-player-container",
+            );
+            if (playerContainer) {
+              void playerContainer.offsetHeight;
+              playerContainer.style.opacity = "0.99";
+              void playerContainer.offsetHeight;
+              playerContainer.style.opacity = "";
+            }
+          }
+        } catch (e) {}
+      }, 200);
     }
   };
 

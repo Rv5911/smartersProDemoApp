@@ -168,6 +168,18 @@ async function loginApi(
   }
 
   if (window.dnsNotValid === true) {
+    // If we are on PreLoginPage or ListUsersPage, navigate to LoginPage first so the dialog renders there
+    const isPreLoginPage = document.querySelector(".prelogin-page-container");
+    const isListPageForDns = document.querySelector(".list-users-container");
+    if (isPreLoginPage || isListPageForDns) {
+      loadingOverlay.classList.add("hidden");
+      disableKeyBlock();
+      localStorage.setItem("currentPage", "login");
+      Router.showPage("login");
+      // Short delay to let the login page render before showing dialog
+      await new Promise((r) => setTimeout(r, 300));
+    }
+
     showQrCode()
       .then(() => {
         console.log(
@@ -238,7 +250,6 @@ async function loginApi(
           // Define closeDialog first
           const closeDialog = () => {
             console.log("Closing DNS dialog");
-            // window.dnsNotValid = null;
 
             // Remove event listener
             document.removeEventListener("keydown", handleKeydown, true);
@@ -322,6 +333,7 @@ async function loginApi(
               playlistName,
               playlistUrl,
               playlistUsername: username,
+              playlistServerAddress: serverAddress || "",
             };
 
             localStorage.setItem(
@@ -501,6 +513,7 @@ async function loginApi(
               playlistName,
               playlistUrl: apiUrl,
               playlistUsername: username,
+              playlistServerAddress: serverAddress || "",
             };
 
             localStorage.setItem(
