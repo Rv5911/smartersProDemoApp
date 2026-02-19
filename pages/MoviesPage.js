@@ -2398,6 +2398,10 @@ function validateMoviesData() {
 }
 
 function MoviesPage() {
+      if(window.TMBD_API_KEY==null){
+     if (typeof getTmbdId === "function") getTmbdId();
+
+    } 
   validateMoviesData();
 
   // Get current sort option

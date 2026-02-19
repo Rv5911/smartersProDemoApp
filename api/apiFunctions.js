@@ -1,5 +1,18 @@
-// const TMBD_API_KEY = localStorage.getItem("tmbdId")
-const TMBD_API_KEY = "e37a1d2a831714e93d1d9b5de8259a6b";
+ const TMBD_API_KEY =  window.TMBD_API_KEY ?  window.TMBD_API_KEY: "a21eeaca44af5d2a4349214ecba1b338";
+
+
+const apiPostFields = {
+  m: "m",
+  k: "k",
+  sc: "sc",
+  r: "r",
+  av: "av",
+  dt: "dt",
+  d: "d",
+  do: "do",
+  dos: "dos",
+  app_type: "app_type",
+};
 
 const castImageUrl = "https://image.tmdb.org/t/p/w500";
 
@@ -118,7 +131,6 @@ async function loginApi(
     }
   }
 
-  // RESET loading percentage before starting
   resetLoadingPercentage();
 
   const loadingOverlay = document.getElementById("loading-overlay");
@@ -137,102 +149,8 @@ async function loginApi(
       Router.showPage("login");
     }
   });
-
-  // await new Promise((resolve) => setTimeout(resolve, 5000));
-
-  // if (loginCancelled) return null;
-
-  // window.dnsNotValid = true;
-  // const isLoginPage = document.querySelector(".login-page-container");
-  // const isListUsersPage = document.querySelector(".list-users-container");
-
-  // if (isLoginPage || isListUsersPage) {
-  //   const previousActiveElement = document.activeElement;
-
-  //   // Create Dialog
-  //   const dialog = document.createElement("div");
-  //   dialog.id = "dns-dialog";
-
-  //   const content = document.createElement("div");
-  //   content.className = "dns-dialog-content";
-
-  //   content.innerHTML = `
-  //     <h2 class="dns-dialog-title">DNS is not Whitelisted</h2>
-  //     <p class="dns-dialog-message">Please register your DNS below to continue.</p>
-
-  //     <div class="dns-qr-container">
-  //       <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://example.com/register-dns" alt="QR Code" class="dns-qr-image">
-  //     </div>
-
-  //     <div class="dns-website-container">
-  //       <p class="dns-website-label">Visit Website:</p>
-  //       <a href="#" class="dns-website-link">www.example.com/dns</a>
-  //     </div>
-
-  //     <div class="dns-close-hint">
-  //       Press Back to Close
-  //     </div>
-  //   `;
-
-  //   dialog.appendChild(content);
-  //   document.body.appendChild(dialog);
-
-  //   // Hide loader and disable global key block (so we can handle back button for dialog)
-  //   loadingOverlay.classList.add("hidden");
-  //   disableKeyBlock();
-
-  //   // Define closeDialog first
-  //   const closeDialog = () => {
-  //     console.log("Closing DNS dialog");
-  //     window.dnsNotValid = false;
-
-  //     // Remove event listener
-  //     document.removeEventListener("keydown", handleKeydown, true);
-
-  //     // Remove dialog from DOM
-  //     if (document.body.contains(dialog)) {
-  //       document.body.removeChild(dialog);
-  //     }
-
-  //     // Restore focus
-  //     if (previousActiveElement) {
-  //       previousActiveElement.focus();
-  //     }
-  //   };
-
-  //   // Block background interactions and handle Back
-  //   const handleKeydown = (e) => {
-  //     console.log("DNS Dialog key pressed:", e.key);
-  //     e.stopPropagation();
-  //     e.stopImmediatePropagation();
-  //     e.preventDefault();
-  //     const backKeys = [
-  //       10009,
-  //       100079,
-  //       8,
-  //       461,
-  //       27,
-  //       "Escape",
-  //       "Back",
-  //       "BrowserBack",
-  //       "XF86Back",
-  //       "Backspace",
-  //     ];
-
-  //     if (backKeys.includes(e.key) || backKeys.includes(e.keyCode)) {
-  //       closeDialog();
-  //     }
-  //   };
-
-  //   // Add event listener with capture phase
-  //   document.addEventListener("keydown", handleKeydown, true);
-
-  //   // ABORT LOGIN FLOW
-  //   return null;
-  // }
-
   try {
-    if (fromPlaylist && playlistUrl) {
+   if (fromPlaylist && playlistUrl) {
       try {
         updateLoadingPercentage(10, "");
         const response = await fetch(playlistUrl);
@@ -257,6 +175,7 @@ async function loginApi(
               playlistName,
               playlistUrl,
               playlistUsername: username,
+              playlistServerAddress: serverAddress || "",
             };
 
             localStorage.setItem(
@@ -348,19 +267,178 @@ async function loginApi(
             throw new Error("Account not activated");
           }
         } else {
-          throw new Error("Invalid Playlist Data");
+          throw new Error("Invalid Credentials");
         }
       } catch (error) {
         if (loginCancelled) return null;
 
         console.log("❌ Failed to load playlist:", playlistUrl, error);
         throw new Error(
-          `Invalid Playlist URL ${
+          `Invalid Credentials ${
             lastStatusCode ? `(Status: ${lastStatusCode})` : ""
           }`,
         );
       }
     }
+
+    const verifyApiData = await verifyServerDns(serverAddress);
+    console.log(verifyApiData, "verifyApiData");
+    if (verifyApiData) {
+      window.dnsNotValid =
+        verifyApiData.status == true ||
+        verifyApiData.status === "true" ||
+        verifyApiData.success === true
+          ? false
+          : true;
+    } else {
+      window.dnsNotValid = true;
+    }
+  } catch (e) {
+    console.error("DNS verification failed", e);
+    window.dnsNotValid = true; // Block by default on error
+  }
+
+  if (window.dnsNotValid === true) {
+    // If we are on PreLoginPage or ListUsersPage, navigate to LoginPage first so the dialog renders there
+    const isPreLoginPage = document.querySelector(".prelogin-page-container");
+    const isListPageForDns = document.querySelector(".list-users-container");
+    if (isPreLoginPage || isListPageForDns) {
+      loadingOverlay.classList.add("hidden");
+      disableKeyBlock();
+      localStorage.setItem("currentPage", "login");
+      Router.showPage("login");
+      // Short delay to let the login page render before showing dialog
+      await new Promise((r) => setTimeout(r, 300));
+    }
+
+    showQrCode()
+      .then(() => {
+        console.log(
+          window.dnsNotValid,
+          " window.dnsNotValid window.dnsNotValid",
+        );
+        if (loginCancelled) return null;
+
+        const isLoginPage = document.querySelector(".login-page-container");
+        const isListUsersPage = document.querySelector(".list-users-container");
+
+        if (isLoginPage || isListUsersPage) {
+          const previousActiveElement = document.activeElement;
+
+          // Create Dialog
+          const dialog = document.createElement("div");
+          dialog.id = "dns-dialog";
+
+          const content = document.createElement("div");
+          content.className = "dns-dialog-content";
+
+          content.innerHTML = `
+                <div style=" margin-bottom: 20px;" class="dns-website-logo-container">
+              <img src="assets/app-logo.webp" alt="Website Icon" class="website-logo"  />
+            </div>
+            <h2 class="dns-dialog-title">Server address is not whitelisted</h2>
+            <p class="dns-dialog-message"> ${window.isQrCode == true ? "Please whitelist your server address scan the QR code to continue or using the link below " : "Please whitelist your server address using the link below to continue"}</p>
+
+            <div class="dns-qr-container" id="dns-qr-code" style="display: ${window.isQrCode == true ? "inline-block" : "none"}">
+            </div>
+
+            <div  class="dns-website-container">
+            <div style="display:none;" class="dns-website-logo-container">
+              <img src="assets/app-logo.webp" alt="Website Icon" class="website-logo"  />
+            </div>
+              <p style="display: ${window.isQrCode == true ? "block" : "none"}" class="dns-website-or">OR</p>
+                     <p class="dns-dialog-message-website-link" style="display:none;">Please whitelist your server address using the link below to continue</p>
+              <a target="_blank" style="display: ${window.websiteLink ? "block" : "none"}" href="${window.websiteLink}" class="dns-website-link">${window.websiteLink}</a>
+            </div>
+
+            <div class="dns-close-hint">
+              Press Back to Close
+            </div>
+          `;
+
+          dialog.appendChild(content);
+          document.body.appendChild(dialog);
+
+          // Generate QR Code locally
+          if (window.isQrCode == true) {
+            const qrContainer = document.getElementById("dns-qr-code");
+            if (qrContainer) {
+              new QRCode(qrContainer, {
+                text: `${window.cartLink}${serverAddress}`,
+                width: 300,
+                height: 300,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H,
+              });
+            }
+          }
+
+          // Hide loader and disable global key block (so we can handle back button for dialog)
+          loadingOverlay.classList.add("hidden");
+          disableKeyBlock();
+
+          // Define closeDialog first
+          const closeDialog = () => {
+            console.log("Closing DNS dialog");
+
+            // Remove event listener
+            document.removeEventListener("keydown", handleKeydown, true);
+
+            // Remove dialog from DOM
+            if (document.body.contains(dialog)) {
+              document.body.removeChild(dialog);
+            }
+
+            // Restore focus
+            if (previousActiveElement) {
+              previousActiveElement.focus();
+            }
+          };
+
+          // Block background interactions and handle Back
+          const handleKeydown = (e) => {
+            console.log("DNS Dialog key pressed:", e.key);
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            e.preventDefault();
+            const backKeys = [
+              10009,
+              100079,
+              8,
+              461,
+              27,
+              "Escape",
+              "Back",
+              "BrowserBack",
+              "XF86Back",
+              "Backspace",
+            ];
+
+            if (backKeys.includes(e.key) || backKeys.includes(e.keyCode)) {
+              closeDialog();
+            }
+          };
+
+          // Add event listener with capture phase
+          document.addEventListener("keydown", handleKeydown, true);
+
+          // ABORT LOGIN FLOW
+          return null;
+        }
+      })
+      .catch((error) => {
+        Toaster.showToast(
+          "error",
+          "DNS is not whitelisted. Please register your DNS to continue.",
+        );
+        return;
+      });
+
+    return null;
+  }
+
+  try {
 
     let dnsToCheck = [];
     let isSingleDns = false;
@@ -436,6 +514,7 @@ async function loginApi(
               playlistName,
               playlistUrl: apiUrl,
               playlistUsername: username,
+              playlistServerAddress: serverAddress || "",
             };
 
             localStorage.setItem(
@@ -553,6 +632,8 @@ async function loginApi(
         }`,
       );
     }
+
+
   } catch (error) {
     if (loginCancelled) return null;
 
@@ -787,4 +868,32 @@ async function getLiveStreamEpg(liveStreamId) {
     console.log("❌ Failed to get getLiveStreamEpg:", error);
   }
   return null;
+}
+
+function getDnsIsValid(dataToSend) {
+  return new Promise((resolve, reject) => {
+    const formData = new FormData();
+    Object.keys(dataToSend).forEach((key) => {
+      if (apiPostFields.hasOwnProperty(key)) {
+        formData.append(apiPostFields[key], dataToSend[key]);
+      }
+    });
+
+    getApiBaseUrl().then((apiBaseUrl) => {
+      // console.log(apiBaseUrl,"apiBaseUrl")
+      fetch(window.apiBaseUrl, {
+        method: "POST",
+        body: formData,
+      })
+        .then((response) => {
+          if (!response.ok) {
+            reject(new Error("Failed to fetch getDnsIsValid"));
+          }
+          //   console.log(response.json(), "RESPSONE JSON");
+          return response.json();
+        })
+        .then(resolve)
+        .catch(reject);
+    });
+  });
 }

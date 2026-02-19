@@ -1762,12 +1762,7 @@ function LivePage() {
     }
 
     // Block navigation when video is loading
-    if (
-      isVideoLoading &&
-      ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Enter"].includes(
-        e.key,
-      )
-    ) {
+    if (isVideoLoading && ["ArrowRight"].includes(e.key)) {
       e.preventDefault();
       if (window.Toaster) {
         window.Toaster.showToast("info", "Please wait, loading channel...");
@@ -2171,8 +2166,13 @@ function LivePage() {
     if (focusedSection === "sidebarSearch") {
       focusedSection = "channelSearch";
     } else if (focusedSection === "sidebar") {
-      // Auto-select on Arrow Right to handle locks correctly
-      handleCategorySelect(sidebarIndex, true);
+      const cats = getFilteredCategories();
+      const cat = cats[sidebarIndex];
+      // Only move to channels if this category is already selected
+      if (cat && String(selectedCategoryId) === String(cat.category_id)) {
+        focusedSection = "channels";
+        channelIndex = 0;
+      }
     } else if (focusedSection === "channelSearch") {
       if (!currentPlayingStream) return;
       focusedSection = "player";
@@ -2206,7 +2206,7 @@ function LivePage() {
       if (input) input.focus();
     } else if (focusedSection === "sidebar") {
       // Use shared function with lock check
-      handleCategorySelect(sidebarIndex, false);
+      handleCategorySelect(sidebarIndex, true);
     } else if (focusedSection === "channels") {
       const stream = filteredStreams[channelIndex];
       if (!stream) return;

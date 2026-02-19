@@ -12,6 +12,7 @@ window.SecretToken=null
    window.apiBaseUrl = null;
    window.cartLink=null;
    window.websiteLink=null;
+    window.TMBD_API_KEY = null;
 
 
 
@@ -107,7 +108,7 @@ window.SecretToken=null
   }, 2000);
 
   // if (typeof logAllDnsEntries === "function") logAllDnsEntries();
-  if (typeof getTmbdId === "function") getTmbdId();
+ 
 
 };
 
