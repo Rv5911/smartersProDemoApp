@@ -10,6 +10,10 @@ window.SecretToken=null
  window.isQrCode=null
    window.dnsNotValid = true;
    window.apiBaseUrl = null;
+   window.cartLink=null;
+   window.websiteLink=null;
+
+
 
 
 

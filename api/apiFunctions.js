@@ -152,9 +152,15 @@ async function loginApi(
   try {
     const verifyApiData = await verifyServerDns(serverAddress);
     console.log(verifyApiData, "verifyApiData");
-    // if
-    if(verifyApiData){
-    window.dnsNotValid = verifyApiData.status==true || verifyApiData.status=== "true" || verifyApiData.success === true ? false : true;
+    if (verifyApiData) {
+      window.dnsNotValid =
+        verifyApiData.status == true ||
+        verifyApiData.status === "true" ||
+        verifyApiData.success === true
+          ? false
+          : true;
+    } else {
+      window.dnsNotValid = true;
     }
   } catch (e) {
     console.error("DNS verification failed", e);
@@ -184,19 +190,22 @@ async function loginApi(
           content.className = "dns-dialog-content";
 
           content.innerHTML = `
-            <h2 class="dns-dialog-title">DNS is not Whitelisted</h2>
-            <p class="dns-dialog-message">Please register your DNS below to continue.</p>
+                <div style=" margin-bottom: 20px;" class="dns-website-logo-container">
+              <img src="assets/app-logo.webp" alt="Website Icon" class="website-logo"  />
+            </div>
+            <h2 class="dns-dialog-title">Server address is not whitelisted</h2>
+            <p class="dns-dialog-message"> ${window.isQrCode == true ? "Please whitelist your server address scan the QR code to continue or using the link below " : "Please whitelist your server address using the link below to continue"}</p>
 
-            <div class="dns-qr-container"  style="display: ${window.isQrCode == true ? "inline-block" : "none"}">
-
-              <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://example.com/register-dns" alt="QR Code" class="dns-qr-image">
+            <div class="dns-qr-container" id="dns-qr-code" style="display: ${window.isQrCode == true ? "inline-block" : "none"}">
             </div>
 
-            <div class="dns-website-container">
-              <p   style="display: ${window.isQrCode == true ? "block" : "none"}" class="dns-website-or">OR</p>
-
-              <p class="dns-website-label">Visit Website:</p>
-              <a href="#" class="dns-website-link">www.example.com/dns</a>
+            <div  class="dns-website-container">
+            <div style="display:none;" class="dns-website-logo-container">
+              <img src="assets/app-logo.webp" alt="Website Icon" class="website-logo"  />
+            </div>
+              <p style="display: ${window.isQrCode == true ? "block" : "none"}" class="dns-website-or">OR</p>
+                     <p class="dns-dialog-message-website-link" style="display:none;">Please whitelist your server address using the link below to continue</p>
+              <a target="_blank" style="display: ${window.websiteLink ? "block" : "none"}" href="${window.websiteLink}" class="dns-website-link">${window.websiteLink}</a>
             </div>
 
             <div class="dns-close-hint">
@@ -206,6 +215,21 @@ async function loginApi(
 
           dialog.appendChild(content);
           document.body.appendChild(dialog);
+
+          // Generate QR Code locally
+          if (window.isQrCode == true) {
+            const qrContainer = document.getElementById("dns-qr-code");
+            if (qrContainer) {
+              new QRCode(qrContainer, {
+                text: `${window.cartLink}${serverAddress}`,
+                width: 300,
+                height: 300,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H,
+              });
+            }
+          }
 
           // Hide loader and disable global key block (so we can handle back button for dialog)
           loadingOverlay.classList.add("hidden");
@@ -849,7 +873,7 @@ function getDnsIsValid(dataToSend) {
           if (!response.ok) {
             reject(new Error("Failed to fetch getDnsIsValid"));
           }
-        //   console.log(response.json(), "RESPSONE JSON");
+          //   console.log(response.json(), "RESPSONE JSON");
           return response.json();
         })
         .then(resolve)

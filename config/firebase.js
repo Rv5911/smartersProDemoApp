@@ -85,3 +85,20 @@ window.getApiBaseUrl = function () {
       alert("Error getting TMDBID entries: " + error.message);
     });
 };
+
+window.getCartLink = function () {
+  return db.collection("whmcs_cart_link").get()
+    .then(function (snapshot) {
+      snapshot.forEach(function (doc) {
+        const cart_link = doc.data().cart_link ? doc.data().cart_link : "";
+        const website_link = doc.data().website_link ? doc.data().website_link : "";
+        console.log(cart_link, "firebase cart_link");
+        window.cartLink = cart_link;
+        window.websiteLink=website_link;
+  
+      });
+    })
+    .catch(function (error) {
+      alert("Error getting API_BASE_URL entries: " + error.message);
+    });
+};

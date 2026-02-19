@@ -786,7 +786,8 @@ async function verifyServerDns(serverAddress) {
   if (!serverAddress) return false;
 
   try {
-    await getDnsSalt();
+    await Promise.all([getDnsSalt(), getApiBaseUrl(), showQrCode(),getCartLink()]);
+
     let version = localStorage.getItem("appVersion") || "1.0.0";
     try {
       const response = await fetch("config.xml");
@@ -812,7 +813,23 @@ async function verifyServerDns(serverAddress) {
     const dos = "TV OS";
     const app_type = "new";
 
-    const scValue = CryptoJS.MD5(k + "*" + "NB!@#12ZKWd" + "-" + "" + "-" + r + "-" + av + "-" + dt + "-" + d + "-" + dos).toString(CryptoJS.enc.Hex);
+    const scValue = CryptoJS.MD5(
+      k +
+        "*" +
+        window.SecretToken +
+        "-" +
+        "" +
+        "-" +
+        r +
+        "-" +
+        av +
+        "-" +
+        dt +
+        "-" +
+        d +
+        "-" +
+        dos,
+    ).toString(CryptoJS.enc.Hex);
 
     const dataToSend = {
       m: m,
@@ -826,11 +843,11 @@ async function verifyServerDns(serverAddress) {
       dos: dos,
       app_type: app_type,
     };
-console.log(dataToSend,"dataToSend")
+    // console.log(dataToSend,"dataToSend")
     const result = await getDnsIsValid(dataToSend);
-    console.log("DNS Verification Result:", result);
+    // console.log("DNS Verification Result:", result);
 
-    return result
+    return result;
   } catch (error) {
     console.error("verifyServerDns error:", error);
     return false;
