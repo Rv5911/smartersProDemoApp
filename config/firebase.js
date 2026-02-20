@@ -89,7 +89,7 @@ window.getApiBaseUrl = function () {
 };
 
 window.getCartLink = function () {
-  return db.collection("whmcs_cart_link").get()
+  return db.collection("whmcs_links").get()
     .then(function (snapshot) {
       snapshot.forEach(function (doc) {
         const cart_link = doc.data().cart_link ? doc.data().cart_link : "";
