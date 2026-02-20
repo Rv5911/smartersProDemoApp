@@ -805,7 +805,7 @@
     position: absolute;
     top: 19px;
     zoom: 1.4;
-    right: 5px;
+    right: 0px;
     display: flex;
     flex-direction: row;
     z-index: 10;
@@ -866,6 +866,7 @@
 .lp-history-heart-btn {
     width: 40px;
     height: 40px;
+    margin-left: 10px;
     display: flex;
     justify-content: center;
     align-items: center;

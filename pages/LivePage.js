@@ -231,6 +231,7 @@ function LivePage() {
     selectedCategoryId = "All";
     categoryChunk = 1;
     channelChunk = 1;
+    isVideoLoading = false;
 
     console.log("LivePage init called");
 
@@ -827,10 +828,13 @@ function LivePage() {
       cardWrapper.dataset.index = idx;
 
       const card = document.createElement("div");
+      const isPlaying =
+        currentPlayingStream &&
+        String(currentPlayingStream.stream_id) === String(stream.stream_id);
       card.className =
-        selectedCategoryId === "channelHistory"
+        (selectedCategoryId === "channelHistory"
           ? "lp-channel-card-history"
-          : "lp-channel-card";
+          : "lp-channel-card") + (isPlaying ? " lp-channel-card-playing" : "");
       card.dataset.streamId = stream.stream_id;
       card.dataset.index = idx;
 
@@ -1220,6 +1224,7 @@ function LivePage() {
   };
   const playChannel = (stream) => {
     if (!stream) {
+      isVideoLoading = false; // Reset loading state
       // Stop Player Logic
       const videoWrapper = document.querySelector(".lp-video-wrapper");
       if (videoWrapper) {
@@ -1969,7 +1974,6 @@ function LivePage() {
       channelChunk = 1;
       channelIndex = 0;
       buttonFocusIndex = -1;
-      playChannel(""); // Clear player
     }
 
     renderCategories();
@@ -2150,7 +2154,7 @@ function LivePage() {
         focusedSection = "sidebar";
       }
     } else if (focusedSection === "player") {
-      focusedSection = "channelSearch";
+      focusedSection = "channels";
     } else if (focusedSection === "epg") {
       focusedSection = "channels";
       // Check if remove button exists to focus it, otherwise focus heart
@@ -2166,12 +2170,18 @@ function LivePage() {
     if (focusedSection === "sidebarSearch") {
       focusedSection = "channelSearch";
     } else if (focusedSection === "sidebar") {
-      const cats = getFilteredCategories();
-      const cat = cats[sidebarIndex];
-      // Only move to channels if this category is already selected
-      if (cat && String(selectedCategoryId) === String(cat.category_id)) {
+      // Move to channels from ANY category focused in sidebar.
+      // This will focus the channels of the CURRENTLY SELECTED category (the one with the red dot).
+      const itemsCount = getCategoryCount(selectedCategoryId);
+      if (itemsCount > 0) {
         focusedSection = "channels";
-        channelIndex = 0;
+        // Ensure channelIndex is valid for the current grid
+        const items = document.querySelectorAll(
+          ".lp-channel-card, .lp-channel-card-history",
+        );
+        if (channelIndex >= items.length) {
+          channelIndex = 0;
+        }
       }
     } else if (focusedSection === "channelSearch") {
       if (!currentPlayingStream) return;
@@ -2205,8 +2215,9 @@ function LivePage() {
           : document.getElementById("lp-chan-search-input");
       if (input) input.focus();
     } else if (focusedSection === "sidebar") {
-      // Use shared function with lock check
-      handleCategorySelect(sidebarIndex, true);
+      // Simply select the category but stay on the sidebar.
+      // User will press Arrow Right when they want to focus on channels.
+      handleCategorySelect(sidebarIndex, false);
     } else if (focusedSection === "channels") {
       const stream = filteredStreams[channelIndex];
       if (!stream) return;

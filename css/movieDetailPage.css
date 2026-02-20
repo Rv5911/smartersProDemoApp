@@ -195,10 +195,10 @@
 .movie-detail-more-like-this-list .movie-card.focused {
     z-index: 100;
 }
-
+/* 
 .movie-card-inner {
     border: 4px solid transparent !important;
-}
+} */
 
 .movie-detail-more-like-this-list .movie-card.focused .movie-card-inner {
     transform: scale(1.05);

@@ -87,6 +87,7 @@
 .series-detail-season-count {
     font-weight: 700;
     margin-right: 20px;
+    margin-left: 20px;
     color: var(--app-text-white);
 }
 
@@ -232,7 +233,6 @@ margin-right: 12px;
 .seasons-header {
     display: flex;
     align-items: baseline;
-    gap: 20px;
     margin-bottom: 20px;
     border-bottom: 1px solid #333;
     padding-bottom: 10px;
@@ -242,7 +242,7 @@ margin-right: 12px;
     font-size: 20px;
     font-weight: 700;
     color: white;
-    margin: 0;
+    margin-right: 20px;
 }
 
 .episodes-label {
@@ -265,7 +265,6 @@ margin-right: 12px;
 .seasons-episodes-item {
     display: flex;
     flex-direction: row;
-    gap: 20px;
     padding: 10px;
     outline: none;
     width: 100%;
@@ -279,6 +278,7 @@ margin-right: 12px;
 /* Thumbnail Section */
 .episode-row-left {
     flex-shrink: 0;
+    margin-right: 20px;
     width: 280px;
 }
 
