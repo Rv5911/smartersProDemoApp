@@ -698,11 +698,13 @@ function createMoviesNoDataMessage(categoryTitle) {
   );
 }
 
-function createMoviesNoSearchMessage() {
+function createMoviesNoSearchMessage(query) {
   return (
     '<div class="no-data-container">' +
     '<div class="no-data-content">' +
-    "<h2>No Search Results Found</h2>" +
+    '<h2>No result found for "' +
+    query +
+    '"</h2>' +
     "</div>" +
     "</div>"
   );
@@ -2398,10 +2400,9 @@ function validateMoviesData() {
 }
 
 function MoviesPage() {
-      if(window.TMBD_API_KEY==null){
-     if (typeof getTmbdId === "function") getTmbdId();
-
-    } 
+  if (window.TMBD_API_KEY == null) {
+    if (typeof getTmbdId === "function") getTmbdId();
+  }
   validateMoviesData();
 
   // Get current sort option
@@ -2542,6 +2543,13 @@ function MoviesPage() {
     // Pass current sort option to getAPICategories
     let apiCategories = getAPICategories(currentSort);
 
+    // Filter categories that have results if search query is active
+    if (getMoviesSearchQuery()) {
+      apiCategories = apiCategories.filter(
+        (cat) => cat.movies && cat.movies.length > 0,
+      );
+    }
+
     // ALWAYS show these two categories at the top, in this specific order
     let fixedTopCategories = [
       {
@@ -2581,7 +2589,8 @@ function MoviesPage() {
       ? ""
       : await HomeCarousel("movie");
 
-    let html = '<div class="movies-page-container">';
+    let searchQuery = getMoviesSearchQuery();
+    let html = `<div class="movies-page-container" ${searchQuery ? 'style="padding-top: 200px;"' : ""}>`;
     if (carouselHtml) {
       html += `<div class="home-poster">${carouselHtml}</div>`;
     }
@@ -2593,6 +2602,15 @@ function MoviesPage() {
         category.id === "fav"
       ) {
         html += createMoviesCategorySection(category, i);
+      }
+    }
+
+    if (searchQuery) {
+      const resultsFound = window.allMoviesCategories.some(
+        (cat) => cat.movies && cat.movies.length > 0,
+      );
+      if (!resultsFound) {
+        html += createMoviesNoSearchMessage(searchQuery);
       }
     }
 

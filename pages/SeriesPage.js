@@ -665,12 +665,13 @@ function createSeriesNoDataMessage(categoryTitle) {
   );
 }
 
-function createSeriesNoSearchMessage() {
+function createSeriesNoSearchMessage(query) {
   return (
     '<div class="no-data-container">' +
     '<div class="no-data-content">' +
-    "<h2>No Search Results Found</h2>" +
-    "<p>Try a different query</p>" +
+    '<h2>No result found for "' +
+    query +
+    '"</h2>' +
     "</div>" +
     "</div>"
   );
@@ -2603,6 +2604,13 @@ function SeriesPage() {
     // Pass current sort option to getAPISeriesCategories
     let apiCategories = getAPISeriesCategories(currentSort);
 
+    // Filter categories that have results if search query is active
+    if (getSeriesSearchQuery()) {
+      apiCategories = apiCategories.filter(
+        (cat) => cat.series && cat.series.length > 0,
+      );
+    }
+
     // ALWAYS show these two categories at the top, in this specific order
     let fixedTopCategories = [
       {
@@ -2642,7 +2650,8 @@ function SeriesPage() {
       ? ""
       : await HomeCarousel("series");
 
-    let html = '<div class="series-page-container">';
+    let searchQuery = getSeriesSearchQuery();
+    let html = `<div class="series-page-container" ${searchQuery ? 'style="padding-top: 200px;"' : ""}>`;
     if (carouselHtml) {
       html += `<div class="home-poster">${carouselHtml}</div>`;
     }
@@ -2654,6 +2663,15 @@ function SeriesPage() {
         category.id === "fav"
       ) {
         html += createSeriesCategorySection(category, i);
+      }
+    }
+
+    if (searchQuery) {
+      const resultsFound = window.allSeriesCategories.some(
+        (cat) => cat.series && cat.series.length > 0,
+      );
+      if (!resultsFound) {
+        html += createSeriesNoSearchMessage(searchQuery);
       }
     }
 
