@@ -46,7 +46,7 @@ function resetLoadingPercentage() {
   }
 }
 
-function updateLoadingPercentage(targetPercentage, message = "") {
+function updateLoadingPercentage(targetPercentage, message = "Loading your playlist content...") {
   const progressElement = document.getElementById("loading-progress");
   const messageElement = document.getElementById("loading-message");
 
@@ -163,7 +163,7 @@ async function loginApi(
           throw new Error(`Invalid response ${response.status}`);
         }
 
-        updateLoadingPercentage(20, "Processing playlist data...");
+        updateLoadingPercentage(20, "Loading your playlist content...");
         const data = await response.json();
         if (loginCancelled) {
           return null;
@@ -191,42 +191,42 @@ async function loginApi(
               JSON.stringify(newCurrentPlaylistData),
             );
 
-            updateLoadingPercentage(30, "Loading movies data...");
+            updateLoadingPercentage(30, "Loading your playlist content...");
             const vodMovies = await getAllVodMovies();
             if (loginCancelled || !vodMovies) {
               throw new Error("Failed to load movies data");
             }
             await new Promise((r) => setTimeout(r, 100));
 
-            updateLoadingPercentage(40, "Loading movie categories...");
+            updateLoadingPercentage(40, "Loading your playlist content...");
             const moviesCategories = await getMoviesCategories();
             if (loginCancelled || !moviesCategories) {
               throw new Error("Failed to load movie categories");
             }
             await new Promise((r) => setTimeout(r, 100));
 
-            updateLoadingPercentage(50, "Loading series data...");
+            updateLoadingPercentage(50, "Loading your playlist content...");
             const vodSeries = await getAllVodSeries();
             if (loginCancelled || !vodSeries) {
               throw new Error("Failed to load series data");
             }
             await new Promise((r) => setTimeout(r, 100));
 
-            updateLoadingPercentage(60, "Loading series categories...");
+            updateLoadingPercentage(60, "Loading your playlist content...");
             const seriesCategories = await getSeriesCategories();
             if (loginCancelled || !seriesCategories) {
               throw new Error("Failed to load series categories");
             }
             await new Promise((r) => setTimeout(r, 100));
 
-            updateLoadingPercentage(70, "Loading live streams...");
+            updateLoadingPercentage(70, "Loading your playlist content...");
             const vodAllLiveStreams = await getAllLiveStreams();
             if (loginCancelled || !vodAllLiveStreams) {
               throw new Error("Failed to load live streams");
             }
             await new Promise((r) => setTimeout(r, 100));
 
-            updateLoadingPercentage(80, "Loading live categories...");
+            updateLoadingPercentage(80, "Loading your playlist content...");
             const liveCategories = await getLiveCategories();
             if (loginCancelled || !liveCategories) {
               throw new Error("Failed to load live categories");
@@ -240,7 +240,7 @@ async function loginApi(
             window.allLiveStreams = vodAllLiveStreams;
             window.liveCategories = liveCategories;
 
-            updateLoadingPercentage(100, "Login successful!");
+            updateLoadingPercentage(100, "Loading your playlist content...");
 
             if (!fromPlaylist) {
               existingPlaylists.push(newPlaylist);
@@ -486,7 +486,7 @@ async function loginApi(
           );
 
           if (isSingleDns) {
-            updateLoadingPercentage(100, "Login failed");
+            updateLoadingPercentage(100, "");
             setTimeout(() => {
               loadingOverlay.classList.add("hidden");
               disableKeyBlock();
@@ -530,42 +530,42 @@ async function loginApi(
               JSON.stringify(newCurrentPlaylistData),
             );
 
-            updateLoadingPercentage(35, "Loading movies data...");
+            updateLoadingPercentage(35, "Loading your playlist content...");
             const vodMovies = await getAllVodMovies();
             if (loginCancelled || !vodMovies) {
               throw new Error("Failed to load movies data");
             }
             await new Promise((r) => setTimeout(r, 100));
 
-            updateLoadingPercentage(45, "Loading movie categories...");
+            updateLoadingPercentage(45, "Loading your playlist content...");
             const moviesCategories = await getMoviesCategories();
             if (loginCancelled || !moviesCategories) {
               throw new Error("Failed to load movie categories");
             }
             await new Promise((r) => setTimeout(r, 100));
 
-            updateLoadingPercentage(55, "Loading series data...");
+            updateLoadingPercentage(55, "Loading your playlist content...");
             const vodSeries = await getAllVodSeries();
             if (loginCancelled || !vodSeries) {
               throw new Error("Failed to load series data");
             }
             await new Promise((r) => setTimeout(r, 100));
 
-            updateLoadingPercentage(65, "Loading series categories...");
+            updateLoadingPercentage(65, "Loading your playlist content...");
             const seriesCategories = await getSeriesCategories();
             if (loginCancelled || !seriesCategories) {
               throw new Error("Failed to load series categories");
             }
             await new Promise((r) => setTimeout(r, 100));
 
-            updateLoadingPercentage(75, "Loading live streams...");
+            updateLoadingPercentage(75, "Loading your playlist content...");
             const vodAllLiveStreams = await getAllLiveStreams();
             if (loginCancelled || !vodAllLiveStreams) {
               throw new Error("Failed to load live streams");
             }
             await new Promise((r) => setTimeout(r, 100));
 
-            updateLoadingPercentage(85, "Loading live categories...");
+            updateLoadingPercentage(85, "Loading your playlist content...");
             const liveCategories = await getLiveCategories();
             if (loginCancelled || !liveCategories) {
               throw new Error("Failed to load live categories");
@@ -587,7 +587,7 @@ async function loginApi(
               );
             }
 
-            updateLoadingPercentage(100, "Login successful!");
+            updateLoadingPercentage(100, "Loading your playlist content...");
             success = true;
 
             setTimeout(() => {
@@ -612,7 +612,7 @@ async function loginApi(
         console.log("❌ Failed DNS:", dnsToCheck[i], error);
 
         if (isSingleDns) {
-          updateLoadingPercentage(100, "Login failed");
+          updateLoadingPercentage(100, "");
           setTimeout(() => {
             loadingOverlay.classList.add("hidden");
             disableKeyBlock();
