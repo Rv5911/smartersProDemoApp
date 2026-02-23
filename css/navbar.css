@@ -87,11 +87,14 @@
 .nav-item:focus,
 .nav-item:hover {
     opacity: 1;
+    transform: scale(1.2);
     font-weight: 600;
     text-decoration: underline;
     text-underline-offset: 20px;
+    color: var(--app-text-color);
     text-decoration-thickness: 5px;
     outline: none;
+    transition: all 0.2s ease-in-out;
 }
 
 .nav-item.page-open {

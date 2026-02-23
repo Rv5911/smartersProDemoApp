@@ -62,6 +62,7 @@ async function MovieDetailPage() {
         Router.showPage("masterSearchPage");
       } else {
         console.log("this run 1");
+        localStorage.setItem("previousPage", "movieDetailPage");
         localStorage.setItem("currentPage", "moviesPage");
         localStorage.setItem("navigationFocus", "moviesPage");
         Router.showPage("moviesPage");
@@ -98,6 +99,7 @@ async function MovieDetailPage() {
     } else {
       console.log("this run 2");
 
+      localStorage.setItem("previousPage", "movieDetailPage");
       localStorage.setItem("currentPage", "moviesPage");
       localStorage.setItem("navigationFocus", "moviesPage");
       Router.showPage("moviesPage");
@@ -143,6 +145,7 @@ async function MovieDetailPage() {
     } else {
       console.log("this run 3");
 
+      localStorage.setItem("previousPage", "movieDetailPage");
       localStorage.setItem("currentPage", "moviesPage");
       localStorage.setItem("navigationFocus", "moviesPage");
       Router.showPage("moviesPage");
@@ -660,6 +663,7 @@ async function MovieDetailPage() {
           localStorage.setItem("navigationFocus", "masterSearchPage");
           Router.showPage("masterSearchPage");
         } else {
+          localStorage.setItem("previousPage", "movieDetailPage");
           localStorage.setItem("currentPage", "moviesPage");
           localStorage.setItem("navigationFocus", "moviesPage");
           Router.showPage("moviesPage");

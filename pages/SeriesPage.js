@@ -2540,9 +2540,9 @@ function SeriesPage() {
     const isSearchFocused = activeEl && activeEl.id === "search-input";
     const navFocus = localStorage.getItem("navigationFocus");
     if (!isSearchFocused && navFocus !== "sidebar") {
-        // Fix: Default to 'navbar' focus when entering the page.
-        // Only focus content ('seriesPage') if we are returning from the Detail Page.
-        if (previousPageVal === "seriesDetailPage") {
+        // Keep existing seriesPage focus (e.g. when returning from SeriesDetailPage)
+        // so we can restore the previously focused card; otherwise default to navbar.
+        if (navFocus === "seriesPage" || previousPageVal === "seriesDetailPage") {
             localStorage.setItem("navigationFocus", "seriesPage");
         } else {
             localStorage.setItem("navigationFocus", "navbar");
