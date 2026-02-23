@@ -58,6 +58,7 @@
 }
 
 .playlist-card-focused {
+    
     transform: scale(1.08);
 }
 
@@ -161,9 +162,10 @@
     padding: 30px;
     border-radius: 12px;
     border: 2px solid var(--blue-text);
-    zoom: 1.4;
+    zoom: 1.6;
     text-align: center;
     color: white;
+
     min-width: 300px;
 }
 
@@ -174,6 +176,7 @@
 .remove-dialog-buttons {
     margin-top: 25px;
     display: flex;
+
     justify-content: center;
 }
 
@@ -184,6 +187,7 @@
     border: 2px solid transparent;
     cursor: pointer;
     font-weight: bold;
+
     font-size: 16px;
 }
 
@@ -195,6 +199,7 @@
 .cancel-btn {
     background-color: var(--blue-text);
     color: white;
+    margin-right: 0px !important;
 }
 
 

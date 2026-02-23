@@ -86,14 +86,21 @@
 .nav-item.active,
 .nav-item:focus,
 .nav-item:hover {
-    /* background: #ffffff1a; */
     opacity: 1;
     font-weight: 600;
     text-decoration: underline;
+    text-underline-offset: 20px;
     text-decoration-thickness: 5px;
     outline: none;
-    text-decoration-color: var(--app-light-text-color);
+}
+
+.nav-item.page-open {
+    opacity: 1;
+    text-decoration: underline;
     text-underline-offset: 20px;
+
+    text-decoration-thickness: 5px;
+    font-weight: 600;
 }
 
 .navbar-profile {

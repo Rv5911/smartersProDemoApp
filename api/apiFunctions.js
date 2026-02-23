@@ -126,7 +126,7 @@ async function loginApi(
     );
 
     if (duplicate) {
-      Toaster.showToast("error", "Playlist name already exists!");
+      Toaster.showToast("error", "Playlist with the same name already exists!");
       return null;
     }
   }
@@ -828,9 +828,7 @@ async function getSeriesTmbdId(seriesName) {
 async function getSeriesCast(seriesId) {
   try {
     const response = await fetch(
-      `https://api.themoviedb.org/3/tv/${seriesId}/credits?api_key=${localStorage.getItem(
-        "tmbdId",
-      )}`,
+      `https://api.themoviedb.org/3/tv/${seriesId}/credits?api_key=${window.TMBD_API_KEY}`,
     );
     if (!response.ok) throw new Error("Failed to fetch getSeriesCasts");
     return await response.json();
@@ -842,9 +840,7 @@ async function getSeriesCast(seriesId) {
 async function getMovieCast(movies_tmbd_id) {
   try {
     const repsonse = await fetch(
-      `https://api.themoviedb.org/3/movie/${movies_tmbd_id}/credits?api_key=${localStorage.getItem(
-        "tmbdId",
-      )}`,
+      `https://api.themoviedb.org/3/movie/${movies_tmbd_id}/credits?api_key=${window.TMBD_API_KEY}`,
     );
 
     if (!repsonse.ok) throw new Error("Failed to fetch getMovieCast");

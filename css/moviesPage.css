@@ -133,7 +133,7 @@
     margin-right: 30px;
     flex-shrink: 0;
     height: 400px;
-    opacity: 0.3;
+    
     /* increased to fit title */
     width: 260px;
     border: none;
@@ -194,7 +194,7 @@
     content: "";
     position: absolute;
     inset: 0;
-    border: 4px solid var(--app-text-white);
+    border: 4px solid var(--app-text-color);
     /* border-radius: 16px; */
     pointer-events: none;
     z-index: 10;

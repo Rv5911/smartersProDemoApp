@@ -233,17 +233,17 @@ function ListUsersPage() {
 
       function updateDialogFocus() {
         deleteBtn.style.border = "2px solid transparent";
-        deleteBtn.style.transform = "scale(1)";
+        deleteBtn.style.outline = "none";
+
         cancelBtn.style.border = "2px solid transparent";
-        cancelBtn.style.transform = "scale(1)";
+        cancelBtn.style.outline = "none";
+
 
         if (dialogActiveBtn === "delete") {
           deleteBtn.style.border = "2px solid #fff";
-          deleteBtn.style.transform = "scale(1.1)";
           deleteBtn.focus();
         } else {
           cancelBtn.style.border = "2px solid #fff";
-          cancelBtn.style.transform = "scale(1.1)";
           cancelBtn.focus();
         }
       }
