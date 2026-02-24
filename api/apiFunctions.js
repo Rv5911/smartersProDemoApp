@@ -165,7 +165,7 @@ async function loginApi(
     try {
         if (fromPlaylist && playlistUrl) {
             try {
-                updateLoadingPercentage(null, "Connecting to playlist...");
+                updateLoadingPercentage(null, "");
                 const response = await fetch(playlistUrl);
                 if (loginCancelled) {
                     return null;

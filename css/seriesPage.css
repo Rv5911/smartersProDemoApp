@@ -170,7 +170,7 @@
 }
 
 .series-card.focused .series-card-inner {
-    transform: scale(1.05) translateY(-20px);
+    transform: scale(1.1);
     /* Lifted more */
     z-index: 2;
     /* filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.6)); */
@@ -222,6 +222,12 @@
     /* border-bottom-right-radius: 16px; */
     z-index: 5;
     overflow: hidden;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.series-card.focused .series-card-text {
+    opacity: 1;
 }
 
 .series-card-text h2 {
@@ -252,7 +258,7 @@
     align-items: center;
     justify-content: center;
     z-index: 15;
-    opacity: 0;
+    opacity: 1;
     transition: opacity 0.2s ease;
 }
 
@@ -310,6 +316,8 @@
     opacity: 1 !important;
     color: #ff4d4d !important;
 }
+
+/* removed focused heart opacity override to keep favorited hearts visible and unfavorited ones hidden */
 
 /* Removed opacity: 0 on focus to keep heart visible */
 

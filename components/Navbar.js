@@ -99,7 +99,7 @@ function Navbar() {
 
           <div class="sidebar-footer">
             <button class="footer-link-primary" data-action="switch-playlist-footer" tabindex="0">Switch Playlist</button>
-            <span class="version-text">Version: v1.0</span>
+            <span class="version-text">Version: v${localStorage.getItem("appVersion") ? localStorage.getItem("appVersion") : "1.0.0"}</span>
             <span class="contact-text">Contact us at: <span class="contact-email">support@smarterspro.com</span></span>
           </div>
         </div>

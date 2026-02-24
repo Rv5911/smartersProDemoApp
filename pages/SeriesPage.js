@@ -41,7 +41,7 @@ let seriesEnterKeyState = {
 
 let seriesNavigationDebounce = {
     lastKeyPress: 0,
-    debounceTime: 300,
+    debounceTime: 250,
     isDebouncing: false,
 };
 
