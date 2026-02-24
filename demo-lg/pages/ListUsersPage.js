@@ -1,220 +1,224 @@
 function ListUsersPage() {
-  const listPlaylistsData = localStorage.getItem("playlistsData")
-    ? JSON.parse(localStorage.getItem("playlistsData"))
-    : [];
+    const listPlaylistsData = localStorage.getItem("playlistsData") ?
+        JSON.parse(localStorage.getItem("playlistsData")) :
+        [];
 
-  setTimeout(() => {
-    if (ListUsersPage.cleanup) ListUsersPage.cleanup();
+    setTimeout(() => {
+        if (ListUsersPage.cleanup) ListUsersPage.cleanup();
 
-    const container = document.querySelector(".playlist-cards-container");
-    // const addUserBtn = document.querySelector(".list-users-navbar button"); // Removed
+        const container = document.querySelector(".playlist-cards-container");
+        // const addUserBtn = document.querySelector(".list-users-navbar button"); // Removed
 
-    // let onAddUser = false; // Removed
-    let currentRow = 0;
-    let currentCol = 0;
-    let rows = [];
-    let enterPressTimer = null;
-    let dialogOpen = false;
+        // let onAddUser = false; // Removed
+        let currentRow = 0;
+        let currentCol = 0;
+        let rows = [];
+        let enterPressTimer = null;
+        let dialogOpen = false;
 
-    function updateCards() {
-      return document.querySelectorAll(".playlist-card");
-    }
-
-    function computeRows() {
-      const cards = updateCards();
-      rows = [];
-      let currentOffsetTop = null;
-      let row = [];
-
-      cards.forEach((card) => {
-        if (currentOffsetTop === null || card.offsetTop === currentOffsetTop) {
-          row.push(card);
-          currentOffsetTop = card.offsetTop;
-        } else {
-          rows.push(row);
-          row = [card];
-          currentOffsetTop = card.offsetTop;
+        function updateCards() {
+            return document.querySelectorAll(".playlist-card");
         }
-      });
 
-      if (row.length > 0) rows.push(row);
+        function computeRows() {
+            const cards = updateCards();
+            rows = [];
+            let currentOffsetTop = null;
+            let row = [];
 
-      // Ensure focus is strictly within bounds
-      if (currentRow >= rows.length) currentRow = Math.max(0, rows.length - 1);
-      if (rows[currentRow] && currentCol >= rows[currentRow].length)
-        currentCol = Math.max(0, rows[currentRow].length - 1);
-    }
-
-    computeRows();
-    window.addEventListener("resize", computeRows);
-
-    function setFocus() {
-      const cards = updateCards();
-      cards.forEach((card) => {
-        card.classList.remove("playlist-card-focused");
-      });
-
-      if (rows[currentRow] && rows[currentRow][currentCol]) {
-        const card = rows[currentRow][currentCol];
-        card.classList.add("playlist-card-focused");
-
-        card.scrollIntoView({
-          block: "center",
-          inline: "center",
-        });
-      }
-    }
-
-    if (updateCards().length > 0) setFocus();
-
-    function listUsersKeydownEvents(e) {
-      if (dialogOpen) return;
-      // if (localStorage.getItem("currentPage") !== "listPage") return;
-
-      const key = e.key;
-      switch (key) {
-        case "ArrowRight":
-          if (currentCol < rows[currentRow].length - 1) {
-            currentCol++;
-            setFocus();
-          }
-          break;
-        case "ArrowLeft":
-          if (currentCol > 0) {
-            currentCol--;
-            setFocus();
-          }
-          break;
-        case "ArrowDown":
-          if (currentRow < rows.length - 1) {
-            currentRow++;
-            currentCol = Math.min(currentCol, rows[currentRow].length - 1);
-            setFocus();
-          }
-          break;
-        case "ArrowUp":
-          if (currentRow > 0) {
-            currentRow--;
-            currentCol = Math.min(currentCol, rows[currentRow].length - 1);
-            setFocus();
-          }
-          break;
-        case "Backspace":
-        case "Escape":
-          // Optional: handle back
-          break;
-      }
-    }
-
-    document.addEventListener("keydown", listUsersKeydownEvents);
-
-    function handleEnterKeyDown(e) {
-      if (dialogOpen) return;
-      // if (localStorage.getItem("currentPage") !== "listPage") return;
-      if (e.key !== "Enter") return;
-      if (enterPressTimer) return;
-
-      const card = rows[currentRow] && rows[currentRow][currentCol];
-      // Do not allow long press on "Add Playlist" card
-      if (card && card.dataset.action === "add-playlist") {
-        localStorage.setItem("currentPage", "login");
-        Router.showPage("login");
-        ListUsersPage.cleanup();
-        return;
-      }
-
-      enterPressTimer = setTimeout(() => {
-        if (enterPressTimer) {
-          // Check if not cleared
-          computeRows();
-          const currentCard = rows[currentRow] && rows[currentRow][currentCol];
-          if (currentCard) showRemoveDialog(currentRow, currentCol);
-          enterPressTimer = null; // Consume timer
-        }
-      }, 200); // 800ms for long press
-    }
-
-    function handleEnterKeyUp(e) {
-      if (dialogOpen) return;
-      // if (localStorage.getItem("currentPage") !== "listPage") return;
-      if (e.key !== "Enter") return;
-
-      if (enterPressTimer) {
-        clearTimeout(enterPressTimer);
-        enterPressTimer = null;
-
-        const card = rows[currentRow] && rows[currentRow][currentCol];
-        if (card) {
-          if (card.dataset.action === "add-playlist") {
-            // Navigate to Login Page
-            localStorage.setItem("currentPage", "login");
-            ListUsersPage.cleanup();
-            Router.showPage("login");
-          } else {
-            // Existing Login Logic
-            const titleElement = card.querySelector(".playlist-card-title");
-            const playlistName = titleElement
-              ? titleElement.textContent
-              : "Unknown";
-
-            const playlistsData =
-              JSON.parse(localStorage.getItem("playlistsData")) || [];
-            const targetIndex = playlistsData.findIndex(
-              (pl) => pl.playlistName === playlistName,
-            );
-
-            if (targetIndex === -1) {
-              console.error("Playlist not found:", playlistName);
-              return;
-            }
-
-            // Call global loginApi
-            if (typeof loginApi === "function") {
-              loginApi(
-                "",
-                "",
-                playlistsData[targetIndex].playlistName,
-                true,
-                playlistsData[targetIndex].playlistUrl,
-                playlistsData[targetIndex].playlistServerAddress || "", // use saved server address for DNS check
-              ).then((response) => {
-                if (response) {
-                  localStorage.setItem(
-                    "selectedPlaylist",
-                    JSON.stringify(playlistsData[targetIndex]),
-                  );
-                  const loadingEl = document.querySelector("#loading-overlay");
-                  if (loadingEl) {
-                    loadingEl.style.background = "rgba(0, 0, 0, 0.7)";
-                    loadingEl.style.marginTop = "0px";
-                  }
-                  ListUsersPage.cleanup();
+            cards.forEach((card) => {
+                if (currentOffsetTop === null || card.offsetTop === currentOffsetTop) {
+                    row.push(card);
+                    currentOffsetTop = card.offsetTop;
+                } else {
+                    rows.push(row);
+                    row = [card];
+                    currentOffsetTop = card.offsetTop;
                 }
-              });
-            } else {
-              console.error("loginApi function not found");
-            }
-          }
+            });
+
+            if (row.length > 0) rows.push(row);
+
+            // Ensure focus is strictly within bounds
+            if (currentRow >= rows.length) currentRow = Math.max(0, rows.length - 1);
+            if (rows[currentRow] && currentCol >= rows[currentRow].length)
+                currentCol = Math.max(0, rows[currentRow].length - 1);
         }
-      }
-    }
 
-    document.addEventListener("keydown", handleEnterKeyDown);
-    document.addEventListener("keyup", handleEnterKeyUp);
+        computeRows();
+        window.addEventListener("resize", computeRows);
 
-    // --- Remove dialog ---
-    function showRemoveDialog(row, col) {
-      dialogOpen = true;
-      computeRows();
-      const card = rows[row] && rows[row][col];
-      if (!card) return;
+        function setFocus() {
+            const cards = updateCards();
+            cards.forEach((card) => {
+                card.classList.remove("playlist-card-focused");
+            });
 
-      const titleElement = card.querySelector(".playlist-card-title");
-      const title = titleElement ? titleElement.textContent : "Unknown";
+            if (rows[currentRow] && rows[currentRow][currentCol]) {
+                const card = rows[currentRow][currentCol];
+                card.classList.add("playlist-card-focused");
 
-      const dialog = document.createElement("div");
-      dialog.className = "remove-dialog";
-      dialog.innerHTML = `
+                card.scrollIntoView({
+                    block: "center",
+                    inline: "center",
+                });
+            }
+        }
+
+        if (updateCards().length > 0) setFocus();
+
+        function listUsersKeydownEvents(e) {
+            if (dialogOpen) return;
+            // if (localStorage.getItem("currentPage") !== "listPage") return;
+
+            const key = e.key;
+            switch (key) {
+                case "ArrowRight":
+                    if (currentCol < rows[currentRow].length - 1) {
+                        currentCol++;
+                        setFocus();
+                    }
+                    break;
+                case "ArrowLeft":
+                    if (currentCol > 0) {
+                        currentCol--;
+                        setFocus();
+                    }
+                    break;
+                case "ArrowDown":
+                    if (currentRow < rows.length - 1) {
+                        currentRow++;
+                        currentCol = Math.min(currentCol, rows[currentRow].length - 1);
+                        setFocus();
+                    }
+                    break;
+                case "ArrowUp":
+                    if (currentRow > 0) {
+                        currentRow--;
+                        currentCol = Math.min(currentCol, rows[currentRow].length - 1);
+                        setFocus();
+                    }
+                    break;
+                case "Backspace":
+                case "Escape":
+                    // Optional: handle back
+                    break;
+            }
+        }
+
+        document.addEventListener("keydown", listUsersKeydownEvents);
+
+        function handleEnterKeyDown(e) {
+            if (dialogOpen) return;
+            // if (localStorage.getItem("currentPage") !== "listPage") return;
+            if (e.key !== "Enter") return;
+            if (enterPressTimer) return;
+
+            const card = rows[currentRow] && rows[currentRow][currentCol];
+            // Do not allow long press on "Add Playlist" card
+            if (card && card.dataset.action === "add-playlist") {
+                localStorage.removeItem("login_playlistName");
+                localStorage.removeItem("login_username");
+                localStorage.removeItem("login_password");
+                localStorage.removeItem("login_serverAddress");
+                localStorage.setItem("currentPage", "login");
+                Router.showPage("login");
+                ListUsersPage.cleanup();
+                return;
+            }
+
+            enterPressTimer = setTimeout(() => {
+                if (enterPressTimer) {
+                    // Check if not cleared
+                    computeRows();
+                    const currentCard = rows[currentRow] && rows[currentRow][currentCol];
+                    if (currentCard) showRemoveDialog(currentRow, currentCol);
+                    enterPressTimer = null; // Consume timer
+                }
+            }, 200); // 800ms for long press
+        }
+
+        function handleEnterKeyUp(e) {
+            if (dialogOpen) return;
+            // if (localStorage.getItem("currentPage") !== "listPage") return;
+            if (e.key !== "Enter") return;
+
+            if (enterPressTimer) {
+                clearTimeout(enterPressTimer);
+                enterPressTimer = null;
+
+                const card = rows[currentRow] && rows[currentRow][currentCol];
+                if (card) {
+                    if (card.dataset.action === "add-playlist") {
+                        // Navigate to Login Page
+                        localStorage.setItem("currentPage", "login");
+                        ListUsersPage.cleanup();
+                        Router.showPage("login");
+                    } else {
+                        // Existing Login Logic
+                        const titleElement = card.querySelector(".playlist-card-title");
+                        const playlistName = titleElement ?
+                            titleElement.textContent :
+                            "Unknown";
+
+                        const playlistsData =
+                            JSON.parse(localStorage.getItem("playlistsData")) || [];
+                        const targetIndex = playlistsData.findIndex(
+                            (pl) => pl.playlistName === playlistName,
+                        );
+
+                        if (targetIndex === -1) {
+                            console.error("Playlist not found:", playlistName);
+                            return;
+                        }
+
+                        // Call global loginApi
+                        if (typeof loginApi === "function") {
+                            loginApi(
+                                "",
+                                "",
+                                playlistsData[targetIndex].playlistName,
+                                true,
+                                playlistsData[targetIndex].playlistUrl,
+                                playlistsData[targetIndex].playlistServerAddress || "", // use saved server address for DNS check
+                            ).then((response) => {
+                                if (response) {
+                                    localStorage.setItem(
+                                        "selectedPlaylist",
+                                        JSON.stringify(playlistsData[targetIndex]),
+                                    );
+                                    const loadingEl = document.querySelector("#loading-overlay");
+                                    if (loadingEl) {
+                                        loadingEl.style.background = "rgba(0, 0, 0, 0.7)";
+                                        loadingEl.style.marginTop = "0px";
+                                    }
+                                    ListUsersPage.cleanup();
+                                }
+                            });
+                        } else {
+                            console.error("loginApi function not found");
+                        }
+                    }
+                }
+            }
+        }
+
+        document.addEventListener("keydown", handleEnterKeyDown);
+        document.addEventListener("keyup", handleEnterKeyUp);
+
+        // --- Remove dialog ---
+        function showRemoveDialog(row, col) {
+            dialogOpen = true;
+            computeRows();
+            const card = rows[row] && rows[row][col];
+            if (!card) return;
+
+            const titleElement = card.querySelector(".playlist-card-title");
+            const title = titleElement ? titleElement.textContent : "Unknown";
+
+            const dialog = document.createElement("div");
+            dialog.className = "remove-dialog";
+            dialog.innerHTML = `
         <div class="remove-dialog-content" tabindex="0">
           <h2>${title}</h2>
           <p>Are you sure want to delete?</p>
@@ -224,146 +228,145 @@ function ListUsersPage() {
           </div>
         </div>
       `;
-      document.body.appendChild(dialog);
+            document.body.appendChild(dialog);
 
-      const deleteBtn = dialog.querySelector(".delete-btn");
-      const cancelBtn = dialog.querySelector(".cancel-btn");
+            const deleteBtn = dialog.querySelector(".delete-btn");
+            const cancelBtn = dialog.querySelector(".cancel-btn");
 
-      let dialogActiveBtn = "delete";
+            let dialogActiveBtn = "delete";
 
-      function updateDialogFocus() {
-        deleteBtn.style.border = "2px solid transparent";
-        deleteBtn.style.outline = "none";
+            function updateDialogFocus() {
+                deleteBtn.style.border = "2px solid transparent";
+                deleteBtn.style.outline = "none";
 
-        cancelBtn.style.border = "2px solid transparent";
-        cancelBtn.style.outline = "none";
+                cancelBtn.style.border = "2px solid transparent";
+                cancelBtn.style.outline = "none";
 
-
-        if (dialogActiveBtn === "delete") {
-          deleteBtn.style.border = "2px solid #fff";
-          deleteBtn.focus();
-        } else {
-          cancelBtn.style.border = "2px solid #fff";
-          cancelBtn.focus();
-        }
-      }
-      updateDialogFocus();
-
-      function dialogKeydown(e) {
-        if (!dialogOpen) return;
-        e.preventDefault();
-        e.stopPropagation();
-
-        switch (e.key) {
-          case "ArrowRight":
-          case "Tab":
-            dialogActiveBtn =
-              dialogActiveBtn === "delete" ? "cancel" : "delete";
-            updateDialogFocus();
-            break;
-          case "ArrowLeft":
-            dialogActiveBtn =
-              dialogActiveBtn === "cancel" ? "delete" : "cancel";
-            updateDialogFocus();
-            break;
-          case "Enter":
-            if (dialogActiveBtn === "delete") {
-              removePlaylist(row, col);
-              closeDialog();
-            } else {
-              closeDialog();
+                if (dialogActiveBtn === "delete") {
+                    deleteBtn.style.border = "2px solid #fff";
+                    deleteBtn.focus();
+                } else {
+                    cancelBtn.style.border = "2px solid #fff";
+                    cancelBtn.focus();
+                }
             }
-            break;
-          case "Escape":
-          case "Backspace":
-            closeDialog();
-            break;
+            updateDialogFocus();
+
+            function dialogKeydown(e) {
+                if (!dialogOpen) return;
+                e.preventDefault();
+                e.stopPropagation();
+
+                switch (e.key) {
+                    case "ArrowRight":
+                    case "Tab":
+                        dialogActiveBtn =
+                            dialogActiveBtn === "delete" ? "cancel" : "delete";
+                        updateDialogFocus();
+                        break;
+                    case "ArrowLeft":
+                        dialogActiveBtn =
+                            dialogActiveBtn === "cancel" ? "delete" : "cancel";
+                        updateDialogFocus();
+                        break;
+                    case "Enter":
+                        if (dialogActiveBtn === "delete") {
+                            removePlaylist(row, col);
+                            closeDialog();
+                        } else {
+                            closeDialog();
+                        }
+                        break;
+                    case "Escape":
+                    case "Backspace":
+                        closeDialog();
+                        break;
+                }
+            }
+
+            function closeDialog() {
+                dialogOpen = false;
+                if (document.body.contains(dialog)) {
+                    document.body.removeChild(dialog);
+                }
+                document.removeEventListener("keydown", dialogKeydown);
+                setFocus(); // Restore focus to cards page
+            }
+
+            document.addEventListener("keydown", dialogKeydown);
+
+            deleteBtn.addEventListener("click", () => {
+                removePlaylist(row, col);
+                closeDialog();
+            });
+
+            cancelBtn.addEventListener("click", closeDialog);
         }
-      }
 
-      function closeDialog() {
-        dialogOpen = false;
-        if (document.body.contains(dialog)) {
-          document.body.removeChild(dialog);
+        function removePlaylist(row, col) {
+            computeRows();
+
+            // Calculate which card index to remove (flattened index)
+            // Note: rows might include the "Add Playlist" card, but listPlaylistsData does not.
+            // We must map row/col to index in listPlaylistsData.
+            // Since "Add Playlist" is the LAST card, we should be careful.
+
+            // Flatten rows to find generic index
+            let flatIndex = 0;
+            for (let r = 0; r < row; r++) {
+                flatIndex += rows[r].length;
+            }
+            flatIndex += col;
+
+            // If flatIndex is out of bounds of data arrow (i.e. it's the Add Playlist card)
+            // we shouldn't be here anyway due to checks, but just in case.
+
+            const data = JSON.parse(localStorage.getItem("playlistsData")) || [];
+
+            if (flatIndex >= data.length) {
+                console.error("Attempted to remove non-data card");
+                return;
+            }
+
+            // Remove selected item
+            data.splice(flatIndex, 1);
+
+            // Save updated list
+            localStorage.setItem("playlistsData", JSON.stringify(data));
+
+            // Reload/Cleanup
+            if (data.length === 0) {
+                localStorage.setItem("currentPage", "loginPage");
+                ListUsersPage.cleanup();
+                Router.showPage("login");
+            } else {
+                ListUsersPage.cleanup();
+                Router.showPage("listPage");
+            }
         }
-        document.removeEventListener("keydown", dialogKeydown);
-        setFocus(); // Restore focus to cards page
-      }
 
-      document.addEventListener("keydown", dialogKeydown);
+        ListUsersPage.cleanup = function() {
+            document.removeEventListener("keydown", listUsersKeydownEvents);
+            document.removeEventListener("keydown", handleEnterKeyDown);
+            document.removeEventListener("keyup", handleEnterKeyUp);
+            window.removeEventListener("resize", computeRows);
+        };
+    }, 0);
 
-      deleteBtn.addEventListener("click", () => {
-        removePlaylist(row, col);
-        closeDialog();
-      });
-
-      cancelBtn.addEventListener("click", closeDialog);
-    }
-
-    function removePlaylist(row, col) {
-      computeRows();
-
-      // Calculate which card index to remove (flattened index)
-      // Note: rows might include the "Add Playlist" card, but listPlaylistsData does not.
-      // We must map row/col to index in listPlaylistsData.
-      // Since "Add Playlist" is the LAST card, we should be careful.
-
-      // Flatten rows to find generic index
-      let flatIndex = 0;
-      for (let r = 0; r < row; r++) {
-        flatIndex += rows[r].length;
-      }
-      flatIndex += col;
-
-      // If flatIndex is out of bounds of data arrow (i.e. it's the Add Playlist card)
-      // we shouldn't be here anyway due to checks, but just in case.
-
-      const data = JSON.parse(localStorage.getItem("playlistsData")) || [];
-
-      if (flatIndex >= data.length) {
-        console.error("Attempted to remove non-data card");
-        return;
-      }
-
-      // Remove selected item
-      data.splice(flatIndex, 1);
-
-      // Save updated list
-      localStorage.setItem("playlistsData", JSON.stringify(data));
-
-      // Reload/Cleanup
-      if (data.length === 0) {
-        localStorage.setItem("currentPage", "loginPage");
-        ListUsersPage.cleanup();
-        Router.showPage("login");
-      } else {
-        ListUsersPage.cleanup();
-        Router.showPage("listPage");
-      }
-    }
-
-    ListUsersPage.cleanup = function () {
-      document.removeEventListener("keydown", listUsersKeydownEvents);
-      document.removeEventListener("keydown", handleEnterKeyDown);
-      document.removeEventListener("keyup", handleEnterKeyUp);
-      window.removeEventListener("resize", computeRows);
-    };
-  }, 0);
-
-  const colors = [
-    "#4FE291",
-    "#9b59b6",
-    "#3498db",
-    "#e67e22",
-    "#e74c3c",
-    "#f1c40f",
-    "#1abc9c",
-    "#d35400",
-  ];
-  const cardsHTML = listPlaylistsData
-    .map((user, index) => {
-      const randomBodyColor = colors[index % colors.length];
-      return `
+    const colors = [
+        "#4FE291",
+        "#9b59b6",
+        "#3498db",
+        "#e67e22",
+        "#e74c3c",
+        "#f1c40f",
+        "#1abc9c",
+        "#d35400",
+    ];
+    const cardsHTML = listPlaylistsData
+        .map((user, index) => {
+            const randomBodyColor = colors[index % colors.length];
+            return `
       <div class="playlist-card" data-index="${index}">
         <div class="playlist-icon-wrapper user-icon-wrapper">
           <svg width="176" height="205" viewBox="0 0 176 205" fill="none" xmlns="http://www.w3.org/2000/svg"> 
@@ -376,11 +379,11 @@ function ListUsersPage() {
         </div>
       </div>
     `;
-    })
-    .join("");
+        })
+        .join("");
 
-  // Add Playlist Card HTML
-  const addPlaylistCardHTML = `
+    // Add Playlist Card HTML
+    const addPlaylistCardHTML = `
       <div class="playlist-card add-playlist" data-action="add-playlist">
         <div class="playlist-icon-wrapper">
           <div class="plus-circle">
@@ -393,7 +396,7 @@ function ListUsersPage() {
       </div>
   `;
 
-  return `
+    return `
     <div class="list-users-container">
       <div class="list-users-header">
 <svg width="207" class="listPage-logo" height="63" viewBox="0 0 207 63" fill="none" xmlns="http://www.w3.org/2000/svg">

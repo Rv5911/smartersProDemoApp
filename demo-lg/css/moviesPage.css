@@ -133,7 +133,7 @@
     margin-right: 30px;
     flex-shrink: 0;
     height: 400px;
-    
+
     /* increased to fit title */
     width: 260px;
     border: none;
@@ -183,7 +183,7 @@
 }
 
 .movie-card.focused .movie-card-inner {
-    transform: scale(1.05) translateY(-20px);
+    transform: scale(1.1);
     /* Lifted more */
     z-index: 2;
     /* Soft glow instead of border */
@@ -230,6 +230,12 @@
     /* border-bottom-right-radius: 16px; */
     z-index: 5;
     overflow: hidden;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.movie-card.focused .movie-card-text {
+    opacity: 1;
 }
 
 .movie-card-text h2 {
@@ -288,7 +294,7 @@
     align-items: center;
     justify-content: center;
     z-index: 15;
-    opacity: 0;
+    opacity: 1;
     transition: opacity 0.2s ease;
 }
 
@@ -520,6 +526,8 @@
     opacity: 1 !important;
     color: #ff4d4d !important;
 }
+
+/* removed focused heart opacity override to keep hearts hidden if not fav */
 
 .movie-card-play-div {
     display: flex;

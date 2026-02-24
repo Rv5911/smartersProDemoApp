@@ -348,6 +348,19 @@ function LoginPage() {
             Router.showPage("listPage");
         });
 
+        playlistInput.addEventListener("input", (e) => {
+            localStorage.setItem("login_playlistName", e.target.value);
+        });
+        usernameInput.addEventListener("input", (e) => {
+            localStorage.setItem("login_username", e.target.value);
+        });
+        passwordInput.addEventListener("input", (e) => {
+            localStorage.setItem("login_password", e.target.value);
+        });
+        serverInput.addEventListener("input", (e) => {
+            localStorage.setItem("login_serverAddress", e.target.value);
+        });
+
         LoginPage.cleanup = function() {
             document.removeEventListener("keydown", loginPageKeydownEvents);
             eyeIcon.removeEventListener("click", togglePassword);
@@ -387,21 +400,21 @@ function LoginPage() {
             <div class="input-group">
               <div class="login-input-container">
                 <img class="input-icon" src="../assets/playlist.png" alt="Playlist">
-                <input class="playlistname-input login-input" type="text"   placeholder="Playlist Name">
+                <input class="playlistname-input login-input" type="text" placeholder="Playlist Name" value="${localStorage.getItem("login_playlistName") || ""}">
               </div>
             </div>
       
             <div class="input-group">
               <div class="login-input-container">
                 <img class="input-icon" src="../assets/username.png" alt="User">
-                <input class="username-input login-input" type="text"   placeholder="Username">
+                <input class="username-input login-input" type="text" placeholder="Username" value="${localStorage.getItem("login_username") || ""}">
               </div>
             </div>
             
-                  <div class="input-group">
+            <div class="input-group">
               <div class="login-input-container password-wrapper">
                 <img class="input-icon" src="../assets/password.png" alt="Password">
-                <input class="password-input login-input" type="password" placeholder="Password"   >
+                <input class="password-input login-input" type="password" placeholder="Password" value="${localStorage.getItem("login_password") || ""}">
                 <img class="eye-icon-login" src="../assets/eye-closed.png" alt="Toggle password visibility">
               </div>
             </div>
@@ -409,7 +422,7 @@ function LoginPage() {
             <div class="input-group">
               <div class="login-input-container">
                 <img class="input-icon" src="../assets/server.png" alt="Server">
-                <input class="server-input login-input" type="text"  placeholder="Server Address">
+                <input class="server-input login-input" type="text" placeholder="Server Address" value="${localStorage.getItem("login_serverAddress") || ""}">
               </div>
             </div>
 

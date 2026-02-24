@@ -10,7 +10,7 @@
     align-items: center;
     background-color: rgba(0, 0, 0, 0.8);
     z-index: 10000;
-    animation: fadeIn 0.3s ease-in-out;
+    /* animation: fadeIn 0.3s ease-in-out; */
 }
 
 .dns-dialog-content {
@@ -38,13 +38,13 @@
     color: white;
 }
 
-.dns-dialog-message-website-link{
+.dns-dialog-message-website-link {
     font-size: 16px;
     margin-bottom: 5px;
     color: white;
 }
 
-.dns-website-logo-container{
+.dns-website-logo-container {
     object-fit: contain;
     display: flex;
 
@@ -52,11 +52,12 @@
     margin-bottom: 20px;
 }
 
-.website-logo{
+.website-logo {
     width: 50%;
     height: 50%;
     object-fit: contain;
 }
+
 .dns-qr-container {
     background: white;
     padding: 15px;

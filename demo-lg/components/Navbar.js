@@ -99,7 +99,7 @@ function Navbar() {
 
           <div class="sidebar-footer">
             <button class="footer-link-primary" data-action="switch-playlist-footer" tabindex="0">Switch Playlist</button>
-            <span class="version-text">Version: v1.0</span>
+            <span class="version-text">Version: v${localStorage.getItem("appVersion") ? localStorage.getItem("appVersion") : "1.0.0"}</span>
             <span class="contact-text">Contact us at: <span class="contact-email">support@smarterspro.com</span></span>
           </div>
         </div>
@@ -1377,16 +1377,30 @@ function initNavbar() {
       if (PAGES_WITH_SEARCH.includes(checkPage)) {
         searchContainer.style.visibility = "visible";
         // Reset display property that might have been set by other pages (e.g., LivePage)
-        if (searchInput) searchInput.style.display = "";
+        if (searchInput) {
+                    searchInput.style.display = "";
+                    // Update placeholder based on page
+                    if (checkPage === "moviesPage") {
+                        searchInput.placeholder = "Search Movies";
+                    } else if (checkPage === "seriesPage") {
+                        searchInput.placeholder = "Search Series";
+                    } else {
+                        searchInput.placeholder = "Search";
+                    }
+                }
         if (searchIcon) searchIcon.style.display = "";
+
       } else {
         searchContainer.style.visibility = "hidden";
       }
     }
   }
 
-  function updateNavbarActive(page) {
-    const activeIndex = pageIndexMap[page];
+  function updateNavbarActive(page, skipFocus = false) {
+        // Map detail pages to their parent navbar items
+        let pageToHighlight = page;
+        if (page === "movieDetailPage") pageToHighlight = "moviesPage";
+        if (page === "seriesDetailPage") pageToHighlight = "seriesPage";
 
     // Remove page-open from all items
     navItems.forEach((item) => item.classList.remove("page-open"));
@@ -1398,19 +1412,28 @@ function initNavbar() {
 
     // Fixed logic for pageIndexMap matching
     const navItemToMark = document.querySelector(
-      `.nav-item[data-page="${page}"]`,
+      `.nav-item[data-page="${pageToHighlight}"]`,
     );
     if (navItemToMark) {
       navItemToMark.classList.add("page-open");
     }
 
-    const index = pageIndexMap[page] || 0;
-    currentIndex = index + 1;
-    highlightNavItem(currentIndex);
-    localStorage.setItem("navigationFocus", "navbar");
+   const index =
+            pageIndexMap[pageToHighlight] !== undefined ?
+            pageIndexMap[pageToHighlight] :
+            0;
+        currentIndex = index + 1;
 
-    updateSearchVisibility(page);
-  }
+        if (!skipFocus) {
+            highlightNavItem(currentIndex);
+            localStorage.setItem("navigationFocus", "navbar");
+        } else {
+            setActiveItem(currentIndex);
+        }
+
+        updateSearchVisibility(page);
+    }
+    window.updateNavbarActive = updateNavbarActive;
 
   window.updateSearchVisibility = updateSearchVisibility;
 

@@ -157,7 +157,8 @@ async function loginApi(
         loadingOverlay.classList.add("hidden");
         resetLoadingPercentage();
         Toaster.showToast("error", "Login Aborted!");
-        if (localStorage.getItem("currentPage") != "listPage") {
+        const currentPage = localStorage.getItem("currentPage");
+        if (currentPage !== "listPage" && currentPage !== "login") {
             localStorage.setItem("currentPage", "login");
             Router.showPage("login");
         }
@@ -165,7 +166,7 @@ async function loginApi(
     try {
         if (fromPlaylist && playlistUrl) {
             try {
-                updateLoadingPercentage(null, "Connecting to playlist...");
+                updateLoadingPercentage(null, "");
                 const response = await fetch(playlistUrl);
                 if (loginCancelled) {
                     return null;
@@ -268,6 +269,12 @@ async function loginApi(
 
                             localStorage.setItem("navigationFocus", "navbar");
                             localStorage.setItem("currentPage", "moviesPage");
+                            // Clear persisted login fields on success
+                            localStorage.removeItem("login_playlistName");
+                            localStorage.removeItem("login_username");
+                            localStorage.removeItem("login_password");
+                            localStorage.removeItem("login_serverAddress");
+
                             Router.showPage("moviesPage");
                             if (typeof window.setNavbarFocus === "function") {
                                 window.setNavbarFocus("moviesPage");
@@ -606,6 +613,12 @@ async function loginApi(
 
                             localStorage.setItem("navigationFocus", "navbar");
                             localStorage.setItem("currentPage", "moviesPage");
+                            // Clear persisted login fields on success
+                            localStorage.removeItem("login_playlistName");
+                            localStorage.removeItem("login_username");
+                            localStorage.removeItem("login_password");
+                            localStorage.removeItem("login_serverAddress");
+
                             Router.showPage("moviesPage");
                             if (typeof window.setNavbarFocus === "function") {
                                 window.setNavbarFocus("moviesPage");
@@ -647,7 +660,7 @@ async function loginApi(
         if (loginCancelled) return null;
 
         console.log("❌ Login failed:", error);
-        updateLoadingPercentage(null, "Login failed");
+        updateLoadingPercentage(null, "");
 
         // Check if it's an "Invalid Playlist Data" error
         const isInvalidPlaylistError =
@@ -669,8 +682,8 @@ async function loginApi(
 
                 // Navigate to login page
                 localStorage.setItem("navigationFocus", "navbar");
-                localStorage.setItem("currentPage", "loginPage");
-                Router.showPage("loginPage");
+                localStorage.setItem("currentPage", "login");
+                Router.showPage("login");
 
                 Toaster.showToast(
                     "error",
