@@ -1955,6 +1955,14 @@ function initNavbar() {
     );
     if (activeIndex === -1) activeIndex = 0;
 
+    const keyCode = e.keyCode || e.which;
+
+    // Handle LG (461) and Tizen (10009) back buttons by numeric keyCode
+    if (keyCode === 461 || keyCode === 10009) {
+      closeSortMenu();
+      return;
+    }
+
     switch (e.key) {
       case "ArrowDown":
         activeIndex = (activeIndex + 1) % sortOptionItems.length;
@@ -1979,10 +1987,6 @@ function initNavbar() {
       case "Back":
       case "BrowserBack":
       case "XF86Back":
-      case "10009":
-      case "461":
-      case 10009:
-      case 461:
         closeSortMenu();
         break;
     }

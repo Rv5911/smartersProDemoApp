@@ -1528,6 +1528,12 @@ function VideoJsPlayer(poster = "") {
       if (isAspectRatioFocused) {
         const aspectRatioButton = document.getElementById("aspectRatioButton");
         if (aspectRatioButton) {
+          // Handle LG (461) and Tizen (10009) back keys by keyCode
+          if (key === 461 || key === 10009) {
+            goBack();
+            e.preventDefault();
+            return;
+          }
           switch (e.key) {
             case "ArrowUp":
               // Move focus to seek bar
@@ -1631,6 +1637,14 @@ function VideoJsPlayer(poster = "") {
               goBack();
               e.preventDefault();
               break;
+
+            default:
+              // Handle LG (461) and Tizen (10009) back keys by keyCode
+              if (key === 461 || key === 10009) {
+                goBack();
+                e.preventDefault();
+              }
+              break;
           }
         }
         return; // Don't process other keys when seek bar is focused
@@ -1714,6 +1728,12 @@ function VideoJsPlayer(poster = "") {
       }
 
       // 🔴 Fallback controls (when nothing is focused)
+      // Handle LG (keyCode 461) and Tizen (keyCode 10009) back keys numerically
+      if (key === 461 || key === 10009) {
+        goBack();
+        return;
+      }
+
       switch (e.key) {
         case "Enter":
           if (player && typeof player.paused === "function") {
@@ -1767,7 +1787,6 @@ function VideoJsPlayer(poster = "") {
         case "Back":
         case "BrowserBack":
         case "XF86Back":
-        case 10009:
           goBack();
           break;
       }
