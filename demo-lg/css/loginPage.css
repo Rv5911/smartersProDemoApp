@@ -328,7 +328,7 @@ margin-right: 15px;
 }
 
 .login-form-div.shift-up {
-    transform: translateY(-50px);
+    transform: translateY(-150px);
     /* transition: transform 0.25s ease; */
 }
 

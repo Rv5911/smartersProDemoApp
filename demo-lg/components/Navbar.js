@@ -957,6 +957,26 @@ function initNavbar() {
           ].includes(currentPage)
         ) {
           e.preventDefault();
+
+          // Stop Live TV player audio/video before leaving the page
+          if (currentPage === "liveTvPage") {
+            // Call the registered cleanup (removes event listeners + disposes player)
+            if (typeof window.cleanupLivePage === "function") {
+              try {
+                window.cleanupLivePage();
+              } catch (err) {}
+            }
+            // Belt-and-suspenders: also force-stop all video elements
+            document.querySelectorAll("video").forEach((v) => {
+              try {
+                v.pause();
+                v.src = "";
+                v.load();
+              } catch (err) {}
+            });
+            window.livePlayer = null;
+          }
+
           localStorage.setItem("currentPage", "homePage");
           localStorage.setItem("navigationFocus", "navbar");
 

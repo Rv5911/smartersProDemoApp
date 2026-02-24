@@ -386,30 +386,30 @@ function LoginPage() {
           <div class="login-inputs-div">
             <div class="input-group">
               <div class="login-input-container">
-                <img class="input-icon" src="./assets/playlist.png" alt="Playlist">
-                <input class="playlistname-input login-input" type="text"  value="SimonWinter" placeholder="Playlist Name">
+                <img class="input-icon" src="../assets/playlist.png" alt="Playlist">
+                <input class="playlistname-input login-input" type="text"   placeholder="Playlist Name">
               </div>
             </div>
       
             <div class="input-group">
               <div class="login-input-container">
-                <img class="input-icon" src="./assets/username.png" alt="User">
-                <input class="username-input login-input" type="text" value="SimonWinter"  placeholder="Username">
+                <img class="input-icon" src="../assets/username.png" alt="User">
+                <input class="username-input login-input" type="text"   placeholder="Username">
               </div>
             </div>
             
                   <div class="input-group">
               <div class="login-input-container password-wrapper">
-                <img class="input-icon" src="./assets/password.png" alt="Password">
-                <input class="password-input login-input" type="password" placeholder="Password" value="1z5gFtKLe5"  >
-                <img class="eye-icon-login" src="./assets/eye-closed.png" alt="Toggle password visibility">
+                <img class="input-icon" src="../assets/password.png" alt="Password">
+                <input class="password-input login-input" type="password" placeholder="Password"   >
+                <img class="eye-icon-login" src="../assets/eye-closed.png" alt="Toggle password visibility">
               </div>
             </div>
 
             <div class="input-group">
               <div class="login-input-container">
-                <img class="input-icon" src="./assets/server.png" alt="Server">
-                <input class="server-input login-input" type="text"  placeholder="Server Address" value="http://simonclarke.xyz/">
+                <img class="input-icon" src="../assets/server.png" alt="Server">
+                <input class="server-input login-input" type="text"  placeholder="Server Address">
               </div>
             </div>
 
