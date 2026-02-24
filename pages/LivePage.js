@@ -2244,10 +2244,10 @@ function LivePage() {
         if (focusedSection === "sidebarSearch") {
             focusedSection = "channelSearch";
         } else if (focusedSection === "sidebar") {
-            // Move to channels from ANY category focused in sidebar.
-            // This will focus the channels of the CURRENTLY SELECTED category (the one with the red dot).
-            // Trigger category select to handle parental check if needed
-            handleCategorySelect(sidebarIndex, true);
+  focusedSection = "channels";
+  channelIndex = 0;      // reset highlight to first channel
+  buttonFocusIndex = -1; // clear button focus
+
         } else if (focusedSection === "channelSearch") {
             if (!currentPlayingStream) return;
             focusedSection = "player";
