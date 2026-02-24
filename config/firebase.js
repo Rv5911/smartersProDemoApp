@@ -1,11 +1,11 @@
 var firebaseConfig = {
-  apiKey: "AIzaSyDK5uF-816i4_R9UlT0v5_BD12qu3rpF8E",
-  authDomain: "smarttvapp-5f8ca.firebaseapp.com",
-  projectId: "smarttvapp-5f8ca",
-  storageBucket: "smarttvapp-5f8ca.firebasestorage.app",
-  messagingSenderId: "430801978001",
-  appId: "1:430801978001:web:74d60528a2d1c37dfdb530",
-  measurementId: "G-3G73FDKF4B"
+  apiKey: "AIzaSyC9id2H-Mwwb12XQG8qIoZkl1erUEVuLy4",
+  authDomain: "smarterspro-smarttv.firebaseapp.com",
+  projectId: "smarterspro-smarttv",
+  storageBucket: "smarterspro-smarttv.firebasestorage.app",
+  messagingSenderId: "802563511642",
+  appId: "1:802563511642:web:119d286afcf047ed030f63",
+  measurementId: "G-0MMJ8QX7MB"
   };
 
 firebase.initializeApp(firebaseConfig);
@@ -33,6 +33,7 @@ window.getTmbdId = function () {
       snapshot.forEach(function (doc) {
         const tmbdId=doc.data().tmbd_api_key? doc.data().tmbd_api_key : ""
         // console.log("TMDBID Entry:", doc.id, "=>", tmbdId);
+        localStorage.setItem("tmbdId", tmbdId.trim());
         window.TMBD_API_KEY = tmbdId.trim();
         console.log("TMDBID from Firebase:", window.TMBD_API_KEY);
         // localStorage.setItem("tmbdId", tmbdId);
