@@ -619,8 +619,10 @@ function VideoJsPlayer(poster = "") {
     if (titleBar) {
       titleBar.classList.remove("hidden");
       setTimeout(() => {
-        if (!player.paused()) {
-          titleBar.classList.add("hidden");
+        if (player && typeof player.paused === "function") {
+          if (!player.paused()) {
+            titleBar.classList.add("hidden");
+          }
         }
       }, 3000);
     }
@@ -850,6 +852,24 @@ function VideoJsPlayer(poster = "") {
     });
 
     function goBack() {
+      const getCurrentPlaylist = () => {
+        try {
+          const currentPlaylistName = JSON.parse(
+            localStorage.getItem("selectedPlaylist") || "{}",
+          ).playlistName;
+          const playlistsData = JSON.parse(
+            localStorage.getItem("playlistsData") || "[]",
+          );
+          return (
+            playlistsData.find(
+              (pl) => pl.playlistName === currentPlaylistName,
+            ) || {}
+          );
+        } catch (e) {
+          return {};
+        }
+      };
+
       const currentPlaylist = getCurrentPlaylist();
       const allRecentlyWatchedMovies = currentPlaylist.continueWatchingMovies
         ? currentPlaylist.continueWatchingMovies
@@ -1197,7 +1217,6 @@ function VideoJsPlayer(poster = "") {
             isContinueWatchingMovie == false ? "true" : "false",
           );
 
-          buildDynamicSidebarOptions();
           if (localStorage.getItem("fromMoviesPage") === "true") {
             localStorage.setItem("fromMoviesPage", "false");
             localStorage.setItem("currentPage", "moviesPage");
@@ -1223,7 +1242,6 @@ function VideoJsPlayer(poster = "") {
             "isContinueWatchingSeries",
             isContinueWatchingSeries === false ? "true" : "false",
           );
-          buildDynamicSidebarOptions();
           localStorage.setItem("isReturningFromPlayer", "true");
           if (localStorage.getItem("fromSeriesPage") === "true") {
             localStorage.setItem("fromSeriesPage", "false");
@@ -1283,9 +1301,11 @@ function VideoJsPlayer(poster = "") {
     function removeEpisodeFromContinueWatching(completedEpisodeId) {
       try {
         const seriesId = localStorage.getItem("selectedSeriesId");
-        const currentPlaylistName = JSON.parse(
-          localStorage.getItem("selectedPlaylist"),
-        ).playlistName;
+        const currentPlaylistObj = getCurrentPlaylist();
+        const currentPlaylistName = currentPlaylistObj
+          ? currentPlaylistObj.playlistName
+          : null;
+        if (!currentPlaylistName) return;
         const playlistsData =
           JSON.parse(localStorage.getItem("playlistsData")) || [];
         const currentPlaylist = playlistsData.filter(
@@ -1330,9 +1350,11 @@ function VideoJsPlayer(poster = "") {
     function checkIfAllEpisodesCompleted(currentEpisodeId, seriesEpisodes) {
       try {
         const seriesId = localStorage.getItem("selectedSeriesId");
-        const currentPlaylistName = JSON.parse(
-          localStorage.getItem("selectedPlaylist"),
-        ).playlistName;
+        const currentPlaylistObj = getCurrentPlaylist();
+        const currentPlaylistName = currentPlaylistObj
+          ? currentPlaylistObj.playlistName
+          : null;
+        if (!currentPlaylistName) return false;
         const playlistsData =
           JSON.parse(localStorage.getItem("playlistsData")) || [];
         const currentPlaylist = playlistsData.filter(
