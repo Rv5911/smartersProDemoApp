@@ -4,7 +4,7 @@
     <tizen:application id="xPpro3DS0T.SmartersProDemoNew" package="xPpro3DS0T" required_version="2.3"/>
     <content src="index.html"/>
     <feature name="http://tizen.org/feature/screen.size.normal.1080.1920"/>
-    <icon src="app-icon.png"/>
+    <icon src="app-icon-117.png"/>
     <tizen:metadata key="http://tizen.org/metadata/app_ui_type/base_screen_resolution" value="extensive"/>
     <name>Smarters Pro </name>
     <tizen:privilege name="http://developer.samsung.com/privilege/allshare"/>

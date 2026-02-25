@@ -11,7 +11,7 @@
   background-position: center;
   position: fixed;
   background: var(--blue-bg);
-  animation: splashFade 5s ease-in-out forwards;
+  animation: splashFade 5s ease-in-out;
   will-change: opacity;
 }
 
@@ -19,7 +19,7 @@
   height: 22%;
   object-fit: contain;
   opacity: 0;
-  animation: logoFade 5s ease-in-out forwards;
+  animation: logoFade 5s ease-in-out ;
   will-change: transform, opacity;
   /* Hint for hardware acceleration */
 }
