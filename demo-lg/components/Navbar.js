@@ -1378,18 +1378,17 @@ function initNavbar() {
         searchContainer.style.visibility = "visible";
         // Reset display property that might have been set by other pages (e.g., LivePage)
         if (searchInput) {
-                    searchInput.style.display = "";
-                    // Update placeholder based on page
-                    if (checkPage === "moviesPage") {
-                        searchInput.placeholder = "Search Movies";
-                    } else if (checkPage === "seriesPage") {
-                        searchInput.placeholder = "Search Series";
-                    } else {
-                        searchInput.placeholder = "Search";
-                    }
-                }
+          searchInput.style.display = "";
+          // Update placeholder based on page
+          if (checkPage === "moviesPage") {
+            searchInput.placeholder = "Search Movies";
+          } else if (checkPage === "seriesPage") {
+            searchInput.placeholder = "Search Series";
+          } else {
+            searchInput.placeholder = "Search";
+          }
+        }
         if (searchIcon) searchIcon.style.display = "";
-
       } else {
         searchContainer.style.visibility = "hidden";
       }
@@ -1397,17 +1396,18 @@ function initNavbar() {
   }
 
   function updateNavbarActive(page, skipFocus = false) {
-        // Map detail pages to their parent navbar items
-        let pageToHighlight = page;
-        if (page === "movieDetailPage") pageToHighlight = "moviesPage";
-        if (page === "seriesDetailPage") pageToHighlight = "seriesPage";
+    // Map detail pages to their parent navbar items
+    let pageToHighlight = page;
+    if (page === "movieDetailPage") pageToHighlight = "moviesPage";
+    if (page === "seriesDetailPage") pageToHighlight = "seriesPage";
 
     // Remove page-open from all items
     navItems.forEach((item) => item.classList.remove("page-open"));
 
     // Add page-open to the current page item
-    if (activeIndex !== undefined && navItems[activeIndex - 1]) {
-      // Note: pageIndexMap values are 0-indexed matches for the navItems array index if we align them
+    const activeIndex = pageIndexMap[pageToHighlight];
+    if (activeIndex !== undefined && navItems[activeIndex]) {
+      navItems[activeIndex].classList.add("page-open");
     }
 
     // Fixed logic for pageIndexMap matching
@@ -1418,22 +1418,22 @@ function initNavbar() {
       navItemToMark.classList.add("page-open");
     }
 
-   const index =
-            pageIndexMap[pageToHighlight] !== undefined ?
-            pageIndexMap[pageToHighlight] :
-            0;
-        currentIndex = index + 1;
+    const index =
+      pageIndexMap[pageToHighlight] !== undefined
+        ? pageIndexMap[pageToHighlight]
+        : 0;
+    currentIndex = index + 1;
 
-        if (!skipFocus) {
-            highlightNavItem(currentIndex);
-            localStorage.setItem("navigationFocus", "navbar");
-        } else {
-            setActiveItem(currentIndex);
-        }
-
-        updateSearchVisibility(page);
+    if (!skipFocus) {
+      highlightNavItem(currentIndex);
+      localStorage.setItem("navigationFocus", "navbar");
+    } else {
+      setActiveItem(currentIndex);
     }
-    window.updateNavbarActive = updateNavbarActive;
+
+    updateSearchVisibility(page);
+  }
+  window.updateNavbarActive = updateNavbarActive;
 
   window.updateSearchVisibility = updateSearchVisibility;
 
