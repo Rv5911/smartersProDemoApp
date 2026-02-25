@@ -209,7 +209,7 @@ function LiveTvPage() {
           (pl) => pl.playlistName === selectedPlaylist.playlistName
         )[0];
 
-        console.log(currentPlaylist, "currentPlaylistcurrentPlaylist");
+        // console.log(currentPlaylist, "currentPlaylistcurrentPlaylist");
         const isTs =
           (currentPlaylist.streamFormat || "").toLowerCase() === "ts";
         videoWrapper.innerHTML = isTs

@@ -292,7 +292,7 @@ async function loginApi(
       } catch (error) {
         if (loginCancelled) return null;
 
-        console.log("❌ Failed to load playlist:", playlistUrl, error);
+        // console.log("❌ Failed to load playlist:", playlistUrl, error);
         throw new Error(
           `Invalid Credentials ${
             lastStatusCode ? `(Status: ${lastStatusCode})` : ""
@@ -302,7 +302,7 @@ async function loginApi(
     }
 
     const verifyApiData = await verifyServerDns(serverAddress);
-    console.log(verifyApiData, "verifyApiData");
+    // console.log(verifyApiData, "verifyApiData");
     if (verifyApiData) {
       window.dnsNotValid =
         verifyApiData.status == true ||
@@ -333,10 +333,10 @@ async function loginApi(
 
     showQrCode()
       .then(() => {
-        console.log(
-          window.dnsNotValid,
-          " window.dnsNotValid window.dnsNotValid",
-        );
+        // console.log(
+        //   window.dnsNotValid,
+        //   " window.dnsNotValid window.dnsNotValid",
+        // );
         if (loginCancelled) return null;
 
         const isLoginPage = document.querySelector(".login-page-container");
@@ -400,7 +400,7 @@ async function loginApi(
 
           // Define closeDialog first
           const closeDialog = () => {
-            console.log("Closing DNS dialog");
+            // console.log("Closing DNS dialog");
 
             // Remove event listener
             document.removeEventListener("keydown", handleKeydown, true);
@@ -427,7 +427,7 @@ async function loginApi(
 
           // Block background interactions and handle Back
           const handleKeydown = (e) => {
-            console.log("DNS Dialog key pressed:", e.key);
+            // console.log("DNS Dialog key pressed:", e.key);
             e.stopPropagation();
             e.stopImmediatePropagation();
             e.preventDefault();
@@ -509,9 +509,9 @@ async function loginApi(
 
         if (!response.ok) {
           lastStatusCode = response.status;
-          console.log(
-            `❌ Failed DNS: ${dnsToCheck[i]} (Status: ${response.status})`,
-          );
+          // console.log(
+          //   `❌ Failed DNS: ${dnsToCheck[i]} (Status: ${response.status})`,
+          // );
 
           if (isSingleDns) {
             // updateLoadingPercentage(null, "Invalid Credentials");
@@ -642,7 +642,7 @@ async function loginApi(
         }
       } catch (error) {
         if (loginCancelled) return null;
-        console.log("❌ Failed DNS:", dnsToCheck[i], error);
+        // console.log("❌ Failed DNS:", dnsToCheck[i], error);
 
         if (isSingleDns) {
           updateLoadingPercentage(100, "");
@@ -668,7 +668,7 @@ async function loginApi(
   } catch (error) {
     if (loginCancelled) return null;
 
-    console.log("❌ Login failed:", error);
+    // console.log("❌ Login failed:", error);
     updateLoadingPercentage(null, "");
 
     // Check if it's an "Invalid Playlist Data" error
@@ -682,7 +682,7 @@ async function loginApi(
 
       // If Invalid Playlist Data error, clear session and navigate to login
       if (isInvalidPlaylistError) {
-        console.log("🔄 Invalid Playlist Data detected - redirecting to login");
+        // console.log("🔄 Invalid Playlist Data detected - redirecting to login");
 
         // Clear login state
         localStorage.removeItem("isLogin");

@@ -352,7 +352,7 @@ function removeAllFromHistory(typeKey, playlistUsername) {
             openSidebar(sidebarPage);
         }, 50);
     }
-    console.log(`Cleared all items from ${typeKey} for playlist ${username}`);
+    // console.log(`Cleared all items from ${typeKey} for playlist ${username}`);
 }
 
 function toggleFavoriteItem(item, typeKey, playlistUsername) {
@@ -387,13 +387,13 @@ function toggleFavoriteItem(item, typeKey, playlistUsername) {
                 currentPlaylistData.playlistName :
                 "");
 
-        console.log("🔄 toggleFavoriteItem called:", {
-            typeKey,
-            providedUsername: playlistUsername,
-            resolvedUsername: username,
-            itemId: item && (item.stream_id || item.id),
-            itemName: item && item.name,
-        });
+        // console.log("🔄 toggleFavoriteItem called:", {
+        //     typeKey,
+        //     providedUsername: playlistUsername,
+        //     resolvedUsername: username,
+        //     itemId: item && (item.stream_id || item.id),
+        //     itemName: item && item.name,
+        // });
 
         if (!username) {
             console.error("❌ No playlist username found");
@@ -407,13 +407,13 @@ function toggleFavoriteItem(item, typeKey, playlistUsername) {
 
         // Get fresh data from localStorage
         const playlists = getPlaylistsData();
-        console.log(
-            "📦 Current playlists data:",
-            playlists.map((p) => ({
-                name: p.playlistName,
-                favCount: (p[typeKey] && p[typeKey].length) || 0,
-            })),
-        );
+        // console.log(
+        //     "📦 Current playlists data:",
+        //     playlists.map((p) => ({
+        //         name: p.playlistName,
+        //         favCount: (p[typeKey] && p[typeKey].length) || 0,
+        //     })),
+        // );
 
         const uid = getItemUniqueId(item);
         if (!uid) {
@@ -430,7 +430,7 @@ function toggleFavoriteItem(item, typeKey, playlistUsername) {
         let result;
 
         if (plIndex === -1) {
-            console.log("➕ Creating new playlist entry for:", username);
+            // console.log("➕ Creating new playlist entry for:", username);
             // create minimal playlist entry with the right key
             const newPl = {
                 playlistName: username,
@@ -440,7 +440,7 @@ function toggleFavoriteItem(item, typeKey, playlistUsername) {
             newPl[typeKey] = [item];
             playlists.push(newPl);
             savePlaylistsData(playlists);
-            console.log("✅ Saved new playlist with favorite");
+            // console.log("✅ Saved new playlist with favorite");
             result = {
                 success: true,
                 isFav: true,
@@ -457,7 +457,7 @@ function toggleFavoriteItem(item, typeKey, playlistUsername) {
                 console.log("➕ Adding to favorites:", uid);
                 pl[typeKey].push(item);
                 savePlaylistsData(playlists);
-                console.log("✅ Saved! New favorite count:", pl[typeKey].length);
+                // console.log("✅ Saved! New favorite count:", pl[typeKey].length);
                 result = {
                     success: true,
                     isFav: true,
@@ -469,7 +469,7 @@ function toggleFavoriteItem(item, typeKey, playlistUsername) {
                 console.log("➖ Removing from favorites:", uid);
                 pl[typeKey].splice(favIndex, 1);
                 savePlaylistsData(playlists);
-                console.log("✅ Saved! New favorite count:", pl[typeKey].length);
+                // console.log("✅ Saved! New favorite count:", pl[typeKey].length);
                 result = {
                     success: true,
                     isFav: false,
@@ -485,10 +485,10 @@ function toggleFavoriteItem(item, typeKey, playlistUsername) {
             const selectedPlaylist = JSON.parse(
                 localStorage.getItem("selectedPlaylist") || "{}",
             );
-            console.log(
-                "🔄 Updating selectedPlaylist:",
-                selectedPlaylist.playlistName,
-            );
+            // console.log(
+            //     "🔄 Updating selectedPlaylist:",
+            //     selectedPlaylist.playlistName,
+            // );
             if (selectedPlaylist.playlistName === username) {
                 const updatedPlaylist = playlists.find(
                     (p) => p.playlistName === username,
@@ -500,10 +500,10 @@ function toggleFavoriteItem(item, typeKey, playlistUsername) {
                         "selectedPlaylist",
                         JSON.stringify(selectedPlaylist),
                     );
-                    console.log(
-                        "✅ selectedPlaylist updated, favorite count:",
-                        selectedPlaylist[typeKey].length,
-                    );
+                    // console.log(
+                    //     "✅ selectedPlaylist updated, favorite count:",
+                    //     selectedPlaylist[typeKey].length,
+                    // );
                 }
             }
         } catch (e) {
@@ -524,7 +524,7 @@ function updateLiveClearAllIcon() {
     );
 
     if (channelHistoryEl) {
-        console.log("Updating clear icon for:", channelHistoryEl);
+        // console.log("Updating clear icon for:", channelHistoryEl);
 
         const countElement = channelHistoryEl.querySelector(
             ".livetv-channel-category-count",
@@ -550,7 +550,7 @@ function updateLiveClearAllIcon() {
         let clearButton = document.querySelector(".live-clear");
 
         if (count > 0) {
-            console.log(clearButton, "clearButton");
+            // console.log(clearButton, "clearButton");
             if (clearButton) {
                 clearButton.style.display = "flex";
             }
@@ -594,7 +594,7 @@ function updateSeriesClearAllIcon() {
         let clearButton = document.querySelector(".series-clear");
 
         if (count > 0) {
-            console.log(clearButton, "clearButton");
+            // console.log(clearButton, "clearButton");
             if (clearButton) {
                 clearButton.style.display = "flex";
             }
@@ -612,7 +612,7 @@ function updateMoviesClearAllIcon() {
     );
 
     if (channelHistoryEl) {
-        console.log("Updating clear icon for:", channelHistoryEl);
+        // console.log("Updating clear icon for:", channelHistoryEl);
 
         const countElement = channelHistoryEl.querySelector(
             ".movie-channel-category-count",
@@ -638,7 +638,7 @@ function updateMoviesClearAllIcon() {
         let clearButton = document.querySelector(".movie-clear");
 
         if (count > 0) {
-            console.log(clearButton, "clearButton");
+            // console.log(clearButton, "clearButton");
 
             if (clearButton) {
                 clearButton.style.display = "flex";

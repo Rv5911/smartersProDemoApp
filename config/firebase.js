@@ -17,7 +17,7 @@ window.logAllDnsEntries = function () {
   db.collection("DNS").get()
     .then(function (snapshot) {
       snapshot.forEach(function (doc) {
-        console.log("DNS Entry:", doc.id, "=>", doc.data());
+        // console.log("DNS Entry:", doc.id, "=>", doc.data());
         localStorage.setItem("all_dns", JSON.stringify(doc.data().DNS));
       });
 
@@ -35,7 +35,7 @@ window.getTmbdId = function () {
         // console.log("TMDBID Entry:", doc.id, "=>", tmbdId);
         localStorage.setItem("tmbdId", tmbdId.trim());
         window.TMBD_API_KEY = tmbdId.trim();
-        console.log("TMDBID from Firebase:", window.TMBD_API_KEY);
+        // console.log("TMDBID from Firebase:", window.TMBD_API_KEY);
         // localStorage.setItem("tmbdId", tmbdId);
       });
 
@@ -50,7 +50,7 @@ window.getDnsSalt = function () {
     .then(function (snapshot) {
       snapshot.forEach(function (doc) {
         const salt = doc.data().dnsSalt ? doc.data().dnsSalt : "";
-        console.log(salt, "firebase Salt");
+        // console.log(salt, "firebase Salt");
         window.SecretToken = salt.trim();
       });
     })
@@ -64,7 +64,7 @@ window.showQrCode = function () {
     .then(function (snapshot) {
       snapshot.forEach(function (doc) {
         const qr_code = doc.data().qr_code ? doc.data().qr_code : "";
-        console.log(qr_code, "firebase qr_code");
+        // console.log(qr_code, "firebase qr_code");
         window.isQrCode = qr_code;
   
       });
@@ -79,7 +79,7 @@ window.getApiBaseUrl = function () {
     .then(function (snapshot) {
       snapshot.forEach(function (doc) {
         const api_base_url = doc.data().api_base_url ? doc.data().api_base_url : "";
-        console.log(api_base_url, "firebase api_base_url");
+        // console.log(api_base_url, "firebase api_base_url");
         window.apiBaseUrl = api_base_url.trim();
   
       });
@@ -95,7 +95,7 @@ window.getCartLink = function () {
       snapshot.forEach(function (doc) {
         const cart_link = doc.data().cart_link ? doc.data().cart_link : "";
         const website_link = doc.data().website_link ? doc.data().website_link : "";
-        console.log(cart_link, "firebase cart_link");
+        // console.log(cart_link, "firebase cart_link");
         window.cartLink = cart_link;
         window.websiteLink=website_link;
   
