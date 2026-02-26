@@ -105,7 +105,7 @@ window.onload = function () {
       localStorage.setItem("currentPage", "login");
       Router.showPage("login");
     }
-  }, 2000);
+  }, 4000);
 
   // if (typeof logAllDnsEntries === "function") logAllDnsEntries();
 };

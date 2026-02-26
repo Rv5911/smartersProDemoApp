@@ -31,12 +31,9 @@ window.getTmbdId = function () {
   db.collection("TMDBID").get()
     .then(function (snapshot) {
       snapshot.forEach(function (doc) {
-        const tmbdId=doc.data().tmbd_api_key? doc.data().tmbd_api_key : ""
-        // console.log("TMDBID Entry:", doc.id, "=>", tmbdId);
+        const tmbdId=doc.data().tmdb_api_key? doc.data().tmdb_api_key : ""
         localStorage.setItem("tmbdId", tmbdId.trim());
         window.TMBD_API_KEY = tmbdId.trim();
-        // console.log("TMDBID from Firebase:", window.TMBD_API_KEY);
-        // localStorage.setItem("tmbdId", tmbdId);
       });
 
     })
