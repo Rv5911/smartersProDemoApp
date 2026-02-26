@@ -171,7 +171,6 @@ function PolicyPage() {
 </p>
 
 <ul class="list-containerr">
-  <li>• Smarters Pro is an advanced player that uses M3U and JSON user-created playlists.</li>
   <li>• We do not provide any actual playlists or contents.</li>
   <li>• This application is designed to use with the user's own or created playlist with legal contents.</li>
   <li>• You are responsible to check your created playlists/contents are legal and you have full rights to use and/or RECORD contents.</li>

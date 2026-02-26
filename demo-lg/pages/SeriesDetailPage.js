@@ -564,13 +564,13 @@ async function SeriesDetailPage() {
             });
 
             if (returnToSearchVal === "true" || prev === "masterSearchPage") {
-                console.log("Returning to MasterSearchPage");
+                // console.log("Returning to MasterSearchPage");
                 localStorage.removeItem("returnToMasterSearch");
                 localStorage.setItem("currentPage", "masterSearchPage");
                 localStorage.setItem("navigationFocus", "masterSearchPage");
                 Router.showPage("masterSearchPage");
             } else {
-                console.log("Returning to SeriesPage");
+                // console.log("Returning to SeriesPage");
                 localStorage.setItem("currentPage", "seriesPage");
                 localStorage.setItem("navigationFocus", "seriesPage");
                 Router.showPage("seriesPage");

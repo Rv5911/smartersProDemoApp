@@ -127,7 +127,7 @@ function getFavoriteSeries() {
         const playlist = playlists.find((p) => p.playlistName === username);
 
         if (playlist && playlist.series) {
-            console.log(playlist.series, "PLAYLIST SERIES");
+            // console.log(playlist.series, "PLAYLIST SERIES");
             return playlist.series.map((id) => id.toString());
         }
 

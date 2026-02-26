@@ -1338,9 +1338,9 @@ function VideoJsPlayer(poster = "") {
         // Save back to localStorage
         localStorage.setItem("playlistsData", JSON.stringify(updatedPlaylists));
 
-        console.log(
-          `Removed episode ${completedEpisodeId} from continue watching`,
-        );
+        // console.log(
+        //   `Removed episode ${completedEpisodeId} from continue watching`,
+        // );
       } catch (error) {
         console.warn("Error removing episode from continue watching:", error);
       }

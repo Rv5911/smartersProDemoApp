@@ -47,7 +47,7 @@ async function MovieDetailPage() {
         "keydown",
         handleBackNavigationDuringLoading,
       );
-      console.log("this run 1");
+      // console.log("this run 1");
 
       localStorage.removeItem("selectedMovieId");
 
@@ -61,7 +61,7 @@ async function MovieDetailPage() {
         localStorage.setItem("navigationFocus", "masterSearchPage");
         Router.showPage("masterSearchPage");
       } else {
-        console.log("this run 1");
+        // console.log("this run 1");
         localStorage.setItem("previousPage", "movieDetailPage");
         localStorage.setItem("currentPage", "moviesPage");
         localStorage.setItem("navigationFocus", "moviesPage");
@@ -97,7 +97,7 @@ async function MovieDetailPage() {
       localStorage.setItem("navigationFocus", "masterSearchPage");
       Router.showPage("masterSearchPage");
     } else {
-      console.log("this run 2");
+      // console.log("this run 2");
 
       localStorage.setItem("previousPage", "movieDetailPage");
       localStorage.setItem("currentPage", "moviesPage");
@@ -143,7 +143,7 @@ async function MovieDetailPage() {
       localStorage.setItem("navigationFocus", "masterSearchPage");
       Router.showPage("masterSearchPage");
     } else {
-      console.log("this run 3");
+      // console.log("this run 3");
 
       localStorage.setItem("previousPage", "movieDetailPage");
       localStorage.setItem("currentPage", "moviesPage");
@@ -644,21 +644,21 @@ async function MovieDetailPage() {
         e.key === "BrowserBack" ||
         e.key === "XF86Back"
       ) {
-        console.log("this run 4");
+        // console.log("this run 4");
 
         localStorage.removeItem("selectedMovieId");
 
         const returnToSearchVal = localStorage.getItem("returnToMasterSearch");
         const prev = localStorage.getItem("previousPage");
 
-        console.log("Back Navigation Debug:", {
-          returnToSearchVal,
-          prev,
-        });
+        // console.log("Back Navigation Debug:", {
+        //   returnToSearchVal,
+        //   prev,
+        // });
 
         // Check if returnToSearchVal is "true" string or existing
         if (returnToSearchVal === "true" || prev === "masterSearchPage") {
-          console.log("Returning to MasterSearchPage");
+          // console.log("Returning to MasterSearchPage");
           localStorage.removeItem("returnToMasterSearch");
           localStorage.setItem("currentPage", "masterSearchPage");
           localStorage.setItem("navigationFocus", "masterSearchPage");
@@ -693,7 +693,7 @@ async function MovieDetailPage() {
   return htmlContent;
 
   function renderMovieDetailPage(data) {
-    console.log(data, "DATA");
+    // console.log(data, "DATA");
     var isFav =
       data.movie_data && data.movie_data.stream_id
         ? isItemFavoriteForPlaylist(

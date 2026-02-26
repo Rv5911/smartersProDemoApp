@@ -262,10 +262,10 @@ function StreamFormat() {
         }
       }
       const currentPlaylist = getCurrentPlaylist();
-      console.log(
-        currentPlaylist,
-        "currentPlaylistcurrentPlaylistcurrentPlaylist",
-      );
+      // console.log(
+      //   currentPlaylist,
+      //   "currentPlaylistcurrentPlaylistcurrentPlaylist",
+      // );
 
       updatePlaylistData(
         currentPlaylist.playlistName,
@@ -285,7 +285,7 @@ function StreamFormat() {
         updateFocusStyles();
       }
 
-      console.log("Stream format saved:", selectedValue);
+      // console.log("Stream format saved:", selectedValue);
     });
 
     function handleSubPageFocusStart() {

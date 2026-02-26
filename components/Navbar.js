@@ -892,7 +892,7 @@ function initNavbar() {
                     const prev = localStorage.getItem("previousPage");
 
                     if (returnToSearchVal === "true" || prev === "masterSearchPage") {
-                        console.log("Returning to MasterSearchPage");
+                        // console.log("Returning to MasterSearchPage");
                         localStorage.removeItem("returnToMasterSearch");
                         localStorage.setItem("currentPage", "masterSearchPage");
                         localStorage.setItem("navigationFocus", "masterSearchPage");
@@ -919,7 +919,7 @@ function initNavbar() {
                     const prev = localStorage.getItem("previousPage");
 
                     if (returnToSearchVal === "true" || prev === "masterSearchPage") {
-                        console.log("Returning to MasterSearchPage");
+                        // console.log("Returning to MasterSearchPage");
                         localStorage.removeItem("returnToMasterSearch");
                         localStorage.setItem("currentPage", "masterSearchPage");
                         localStorage.setItem("navigationFocus", "masterSearchPage");

@@ -280,7 +280,7 @@ function TimeFormat() {
         updateFocusStyles();
       }
 
-      console.log("Time format saved:", selectedValue);
+      // console.log("Time format saved:", selectedValue);
     });
 
     function handleSubPageFocusStart() {

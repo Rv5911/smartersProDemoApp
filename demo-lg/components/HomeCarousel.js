@@ -16,11 +16,11 @@ async function HomeCarousel(contentType = "movie") {
     Array.isArray(window[cacheKey]) &&
     window[cacheKey].length > 0
   ) {
-    console.log(
-      "HomeCarousel: Using cached slider data for",
-      currentPlaylistName,
-      contentType,
-    );
+    // console.log(
+    //   "HomeCarousel: Using cached slider data for",
+    //   currentPlaylistName,
+    //   contentType,
+    // );
     const sliderData = window[cacheKey];
     window.homeCarouselSliderData = sliderData;
 

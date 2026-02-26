@@ -94,7 +94,7 @@ function ParentalPinDialog(onSuccess, onCancel, currentPlaylist, fromPage) {
     // Strict isolation: prevent background listeners from firing
     e.stopImmediatePropagation();
 
-    console.log("Key pressed in PIN dialog:", e.key);
+    // console.log("Key pressed in PIN dialog:", e.key);
 
     switch (e.key) {
       case "ArrowDown":
