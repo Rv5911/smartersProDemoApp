@@ -21,7 +21,7 @@ function LiveVideoJsComponent(
     }, 0);
   }
 
-  console.log(srcUrl, "srcUrlsrcUrlsrcUrl");
+  // console.log(srcUrl, "srcUrlsrcUrlsrcUrl");
 
   const currentPlaylistName = JSON.parse(
     localStorage.getItem("selectedPlaylist"),
@@ -223,7 +223,7 @@ function LiveVideoJsComponent(
     }
   }
 
-  console.log(srcUrl, "srcUrl");
+  // console.log(srcUrl, "srcUrl");
 
   // If no URL is provided
   if (!srcUrl || srcUrl.trim() === "") {

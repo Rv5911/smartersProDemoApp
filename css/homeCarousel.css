@@ -72,6 +72,7 @@
     top: 0;
     left: 0;
     width: 100%;
+    object-position: center bottom;
     transition: opacity 0.8s ease-in-out;
     height: 100%;
     object-fit: cover;
@@ -179,7 +180,12 @@
 /* Actions */
 .carousel-actions {
     display: flex;
-    gap: 25px;
+    /* gap: 25px; */
+}
+.carousel-watch-now-btn i,
+.carousel-more-info-btn i,
+.carousel-fav-btn i {
+    margin-right: 15px;
 }
 
 .carousel-watch-now-btn,
@@ -188,7 +194,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 15px;
+    /* gap: 15px; */
+    margin-right: 25px;
     padding: 14px 45px;
     font-size: 22px;
     font-weight: 600;
@@ -210,6 +217,28 @@
     color: white;
     border: 2px solid var(--app-text-color)
 }
+
+/* 
+body[data-mode="light"] .carousel-watch-now-btn {
+    color: black !important;
+    border: 2px solid white;
+}
+
+body[data-mode="light"] .carousel-fav-btn {
+    color: black ;
+    border: 2px solid white;
+}
+
+body[data-mode="light"] .carousel-watch-now-btn:focus,
+.carousel-more-info-btn:focus,
+.carousel-fav-btn:focus,
+.carousel-watch-now-btn.focused,
+.carousel-more-info-btn.focused,
+.carousel-fav-btn.focused,
+.gradient-btn:focus  {
+    color: white !important;
+    border: 2px solid white;
+} */
 
 .carousel-watch-now-btn:focus,
 .carousel-more-info-btn:focus,
@@ -260,7 +289,7 @@
 /* Responsive */
 @media (max-width: 1200px) {
     .carousel-container {
-        height: 70vh;
+        height: 80vh;
     }
 
     .carousel-content {

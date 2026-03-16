@@ -55,7 +55,7 @@
   padding: 48px 56px 40px;
   border: 1px solid rgba(255, 255, 255, 0.02);
   position: relative;
-  background-color: #000000d8;
+  background-color: var(--app-bg);
 }
 .clear-panel::after {
   content: "";
@@ -95,6 +95,9 @@ h1.clear-title {
   min-width: 160px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
 }
+.cancelExitBtn{
+  border-radius: 0px !important;
+}
 .btn:hover {
   color: white;
   background-color: #ffb84d;
@@ -132,8 +135,8 @@ h1.clear-title {
 }
 
 .exit-focused {
-  background-color: var(--gold) !important;
-  color: black !important;
+  background-color: var(--app-text-color) !important;
+  color: white !important;
 }
 
 .clear-actions .save {

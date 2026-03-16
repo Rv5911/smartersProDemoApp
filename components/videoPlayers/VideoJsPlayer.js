@@ -1198,8 +1198,20 @@ function VideoJsPlayer(poster = "") {
           );
 
           buildDynamicSidebarOptions();
-          localStorage.setItem("currentPage", "movieDetailPage");
-          Router.showPage("movieDetailPage");
+          if (localStorage.getItem("fromMoviesPage") === "true") {
+            localStorage.setItem("fromMoviesPage", "false");
+            localStorage.setItem("currentPage", "moviesPage");
+            Router.showPage("moviesPage");
+            setTimeout(() => {
+              const moviesButton = document.querySelector(
+                '[data-page="moviesPage"]',
+              );
+              if (moviesButton) moviesButton.focus();
+            }, 100);
+          } else {
+            localStorage.setItem("currentPage", "movieDetailPage");
+            Router.showPage("movieDetailPage");
+          }
         } else {
           const isContinueWatchingSeries = allRecentlyWatchedSeries.some(
             (series) =>
@@ -1213,20 +1225,56 @@ function VideoJsPlayer(poster = "") {
           );
           buildDynamicSidebarOptions();
           localStorage.setItem("isReturningFromPlayer", "true");
-          localStorage.setItem("currentPage", "seriesDetailPage");
-          Router.showPage("seriesDetailPage");
+          if (localStorage.getItem("fromSeriesPage") === "true") {
+            localStorage.setItem("fromSeriesPage", "false");
+            localStorage.setItem("currentPage", "seriesPage");
+            Router.showPage("seriesPage");
+            setTimeout(() => {
+              const seriesButton = document.querySelector(
+                '[data-page="seriesPage"]',
+              );
+              if (seriesButton) seriesButton.focus();
+            }, 100);
+          } else {
+            localStorage.setItem("currentPage", "seriesDetailPage");
+            Router.showPage("seriesDetailPage");
+          }
         }
       } else {
         if (typeof currentPlayer.dispose === "function") {
           currentPlayer.dispose();
         }
         if (fromValue == "movie") {
-          localStorage.setItem("currentPage", "movieDetailPage");
-          Router.showPage("movieDetailPage");
+          if (localStorage.getItem("fromMoviesPage") === "true") {
+            localStorage.setItem("fromMoviesPage", "false");
+            localStorage.setItem("currentPage", "moviesPage");
+            Router.showPage("moviesPage");
+            setTimeout(() => {
+              const moviesButton = document.querySelector(
+                '[data-page="moviesPage"]',
+              );
+              if (moviesButton) moviesButton.focus();
+            }, 100);
+          } else {
+            localStorage.setItem("currentPage", "movieDetailPage");
+            Router.showPage("movieDetailPage");
+          }
         } else {
           localStorage.setItem("isReturningFromPlayer", "true");
-          localStorage.setItem("currentPage", "seriesDetailPage");
-          Router.showPage("seriesDetailPage");
+          if (localStorage.getItem("fromSeriesPage") === "true") {
+            localStorage.setItem("fromSeriesPage", "false");
+            localStorage.setItem("currentPage", "seriesPage");
+            Router.showPage("seriesPage");
+            setTimeout(() => {
+              const seriesButton = document.querySelector(
+                '[data-page="seriesPage"]',
+              );
+              if (seriesButton) seriesButton.focus();
+            }, 100);
+          } else {
+            localStorage.setItem("currentPage", "seriesDetailPage");
+            Router.showPage("seriesDetailPage");
+          }
         }
       }
     }
@@ -1270,9 +1318,9 @@ function VideoJsPlayer(poster = "") {
         // Save back to localStorage
         localStorage.setItem("playlistsData", JSON.stringify(updatedPlaylists));
 
-        console.log(
-          `Removed episode ${completedEpisodeId} from continue watching`,
-        );
+        // console.log(
+        //   `Removed episode ${completedEpisodeId} from continue watching`,
+        // );
       } catch (error) {
         console.warn("Error removing episode from continue watching:", error);
       }

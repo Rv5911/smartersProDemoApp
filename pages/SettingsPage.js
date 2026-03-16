@@ -10,7 +10,7 @@ function SettingsPage() {
 
         // Show AccountInformation by default
         const secondContainer = document.querySelector(
-            ".settings-second-container"
+            ".settings-second-container",
         );
         secondContainer.innerHTML = AccountInformation();
         isInSubPage = false;
@@ -45,8 +45,11 @@ function SettingsPage() {
             if (localStorage.getItem("navigationFocus") === "navbar") return;
 
             const key = e.key;
+            if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(key)) {
+                e.preventDefault();
+            }
+
             const selectedItem = items[activeIndex];
-            console.log(selectedItem, "selectedItem");
 
             switch (key) {
                 case "ArrowDown":
@@ -59,19 +62,17 @@ function SettingsPage() {
 
                 case "ArrowUp":
                     if (activeIndex === 0) {
-                        // If first item (Account Info or whatever is first)
                         localStorage.setItem("navigationFocus", "navbar");
+                        items.forEach((item) => {
+                            item.classList.remove("settings-pages-container-active");
+                            const img = item.querySelector("img");
+                            if (img)
+                                img.classList.remove("settings-pages-container-image-active");
+                        });
+
                         if (window.setNavbarFocus) {
-                            // Assuming Settings is index 4 or similar, finding "Profile" which is last
-                            // Or we can just focus the last item used or Profile
-                            // Let's default to Profile since Settings is usually accessed via Sidebar which is near Profile
-                            // But wait, Navbar is at top. Let's focus Profile icon as it's on right side usually.
-                            // Actually, let's just focus the last element in Navbar or Profile.
-
-                            // Better: dispatch event or let Navbar pick up focus
-                            // But Navbar logic needs to be triggered.
-
-                            // Let's use the helper exposed in Navbar if available or manual focus
+                            window.setNavbarFocus("settingsPage");
+                        } else {
                             const profileIcon = document.getElementById("profileIcon");
                             if (profileIcon) {
                                 profileIcon.focus();
@@ -80,7 +81,6 @@ function SettingsPage() {
                         }
                         return;
                     }
-                    if (selectedItem.classList.contains("account-info")) return; // Redundant if activeIndex check covers it, but keeping safe
                     activeIndex = (activeIndex - 1 + items.length) % items.length;
                     updateActiveItem();
                     break;
@@ -90,9 +90,8 @@ function SettingsPage() {
                     break;
 
                 case "ArrowRight":
-                    if (selectedItem.classList.contains("account-info")) return;
                     localStorage.setItem("settingPage", "settingsPage");
-                    handleSelection(currentOpenTab); // Use currently open tab
+                    handleSelection(selectedItem);
                     break;
 
                 case "Enter":
@@ -107,19 +106,21 @@ function SettingsPage() {
                 case "10009":
                     SettingsPage.cleanup();
 
-                    Router.showPage("homePage");
+                    Router.showPage("moviesPage");
 
-                    // Focus on the Home nav item in Navbar
+                    // Focus on the Movies nav item in Navbar
                     localStorage.setItem("navigationFocus", "navbar");
                     setTimeout(() => {
                         // Use setNavbarFocus if available, otherwise focus directly
                         if (window.setNavbarFocus) {
-                            window.setNavbarFocus("homePage");
+                            window.setNavbarFocus("moviesPage");
                         } else {
-                            const homeNavItem = document.querySelector('.nav-item[data-page="homePage"]');
-                            if (homeNavItem) {
-                                homeNavItem.focus();
-                                homeNavItem.classList.add("active");
+                            const moviesNavItem = document.querySelector(
+                                '.nav-item[data-page="moviesPage"]',
+                            );
+                            if (moviesNavItem) {
+                                moviesNavItem.focus();
+                                moviesNavItem.classList.add("active");
                             }
                         }
                     }, 50);
@@ -138,28 +139,26 @@ function SettingsPage() {
             }
 
             if (item.classList.contains("account-info")) {
-                container.innerHTML = AccountInformation();
-                isInSubPage = false;
+                if (!isInSubPage || container.innerHTML === "") {
+                    container.innerHTML = AccountInformation();
+                    isInSubPage = true;
+                } else {
+                    window.dispatchEvent(new CustomEvent("subpage-focus-start"));
+                }
                 return;
             }
 
-            isInSubPage = true;
-
             if (item.classList.contains("stream-format")) {
                 container.innerHTML = StreamFormat();
-                // Set up cleanup for when returning from StreamFormat
-                setupSubPageCleanup();
+                isInSubPage = true;
             } else if (item.classList.contains("time-format")) {
                 container.innerHTML = TimeFormat();
-                setupSubPageCleanup();
+                isInSubPage = true;
             } else if (item.classList.contains("parental-control")) {
                 container.innerHTML = ParentalControl();
-                setupSubPageCleanup();
-            } else if (item.classList.contains("account-info")) {
-                container.innerHTML = AccountInformation();
-                setupSubPageCleanup();
+                isInSubPage = true;
             } else if (item.classList.contains("clear-app-cache")) {
-                alert("Clear App Cache selected");
+                console.log("Clear App Cache selected");
             }
         }
 
@@ -172,6 +171,21 @@ function SettingsPage() {
             isInSubPage = false;
             updateActiveItem();
         }
+
+        function handleSettingsFocusChange(e) {
+            if (e.detail && e.detail.focus === "start") {
+                if (isInSubPage) {
+                    // Dispatch to subpage
+                    document.dispatchEvent(new CustomEvent("subpage-focus-start"));
+                } else {
+                    localStorage.setItem("navigationFocus", "settingsPage");
+                    activeIndex = 0;
+                    updateActiveItem();
+                }
+            }
+        }
+
+        window.addEventListener("settings-focus-change", handleSettingsFocusChange);
         document.addEventListener("settings-subpage-exit", handleSubPageExit);
 
         document.addEventListener("keydown", settingsKeydownEvents);
@@ -179,6 +193,10 @@ function SettingsPage() {
         SettingsPage.cleanup = function() {
             document.removeEventListener("keydown", settingsKeydownEvents);
             document.removeEventListener("settings-subpage-exit", handleSubPageExit);
+            window.removeEventListener(
+                "settings-focus-change",
+                handleSettingsFocusChange,
+            );
             isInSubPage = false;
         };
     }, 0);
@@ -189,7 +207,7 @@ function SettingsPage() {
         <div class="settings-first-content">
           <h1 class="settings-title"><i class="fa-solid fa-angle-left"></i>Settings</h1>
           <div class="settings-pages-container">
-            <p class="account-info"><img src="/assets/account-user.png"/>Account Information</p>
+            <p class="account-info"><img src="/assets/account-user.png"/>Playlist Information</p>
 
             <p class="stream-format"><img src="/assets/streamformat-icon.png"/>Stream Format</p>
             <p class="time-format"><img src="/assets/timeIcon.png"/>Time Format</p>

@@ -56,17 +56,7 @@ function ExitModal() {
     document.documentElement.scrollTop = 0;
 
     setTimeout(() => {
-      // Special Handling for Movies and Series - Focus FIRST CARD
-      if (returnPage === "moviesPage" && window.resetMoviesFocus) {
-        window.resetMoviesFocus();
-        return;
-      }
-      if (returnPage === "seriesPage" && window.resetSeriesFocus) {
-        window.resetSeriesFocus();
-        return;
-      }
-
-      // Default Behavior: Focus Navbar
+      // Use default behavior for all pages: Focus Navbar
       const navItems = document.querySelectorAll(".nav-item");
       let targetItem = null;
 
@@ -79,12 +69,22 @@ function ExitModal() {
 
       if (targetItem) {
         targetItem.focus();
-        // Trigger any active state logic if needed
         navItems.forEach((item) => item.classList.remove("active"));
         targetItem.classList.add("active");
-      } else {
-        if (navItems.length > 0) navItems[0].focus();
+      } else if (navItems.length > 0) {
+        navItems[0].focus();
       }
+
+      // Ensure appropriate page containers are scrolled to top
+      const containers = [
+        ".movies-page-container",
+        ".series-page-container",
+        ".ms-page-container",
+      ];
+      containers.forEach((selector) => {
+        const el = document.querySelector(selector);
+        if (el) el.scrollTop = 0;
+      });
     }, 100);
   }
 

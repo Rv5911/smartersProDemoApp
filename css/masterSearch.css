@@ -1,0 +1,179 @@
+:root {
+    --search-input-bg: rgba(255, 255, 255, 0.1);
+    --search-card-bg: rgba(255, 255, 255, 0.05);
+    --search-focused-card: rgba(255, 255, 255, 0.2);
+    --search-accent: #615dfc;
+}
+
+.ms-page-container {
+    width: 100vw;
+    height: 100vh;
+    padding: 200px 60px 40px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    background: var(--app-bg);
+    color: var(--app-text-white);
+}
+
+/* Hide Navbar on this page if it overlaps, but Router usually handles display logic */
+
+.ms-search-header {
+    display: flex;
+    flex-direction: column;
+    zoom: 1.1;
+    gap: 30px;
+    margin: 0 auto 40px;
+}
+
+.ms-search-input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.ms-search-input-wrapper i {
+    position: absolute;
+    left: 25px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 24px;
+    color: rgba(255, 255, 255, 0.5);
+    z-index: 2;
+    transition: color 0.3s ease;
+}
+
+.ms-search-input-wrapper.focused i {
+    color: var(--app-text-color);
+}
+
+.ms-search-input {
+    width: 100%;
+    height: 70px;
+    background: var(--search-input-bg);
+    border: 4px solid transparent;
+    padding: 0 40px 0 70px;
+    font-size: 24px;
+    color: var(--app-text-white);
+    outline: none;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.ms-search-input:focus,
+.ms-search-input.focused {
+    border-color: var(--app-text-color) !important;
+    background: var(--app-bg);
+}
+
+/* Marquee Styles */
+.movie-title-marquee {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+.movie-title-marquee.marquee-active::after {
+    content: attr(data-marquee);
+    padding-left: 60px;
+    /* gap between duplicate texts */
+}
+
+.ms-card.focused .movie-title-marquee.marquee-active {
+    display: inline-block !important;
+    white-space: nowrap !important;
+    animation: marquee var(--duration, 14s) linear infinite !important;
+    animation-delay: 0.8s !important;
+    text-overflow: clip !important;
+    overflow: visible !important;
+    padding-left: 0 !important;
+    padding-right: 60px !important;
+    width: auto !important;
+    max-width: none !important;
+}
+
+@keyframes marquee {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+.ms-tabs-container {
+    display: flex;
+    gap: 20px;
+}
+
+.ms-tab {
+    padding: 15px 30px;
+    background: var(--app-bg);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 20px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border: 4px solid var(--app-text-color);
+}
+
+.ms-tab.active {
+    background: var(--app-text-color);
+}
+
+.ms-tab.focused {
+    border-color: var(--app-text-white);
+    transform: scale(1.1);
+}
+
+.ms-tab-count {
+    background: var(--app-bg);
+    padding: 2px 10px;
+    font-size: 16px;
+    border: 2px solid var(--app-text-color);
+}
+
+.ms-results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 40px;
+    margin: 0 auto;
+    padding-top: 50px;
+    /* Room for card focus uplift */
+}
+
+/* Overriding movie-card styles for the search grid */
+.ms-card {
+    margin: 0 !important;
+    opacity: 1 !important;
+}
+
+.ms-no-results {
+    text-align: center;
+    font-size: 32px;
+    color: var(--app-text-color);
+    grid-column: 1 / -1;
+    padding: 150px 0;
+    zoom: 1.4;
+}
+
+/* Scrollbar Styling */
+.ms-page-container::-webkit-scrollbar {
+    width: 10px;
+}
+
+.ms-page-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.ms-page-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+}
+
+.ms-page-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+}

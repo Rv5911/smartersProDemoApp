@@ -1,7 +1,7 @@
 .list-users-container {
     height: 100vh;
     width: 100%;
-    background-color: #0b0f19;
+    background-color: var(--blue-bg);
     /* Dark navy background */
     display: flex;
     flex-direction: column;
@@ -36,7 +36,7 @@
     justify-content: center;
     align-items: flex-start;
     flex-wrap: wrap;
-    gap: 50px;
+    /* gap: 50px; */
     width: 90%;
     max-height: 70vh;
     overflow-y: auto;
@@ -51,12 +51,14 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-right: 50px;
     cursor: pointer;
     transition: transform 0.2s;
     width: 220px;
 }
 
 .playlist-card-focused {
+    
     transform: scale(1.08);
 }
 
@@ -76,7 +78,7 @@
 
 
 .playlist-card-focused .playlist-icon-wrapper {
-    border-color: var(--app-text-color);
+    border-color: var(--blue-text);
     background-color: #2e354a;
     outline: none;
 }
@@ -94,7 +96,7 @@
 .add-playlist .playlist-icon-wrapper .plus-circle {
     width: 100px;
     height: 100px;
-    background-color: var(--app-text-color);
+    background-color: var(--blue-text);
     border-radius: 50%;
     display: flex;
     justify-content: center;
@@ -156,13 +158,14 @@
 }
 
 .remove-dialog-content {
-    background: var(--app-bg);
+    background: var(--blue-bg);
     padding: 30px;
     border-radius: 12px;
-    border: 2px solid var(--app-text-color);
-    zoom: 1.4;
+    border: 2px solid var(--blue-text);
+    zoom: 1.6;
     text-align: center;
     color: white;
+
     min-width: 300px;
 }
 
@@ -173,16 +176,18 @@
 .remove-dialog-buttons {
     margin-top: 25px;
     display: flex;
+
     justify-content: center;
-    gap: 20px;
 }
 
 .remove-dialog-buttons button {
     padding: 10px 25px;
     border-radius: 6px;
+    margin-right: 20px;
     border: 2px solid transparent;
     cursor: pointer;
     font-weight: bold;
+
     font-size: 16px;
 }
 
@@ -192,13 +197,14 @@
 }
 
 .cancel-btn {
-    background-color: var(--app-text-color);
+    background-color: var(--blue-text);
     color: white;
+    margin-right: 0px !important;
 }
 
 
 .playlist-instructions p {
-    color: var(--app-text-color);
+    color: var(--blue-text);
     font-size: 30px;
 
 }

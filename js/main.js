@@ -5,7 +5,14 @@ window.onload = function () {
   window.allseriesCategories = [];
   window.allLiveStreams = [];
   window.liveCategories = [];
-  window.notValid = true;
+  // window.dnsNotValid = false;
+  window.SecretToken = null;
+  window.isQrCode = null;
+  window.dnsNotValid = true;
+  window.apiBaseUrl = null;
+  window.cartLink = null;
+  window.websiteLink = null;
+  window.TMBD_API_KEY = null;
 
   if (typeof tizen !== "undefined" && tizen.tvinputdevice) {
     const keys = tizen.tvinputdevice.getSupportedKeys();
@@ -76,6 +83,10 @@ window.onload = function () {
     const isPolicyAgreed = localStorage.getItem("termsAccepted") == "true";
 
     const isLogin = localStorage.getItem("isLogin") === "true";
+    localStorage.removeItem("login_playlistName");
+    localStorage.removeItem("login_username");
+    localStorage.removeItem("login_password");
+    localStorage.removeItem("login_serverAddress");
 
     if (paymentDueDate) {
       localStorage.setItem("currentPage", "paymentPage");
@@ -94,10 +105,9 @@ window.onload = function () {
       localStorage.setItem("currentPage", "login");
       Router.showPage("login");
     }
-  }, 5000);
+  }, 4000);
 
   // if (typeof logAllDnsEntries === "function") logAllDnsEntries();
-  if (typeof getTmbdId === "function") getTmbdId();
 };
 
 function showSplashScreen() {
@@ -159,7 +169,9 @@ function renderNavbarVisibility() {
 
     originalShowPage(name);
     renderNavbarVisibility();
-    if (typeof window.updateSearchVisibility === "function") {
+    if (typeof window.updateNavbarActive === "function") {
+      window.updateNavbarActive(name, true);
+    } else if (typeof window.updateSearchVisibility === "function") {
       window.updateSearchVisibility(name);
     }
   };
