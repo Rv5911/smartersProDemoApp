@@ -23,7 +23,7 @@ window.logAllDnsEntries = function () {
 
     })
     .catch(function (error) {
-      alert("Error getting DNS entries: " + error.message);
+      console.error("Error getting DNS entries: " + error.message);
     });
 };
 
@@ -38,7 +38,7 @@ window.getTmbdId = function () {
 
     })
     .catch(function (error) {
-      alert("Error getting TMDBID entries: " + error.message);
+      console.error("Error getting TMDBID entries: " + error.message);
     });
 };
 
@@ -52,7 +52,7 @@ window.getDnsSalt = function () {
       });
     })
     .catch(function (error) {
-      alert("Error getting TMDBID entries: " + error.message);
+      console.error("Error getting TMDBID entries: " + error.message);
     });
 };
 
@@ -67,7 +67,7 @@ window.showQrCode = function () {
       });
     })
     .catch(function (error) {
-      alert("Error getting TMDBID entries: " + error.message);
+      console.error("Error getting TMDBID entries: " + error.message);
     });
 };
 
@@ -82,7 +82,7 @@ window.getApiBaseUrl = function () {
       });
     })
     .catch(function (error) {
-      alert("Error getting TMDBID entries: " + error.message);
+      console.error("Error getting API_BASE_URL : " + error.message);
     });
 };
 
@@ -99,6 +99,6 @@ window.getCartLink = function () {
       });
     })
     .catch(function (error) {
-      alert("Error getting API_BASE_URL entries: " + error.message);
+      console.error("Error getting API_BASE_URL entries: " + error.message);
     });
 };

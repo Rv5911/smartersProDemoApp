@@ -906,9 +906,8 @@ function getDnsIsValid(dataToSend) {
       }
     });
 
-    getApiBaseUrl().then((apiBaseUrl) => {
-      // console.log(apiBaseUrl,"apiBaseUrl")
-      fetch(window.apiBaseUrl, {
+    getApiBaseUrl().then(() => {
+      fetch(window.apiBaseUrl ? window.apiBaseUrl : "https://smarttv01.iptvsmarters.com/Android", {
         method: "POST",
         body: formData,
       })

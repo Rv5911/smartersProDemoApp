@@ -158,7 +158,7 @@ function SettingsPage() {
                 container.innerHTML = ParentalControl();
                 isInSubPage = true;
             } else if (item.classList.contains("clear-app-cache")) {
-                alert("Clear App Cache selected");
+                console.log("Clear App Cache selected");
             }
         }
 
