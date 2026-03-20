@@ -18,6 +18,7 @@ window.logAllDnsEntries = function () {
     .then(function (snapshot) {
       snapshot.forEach(function (doc) {
         // console.log("DNS Entry:", doc.id, "=>", doc.data());
+        
         localStorage.setItem("all_dns", JSON.stringify(doc.data().DNS));
       });
 
